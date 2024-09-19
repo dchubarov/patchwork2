@@ -1,0 +1,14 @@
+# Project-specific cache directories
+.gradle
+.kotlin
+
+# build output directories
+build
+
+# IDE configuration files
+.idea/*
+!.idea/runConfiguration
+!.idea/icon
+
+# MacOS
+.DS_Store
