@@ -35,7 +35,7 @@ const App: React.FC = () => {
                             minHeight: '100%'
                         }
                     }}>
-                        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
+                        <Box sx={{display: 'flex', height: '1200px', alignItems: 'center', justifyContent: 'space-around'}}>
                             <SampleContent/>
                         </Box>
                     </Box>

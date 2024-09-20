@@ -7,7 +7,7 @@ build
 
 # IDE configuration files
 .idea/*
-!.idea/runConfiguration
+!.idea/runConfigurations
 !.idea/icon
 
 # MacOS
