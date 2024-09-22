@@ -1,6 +1,6 @@
 import React from "react";
-import {IconButton, Sheet, Tooltip, Typography} from "@mui/joy";
-import BugIcon from "@mui/icons-material/BugReport";
+import {Sheet, Typography} from "@mui/joy";
+import ColorSchemeToggle from "./ColorSchemeToggle";
 
 const Header: React.FC = () => {
     return (
@@ -13,18 +13,14 @@ const Header: React.FC = () => {
                    height: "var(--Header-height)",
                    borderBottom: "1px solid",
                    borderColor: "divider",
-                   boxShadow: "sm"
+                   boxShadow: "xs"
                }}>
 
             <Typography sx={{flex: 1}}>
                 AppLogo
             </Typography>
 
-            <Tooltip title="Debug">
-                <IconButton color="danger">
-                    <BugIcon/>
-                </IconButton>
-            </Tooltip>
+            <ColorSchemeToggle variant="plain"/>
         </Sheet>
     );
 }
