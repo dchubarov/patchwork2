@@ -77,10 +77,12 @@ const View: React.FC<BoxProps> = (props) => (
          ]}/>
 );
 
-export default {
+const layoutBoxes = {
     Header,
     Main,
     Root,
     Sidebar,
     View
 }
+
+export default layoutBoxes;

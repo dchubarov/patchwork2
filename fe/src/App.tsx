@@ -1,19 +1,11 @@
 import React from "react";
-import {Box, CssBaseline, CssVarsProvider, extendTheme, Sheet, Typography} from "@mui/joy";
-import InfoIcon from "@mui/icons-material/Info";
+import {Outlet} from "react-router-dom";
+import {CssBaseline, CssVarsProvider, extendTheme} from "@mui/joy";
 import Layout from "./Layout";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 const theme = extendTheme({})
-
-const SampleContent: React.FC = () => (
-    <Sheet variant="outlined" sx={{borderRadius: 'md', boxShadow: 'md', p: 3}}>
-        <Typography level="h4" component="h1" color="success" startDecorator={<InfoIcon/>}>
-            This app is online
-        </Typography>
-    </Sheet>
-);
 
 const App: React.FC = () => {
     return (
@@ -31,13 +23,7 @@ const App: React.FC = () => {
                     </Layout.Sidebar>
 
                     <Layout.View>
-                        <Box sx={{
-                            display: 'flex', /*height: '1200px', width: '1200px',*/
-                            alignItems: 'center',
-                            justifyContent: 'space-around'
-                        }}>
-                            <SampleContent/>
-                        </Box>
+                        <Outlet/>
                     </Layout.View>
                 </Layout.Main>
             </Layout.Root>

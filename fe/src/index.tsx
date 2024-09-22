@@ -4,6 +4,25 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import "@fontsource/inter";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import SampleView from "./SampleView";
+import ErrorPage from "./ErrorPage";
+
+const router = createBrowserRouter(
+    [{
+        path: "/",
+        element: <App/>,
+        errorElement: <ErrorPage/>,
+        children: [
+            {
+                index: true,
+                element: <SampleView/>
+            }
+        ]
+    }],
+    {
+        basename: "/"
+    });
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -11,7 +30,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <App/>
+        <RouterProvider router={router} />
     </React.StrictMode>
 );
 

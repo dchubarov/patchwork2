@@ -3,7 +3,7 @@ import {Sheet} from "@mui/joy";
 
 const Sidebar: React.FC = () => {
     return (
-        <Sheet variant="soft"
+        <Sheet variant="plain"
                sx={{
                    p: 2,
                    display: "flex",
