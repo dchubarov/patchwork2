@@ -1,5 +1,6 @@
 import React from "react";
 import {Divider, Sheet, Typography} from "@mui/joy";
+import version from "./version.json"
 
 const Sidebar: React.FC = () => {
     return (
@@ -16,8 +17,7 @@ const Sidebar: React.FC = () => {
             </Typography>
 
             <Divider/>
-            <Typography level="body-sm" p={2}>Version 1.2.3</Typography>
-            {/*TODO display actual version*/}
+            <Typography level="body-sm" p={2}>v{version.version}</Typography>
         </Sheet>
     );
 }
