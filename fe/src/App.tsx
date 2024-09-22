@@ -1,6 +1,9 @@
-import React from 'react';
+import React from "react";
 import {Box, CssBaseline, CssVarsProvider, extendTheme, Sheet, Typography} from "@mui/joy";
 import InfoIcon from "@mui/icons-material/Info";
+import Layout from "./Layout";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
 const theme = extendTheme({})
 
@@ -17,30 +20,27 @@ const App: React.FC = () => {
         <CssVarsProvider theme={theme}>
             <CssBaseline/>
 
-            <Box sx={{display: 'flex', flexDirection: 'column', minHeight: '100dvh'}}>
-                <Box sx={{height: '64px', borderBottom: '1px solid', borderColor: 'divider'}}>Header</Box>
-                <Box sx={{flex: 1, display: 'flex'}}>
-                    <Box sx={{
-                        height: 'calc(100vh - 64px)',
-                        width: '240px',
-                        overflow: 'auto',
-                        borderRight: '1px solid',
-                        borderColor: 'divider'
-                    }}>Sidebar</Box>
-                    <Box sx={{
-                        height: 'calc(100vh - 64px)',
-                        overflow: 'auto',
-                        flex: 1,
-                        '& > *': {
-                            minHeight: '100%'
-                        }
-                    }}>
-                        <Box sx={{display: 'flex', height: '1200px', alignItems: 'center', justifyContent: 'space-around'}}>
+            <Layout.Root>
+                <Layout.Header>
+                    <Header/>
+                </Layout.Header>
+
+                <Layout.Main>
+                    <Layout.Sidebar>
+                        <Sidebar/>
+                    </Layout.Sidebar>
+
+                    <Layout.View>
+                        <Box sx={{
+                            display: 'flex', /*height: '1200px', width: '1200px',*/
+                            alignItems: 'center',
+                            justifyContent: 'space-around'
+                        }}>
                             <SampleContent/>
                         </Box>
-                    </Box>
-                </Box>
-            </Box>
+                    </Layout.View>
+                </Layout.Main>
+            </Layout.Root>
         </CssVarsProvider>
     );
 }
