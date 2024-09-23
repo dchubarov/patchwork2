@@ -3,6 +3,7 @@ import App from "./App";
 import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
 import React from "react";
+import SampleView2 from "./SampleView2";
 
 const router = createBrowserRouter(
     /* routes */
@@ -14,6 +15,10 @@ const router = createBrowserRouter(
             {
                 index: true,
                 element: <SampleView/>
+            },
+            {
+                path: "/users/profile",
+                element: <SampleView2/>
             }
         ]
     }],

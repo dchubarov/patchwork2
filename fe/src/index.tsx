@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {RouterProvider} from "react-router-dom";
-import defaultRouter from "./Router";
+import defaultRouter from "./Routing";
 import reportWebVitals from "./reportWebVitals";
 
 import "@fontsource/inter";
