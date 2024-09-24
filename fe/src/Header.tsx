@@ -1,5 +1,5 @@
 import React from "react";
-import {Divider, Link, Sheet, Typography} from "@mui/joy";
+import {AspectRatio, Divider, Link, Sheet, Typography} from "@mui/joy";
 import {Link as RouterLink} from "react-router-dom";
 import ColorSchemeToggle from "./ColorSchemeToggle";
 import {useViewParameters} from "./ViewContext";
@@ -23,7 +23,18 @@ const Header: React.FC = () => {
                }}>
 
 
-            <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="logo" width={50}/>
+            {/*TODO logo depending on color scheme*/}
+            <AspectRatio ratio="1" sx={{
+                minWidth: 42,
+                filter: "grayscale(.5)",
+                transition: "transform .3s ease-in-out, grayscale .3s ease-in-out",
+                ":hover": {
+                    transform: "rotate(-90deg)",
+                    filter: "grayscale(0)"
+                }
+            }}>
+                <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="Logo"/>
+            </AspectRatio>
 
             <Typography level="title-lg">{title || "!NoViewTitle!"}</Typography>
             <Link component={RouterLink} to="/" variant="soft">Home</Link>
