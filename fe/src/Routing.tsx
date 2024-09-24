@@ -3,7 +3,7 @@ import App from "./App";
 import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
 import React from "react";
-import SampleView2 from "./SampleView2";
+import ViewContextPlayground from "./ViewContextPlayground";
 
 const router = createBrowserRouter(
     /* routes */
@@ -17,9 +17,9 @@ const router = createBrowserRouter(
                 element: <SampleView/>
             },
             {
-                path: "/users/profile",
-                element: <SampleView2/>
-            }
+                path: "/dev/view-context-playground",
+                element: <ViewContextPlayground/>
+            },
         ]
     }],
     /* opts */

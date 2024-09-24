@@ -24,7 +24,7 @@ const Header: React.FC = () => {
 
             <Typography level="title-lg">{title || "!NoViewTitle!"}</Typography>
             <Link component={RouterLink} to="/" variant="soft">Home</Link>
-            <Link component={RouterLink} to="/users/profile" variant="soft">Profile</Link>
+            <Link component={RouterLink} to="/dev/view-context-playground" variant="soft">Dev</Link>
             <Divider sx={{backgroundColor: "transparent", flexGrow: 1}}/>
             <ColorSchemeToggle variant="plain"/>
         </Sheet>
