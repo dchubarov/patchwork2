@@ -8,7 +8,7 @@ build
 # IDE configuration files
 .idea/*
 !.idea/runConfigurations
-!.idea/icon
+!.idea/icon.svg
 
 # MacOS
 .DS_Store
