@@ -22,6 +22,9 @@ const Header: React.FC = () => {
                    gap: 2
                }}>
 
+
+            <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="logo" width={50}/>
+
             <Typography level="title-lg">{title || "!NoViewTitle!"}</Typography>
             <Link component={RouterLink} to="/" variant="soft">Home</Link>
             <Link component={RouterLink} to="/dev/view-context-playground" variant="soft">Dev</Link>
