@@ -2,20 +2,20 @@ import React from "react";
 import {Box, BoxProps, GlobalStyles} from "@mui/joy";
 import {useViewParameters} from "./ViewContext";
 
-const Root: React.FC<BoxProps> = (props) => (
-    <Box {...props}
+const Root: React.FC<BoxProps> = ({sx, ...other}) => (
+    <Box {...other}
          sx={[
              {display: "flex", flexDirection: "column", height: "100dvh"},
-             ...(Array.isArray(props.sx) ? props.sx : [props.sx])
+             ...(Array.isArray(sx) ? sx : [sx])
          ]}/>
 );
 
-const Header: React.FC<BoxProps> = (props) => (
-    <Box {...props}
+const Header: React.FC<BoxProps> = ({children, sx, ...other}) => (
+    <Box {...other}
          component="header"
          sx={[
              {height: "var(--Header-height)", zIndex: 1000},
-             ...(Array.isArray(props.sx) ? props.sx : [props.sx])
+             ...(Array.isArray(sx) ? sx : [sx])
          ]}>
 
         <GlobalStyles styles={(/*theme*/) => ({
@@ -24,25 +24,25 @@ const Header: React.FC<BoxProps> = (props) => (
             }
         })}/>
 
-        {props.children}
+        {children}
     </Box>
 );
 
-const Main: React.FC<BoxProps> = (props) => (
-    <Box {...props}
+const Main: React.FC<BoxProps> = ({sx, ...other}) => (
+    <Box {...other}
          component="main"
          sx={[
              {flex: 1, display: "flex"},
-             ...(Array.isArray(props.sx) ? props.sx : [props.sx])
+             ...(Array.isArray(sx) ? sx : [sx])
          ]}/>
 );
 
-const Sidebar: React.FC<BoxProps> = (props) => {
+const Sidebar: React.FC<BoxProps> = ({children, sx, ...other}) => {
     const {addons, forceSidebar} = useViewParameters();
     const isVisible = addons.length > 0 || forceSidebar;
 
     return (
-        <Box {...props}
+        <Box {...other}
              sx={[
                  {
                      display: isVisible ? "initial" : "none",
@@ -54,22 +54,22 @@ const Sidebar: React.FC<BoxProps> = (props) => {
                          minHeight: '100%'
                      }
                  },
-                 ...(Array.isArray(props.sx) ? props.sx : [props.sx])
+                 ...(Array.isArray(sx) ? sx : [sx])
              ]}>
 
             <GlobalStyles styles={(/*theme*/) => ({
                 ":root": {
-                    "--Sidebar-width": isVisible ? "240px" : 0
+                    "--Sidebar-width": isVisible ? "260px" : 0
                 }
             })}/>
 
-            {props.children}
+            {children}
         </Box>
     );
 }
 
-const View: React.FC<BoxProps> = (props) => (
-    <Box {...props}
+const View: React.FC<BoxProps> = ({sx, ...other}) => (
+    <Box {...other}
          component="main"
          sx={[
              {
@@ -80,7 +80,7 @@ const View: React.FC<BoxProps> = (props) => (
                      minHeight: '100%'
                  }
              },
-             ...(Array.isArray(props.sx) ? props.sx : [props.sx])
+             ...(Array.isArray(sx) ? sx : [sx])
          ]}/>
 );
 
