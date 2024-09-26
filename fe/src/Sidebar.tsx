@@ -1,10 +1,19 @@
 import React from "react";
-import {Box, Divider, Sheet, Typography} from "@mui/joy";
+import {
+    Accordion,
+    accordionClasses,
+    AccordionDetails,
+    AccordionGroup,
+    AccordionSummary,
+    Divider,
+    Sheet,
+    Typography
+} from "@mui/joy";
+import {useMainView} from "./ViewContext";
 import version from "./version.json"
-import {useViewParameters} from "./ViewContext";
 
 const Sidebar: React.FC = () => {
-    const {addons} = useViewParameters();
+    const {widgets} = useMainView();
 
     return (
         <Sheet variant="plain"
@@ -17,13 +26,33 @@ const Sidebar: React.FC = () => {
                    overflow: "auto"
                }}>
 
-            <Box sx={{flex: 1, p: 2, overflow: "auto"}}>
-                {addons.map((addon, index) => (
-                    <React.Fragment key={`addon-${index}`}>
-                        {addon.component}
-                    </React.Fragment>
+            <AccordionGroup disableDivider sx={{
+                pt: 2,
+                px: 1,
+                height: "100%",
+                overflow: "auto",
+                gap: 1,
+                [`& .${accordionClasses.root}.${accordionClasses.expanded}`]: {
+                    backgroundColor: 'background.level1',
+                    borderRadius: 'md',
+                    borderBottom: '1px solid',
+                    borderColor: 'background.level2',
+                },
+            }}>
+
+                {/*<Box sx={{flex: 1, p: 2, overflow: "auto"}}>*/}
+                {widgets.map((addon, index) => (
+                    <Accordion key={`addon-${index}`} defaultExpanded>
+                        <AccordionSummary>
+                            <Typography level="body-xs" sx={{textTransform: "uppercase"}} color="neutral">
+                                {addon.caption || `Widget-${index + 1}`}
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>{addon.component}</AccordionDetails>
+                    </Accordion>
                 ))}
-            </Box>
+                {/*</Box>*/}
+            </AccordionGroup>
 
             <Divider/>
             <Typography level="body-sm" p={2}>v{version.version}</Typography>

@@ -1,19 +1,19 @@
 import React, {useEffect} from "react";
 import {Box, Sheet, Typography} from "@mui/joy";
-import {useViewParameters} from "./ViewContext";
+import {useMainView} from "./ViewContext";
 import InfoIcon from "@mui/icons-material/Info";
 
 const SampleView: React.FC = () => {
-    const {configureAddons, ejectView} = useViewParameters();
+    const {configureWidgets, ejectView} = useMainView();
 
     useEffect(() => {
-        configureAddons([
+        configureWidgets([
             {component: <div style={{backgroundColor: "rgba(0,0,255,0.1)"}}>Sample add-on</div>, slot: 2},
             {component: <div style={{height: 1000, backgroundColor: "rgba(255,0,255,0.1)"}}>Sample add-on 2</div>},
         ]);
 
         return () => ejectView()
-    }, [configureAddons, ejectView]);
+    }, [configureWidgets, ejectView]);
 
     return (
         <Box sx={{/*width: "1200px", height: "1200px",*/

@@ -4,6 +4,7 @@ import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
 import React from "react";
 import ViewContextPlayground from "./ViewContextPlayground";
+import Panorama from "./Panorama";
 
 const router = createBrowserRouter(
     /* routes */
@@ -15,6 +16,10 @@ const router = createBrowserRouter(
             {
                 index: true,
                 element: <SampleView/>
+            },
+            {
+                path: "/panorama",
+                element: <Panorama/>
             },
             {
                 path: "/dev/view-context-playground",

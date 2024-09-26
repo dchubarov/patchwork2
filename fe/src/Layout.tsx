@@ -1,6 +1,6 @@
 import React from "react";
 import {Box, BoxProps, GlobalStyles} from "@mui/joy";
-import {useViewParameters} from "./ViewContext";
+import {useMainView} from "./ViewContext";
 
 const Root: React.FC<BoxProps> = ({sx, ...other}) => (
     <Box {...other}
@@ -38,8 +38,8 @@ const Main: React.FC<BoxProps> = ({sx, ...other}) => (
 );
 
 const Sidebar: React.FC<BoxProps> = ({children, sx, ...other}) => {
-    const {addons, forceSidebar} = useViewParameters();
-    const isVisible = addons.length > 0 || forceSidebar;
+    const {widgets} = useMainView();
+    const isVisible = widgets.length > 0;
 
     return (
         <Box {...other}

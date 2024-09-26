@@ -2,10 +2,10 @@ import React from "react";
 import {AspectRatio, Divider, Link, Sheet, Typography} from "@mui/joy";
 import {Link as RouterLink} from "react-router-dom";
 import ColorSchemeToggle from "./ColorSchemeToggle";
-import {useViewParameters} from "./ViewContext";
+import {useMainView} from "./ViewContext";
 
 const Header: React.FC = () => {
-    const {title} = useViewParameters();
+    const {title, key} = useMainView();
 
     return (
         <Sheet variant="soft"
@@ -34,8 +34,9 @@ const Header: React.FC = () => {
                 <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="Logo"/>
             </AspectRatio>
 
-            <Typography level="title-lg">{title || "!NoViewTitle!"}</Typography>
+            <Typography level="title-lg">{title || key || "!NoViewTitle!"}</Typography>
             <Link component={RouterLink} to="/" variant="soft">Home</Link>
+            <Link component={RouterLink} to="/panorama" variant="soft">Panorama</Link>
             <Link component={RouterLink} to="/dev/view-context-playground" variant="soft">Dev</Link>
             <Divider sx={{backgroundColor: "transparent", flexGrow: 1}}/>
             <ColorSchemeToggle variant="plain"/>
