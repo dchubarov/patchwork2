@@ -1,6 +1,6 @@
 import React from "react";
 import {Box, BoxProps, GlobalStyles} from "@mui/joy";
-import {useMainView} from "./ViewContext";
+import {SidebarPlacement, useMainView} from "./ViewContext";
 
 const Root: React.FC<BoxProps> = ({sx, ...other}) => (
     <Box {...other}
@@ -37,11 +37,15 @@ const Main: React.FC<BoxProps> = ({sx, ...other}) => (
          ]}/>
 );
 
-const Sidebar: React.FC<BoxProps> = ({children, sx, ...other}) => {
-    const {widgets} = useMainView();
+type SidebarProps = BoxProps & {
+    placement: SidebarPlacement
+}
+
+const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) => {
+    const {widgets, sidebarPlacement} = useMainView();
     const isVisible = widgets.length > 0;
 
-    return (
+    return sidebarPlacement === placement ? (
         <Box {...other}
              sx={[
                  {
@@ -65,7 +69,7 @@ const Sidebar: React.FC<BoxProps> = ({children, sx, ...other}) => {
 
             {children}
         </Box>
-    );
+    ) : null;
 }
 
 const View: React.FC<BoxProps> = ({sx, ...other}) => (

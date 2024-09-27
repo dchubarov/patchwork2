@@ -14,6 +14,7 @@ import version from "./version.json"
 
 const Sidebar: React.FC = () => {
     const {widgets} = useMainView();
+    const pinnedWidget = (widgets.length > 0 && widgets[0].slot === 0) ? widgets[0] : null;
 
     return (
         <Sheet variant="plain"
@@ -26,32 +27,34 @@ const Sidebar: React.FC = () => {
                    overflow: "auto"
                }}>
 
-            <AccordionGroup disableDivider sx={{
-                pt: 2,
-                px: 1,
-                height: "100%",
-                overflow: "auto",
-                gap: 1,
-                [`& .${accordionClasses.root}.${accordionClasses.expanded}`]: {
-                    backgroundColor: 'background.level1',
-                    borderRadius: 'md',
-                    borderBottom: '1px solid',
-                    borderColor: 'background.level2',
-                },
-            }}>
+            {pinnedWidget && pinnedWidget.component}
 
-                {/*<Box sx={{flex: 1, p: 2, overflow: "auto"}}>*/}
-                {widgets.map((addon, index) => (
+            <AccordionGroup
+                disableDivider
+                sx={{
+                    pt: 2,
+                    px: 1,
+                    height: "100%",
+                    overflow: "auto",
+                    gap: 1,
+                    [`& .${accordionClasses.root}.${accordionClasses.expanded}`]: {
+                        backgroundColor: 'background.level1',
+                        borderRadius: 'md',
+                        borderBottom: '1px solid',
+                        borderColor: 'background.level2',
+                    },
+                }}>
+
+                {widgets.slice(pinnedWidget ? 1 : undefined).map((widget, index) => (
                     <Accordion key={`addon-${index}`} defaultExpanded>
                         <AccordionSummary>
                             <Typography level="body-xs" sx={{textTransform: "uppercase"}} color="neutral">
-                                {addon.caption || `Widget-${index + 1}`}
+                                {widget.caption || `Widget-${index + 1}`}
                             </Typography>
                         </AccordionSummary>
-                        <AccordionDetails>{addon.component}</AccordionDetails>
+                        <AccordionDetails>{widget.component}</AccordionDetails>
                     </Accordion>
                 ))}
-                {/*</Box>*/}
             </AccordionGroup>
 
             <Divider/>

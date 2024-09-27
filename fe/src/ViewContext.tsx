@@ -2,7 +2,7 @@ import React, {createContext, PropsWithChildren, ReactNode, useCallback, useCont
 
 // Types
 
-export type SidebarPosition = "left" | "right";
+export type SidebarPlacement = "left" | "right";
 
 export interface Widget {
     key: string;
@@ -13,14 +13,15 @@ export interface Widget {
 
 export type WidgetsConfiguration = Partial<Widget> | Partial<Widget>[];
 export type ViewConfiguration = Partial<Pick<ViewState,
+    | "key"
     | "title"
-    | "sidebarPosition"
+    | "sidebarPlacement"
 >>;
 
 export interface ViewState {
     key: string | null;
     title: string | null;
-    sidebarPosition: SidebarPosition;
+    sidebarPlacement: SidebarPlacement;
     widgets: Widget[];
     configureView: (config: ViewConfiguration) => void;
     configureWidgets: (config: WidgetsConfiguration) => void;
@@ -30,7 +31,7 @@ export interface ViewState {
 const initialViewState: ViewState = {
     key: null,
     title: null,
-    sidebarPosition: "left",
+    sidebarPlacement: "left",
     widgets: [],
     configureView: () => {
     },
@@ -60,10 +61,42 @@ function viewStateReducer(state: ViewState, action: ViewStateAction): ViewState 
                 ...state,
                 ...action.config
             };
+
+        case ViewStateActionType.CONFIGURE_WIDGETS:
+            return {
+                ...state,
+                widgets: mergeWidgetConfigurations(state.widgets, action.config)
+            };
+
         case ViewStateActionType.EJECT_VIEW:
             return initialViewState;
     }
-    return state;
+}
+
+function mergeWidgetConfigurations(widgets: Widget[], config: WidgetsConfiguration): Widget[] {
+    let normalizedConfigs = Array.isArray(config)
+        ? config.reverse().filter(
+            (value, index, array) =>
+                index === array.findIndex((item) => item.slot === value.slot)
+        )
+        : [config];
+
+    const updated = [
+        ...widgets
+            .filter((item) => normalizedConfigs.findIndex((value) =>
+                value.slot === item.slot) === -1
+            ),
+        ...normalizedConfigs
+            .filter((config) => config.component !== undefined)
+            .map((config): Widget => ({
+                key: config.key || `widget-${config.slot || 0}`,
+                caption: config.caption || "",
+                slot: config.slot || 0,
+                component: config.component
+            }))
+    ];
+
+    return updated.sort((a: Widget, b: Widget) => a.slot - b.slot);
 }
 
 // Context

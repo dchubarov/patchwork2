@@ -20,13 +20,17 @@ const App: React.FC = () => {
                     </Layout.Header>
 
                     <Layout.Main>
-                        <Layout.Sidebar>
+                        <Layout.Sidebar placement="left">
                             <Sidebar/>
                         </Layout.Sidebar>
 
                         <Layout.View>
                             <Outlet/>
                         </Layout.View>
+
+                        <Layout.Sidebar placement="right">
+                            <Sidebar/>
+                        </Layout.Sidebar>
                     </Layout.Main>
                 </Layout.Root>
             </ViewProvider>

@@ -7,7 +7,7 @@ const ViewContextPlayground: React.FC = () => {
     const [slot, setSlot] = useState(1);
 
     useEffect(() => {
-        configureView({title: "View context playground"});
+        configureView({title: "View context playground", sidebarPlacement: "right"});
         return () => ejectView();
     }, [configureView, ejectView]);
 
@@ -15,9 +15,13 @@ const ViewContextPlayground: React.FC = () => {
         <Box sx={{p: 2}}>
             <Stack gap={2} alignItems="flex-start">
                 <Button variant="solid" onClick={() => {
-                    configureWidgets({component: <div>Add-on #{slot}</div>, slot: slot});
+                    configureWidgets({
+                        component: <div>Widget contents</div>,
+                        caption: `Widget ${slot}`,
+                        slot: slot
+                    });
                     setSlot(slot + 1);
-                }}>Insert add-on</Button>
+                }}>Add widget</Button>
             </Stack>
         </Box>
     );
