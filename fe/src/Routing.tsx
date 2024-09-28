@@ -1,8 +1,8 @@
+import React from "react";
 import {createBrowserRouter} from "react-router-dom";
 import App from "./App";
 import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
-import React from "react";
 import ViewContextPlayground from "./ViewContextPlayground";
 import Panorama from "./Panorama";
 

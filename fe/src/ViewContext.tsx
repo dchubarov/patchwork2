@@ -77,26 +77,31 @@ function mergeWidgetConfigurations(widgets: Widget[], config: WidgetsConfigurati
     let normalizedConfigs = Array.isArray(config)
         ? config.reverse().filter(
             (value, index, array) =>
+                Object.keys(value).length > 0 &&
                 index === array.findIndex((item) => item.slot === value.slot)
         )
         : [config];
 
-    const updated = [
-        ...widgets
-            .filter((item) => normalizedConfigs.findIndex((value) =>
-                value.slot === item.slot) === -1
-            ),
-        ...normalizedConfigs
-            .filter((config) => config.component !== undefined)
-            .map((config): Widget => ({
-                key: config.key || `widget-${config.slot || 0}`,
-                caption: config.caption || "",
-                slot: config.slot || 0,
-                component: config.component
-            }))
-    ];
+    if (normalizedConfigs.length === 0)
+        return widgets;
+    else {
+        const updated = [
+            ...widgets
+                .filter((item) => normalizedConfigs.findIndex((value) =>
+                    value.slot === item.slot) === -1
+                ),
+            ...normalizedConfigs
+                .filter((config) => config.component !== undefined)
+                .map((config): Widget => ({
+                    key: config.key || `widget-${config.slot || 0}`,
+                    caption: config.caption || "",
+                    slot: config.slot || 0,
+                    component: config.component
+                }))
+        ];
 
-    return updated.sort((a: Widget, b: Widget) => a.slot - b.slot);
+        return updated.sort((a: Widget, b: Widget) => a.slot - b.slot);
+    }
 }
 
 // Context

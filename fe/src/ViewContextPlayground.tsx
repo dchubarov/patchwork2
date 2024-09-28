@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Box, Button, Stack} from "@mui/joy";
+import {Box, Button, Stack, Typography} from "@mui/joy";
 import {useMainView} from "./ViewContext";
 
 const ViewContextPlayground: React.FC = () => {
@@ -7,7 +7,8 @@ const ViewContextPlayground: React.FC = () => {
     const [slot, setSlot] = useState(1);
 
     useEffect(() => {
-        configureView({title: "View context playground", sidebarPlacement: "right"});
+        configureView({title: "View context playground", sidebarPlacement: "left"});
+        configureWidgets({component: <Typography level="title-md">Pinned widget</Typography>, slot: 0})
         return () => ejectView();
     }, [configureView, ejectView]);
 

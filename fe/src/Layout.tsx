@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) =>
                      display: isVisible ? "initial" : "none",
                      height: "calc(100vh - var(--Header-height))",
                      width: "var(--Sidebar-width)",
-                     overflow: "auto",
+                     // overflow: "auto",
                      zIndex: 900,
                      '& > *': {
                          minHeight: '100%'
