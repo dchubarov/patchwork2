@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) =>
                      width: "var(--Sidebar-width)",
                      // overflow: "auto",
                      zIndex: 900,
-                     '& > *': {
+                     '& > :first-child': {
                          minHeight: '100%'
                      }
                  },
@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) =>
 
             <GlobalStyles styles={(/*theme*/) => ({
                 ":root": {
-                    "--Sidebar-width": isVisible ? "260px" : 0
+                    "--Sidebar-width": isVisible ? "280px" : 0
                 }
             })}/>
 

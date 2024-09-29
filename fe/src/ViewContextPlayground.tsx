@@ -8,7 +8,7 @@ const ViewContextPlayground: React.FC = () => {
 
     useEffect(() => {
         configureView({title: "View context playground", sidebarPlacement: "left"});
-        configureWidgets({component: <Typography level="title-md">Pinned widget</Typography>, slot: 0})
+        configureWidgets({component: <Typography level="title-md" height="100px">Pinned widget</Typography>, slot: 0})
         return () => ejectView();
     }, [configureView, ejectView]);
 

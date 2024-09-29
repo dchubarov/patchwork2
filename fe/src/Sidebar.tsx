@@ -1,70 +1,73 @@
 import React from "react";
 import {
     Accordion,
-    accordionClasses,
     AccordionDetails,
     AccordionGroup,
-    AccordionSummary, Box,
-    Divider,
+    AccordionSummary,
+    Box,
+    ListItemContent,
     Sheet,
     Typography
 } from "@mui/joy";
 import {useMainView} from "./ViewContext";
-// import version from "./version.json"
 
 const Sidebar: React.FC = () => {
     const {widgets, sidebarPlacement} = useMainView();
     const pinnedWidget = (widgets.length > 0 && widgets[0].slot === 0) ? widgets[0] : null;
 
     return (
-        <Sheet variant="plain"
-               sx={{
-                   display: "flex",
-                   flexDirection: "column",
-                   borderRight: sidebarPlacement === "left" ? "1px solid" : "none",
-                   borderLeft: sidebarPlacement === "right" ? "1px solid" : "none",
-                   borderColor: "divider",
-                   height: "100%",
-                   overflow: "auto"
-               }}>
+        <Box sx={{
+            height: "100%",
+            py: 2,
+            pl: sidebarPlacement === "left" ? 2 : 0,
+            pr: sidebarPlacement === "right" ? 2 : 0
+        }}>
+            <Sheet variant="soft"
+                   color="primary"
+                   invertedColors
+                   sx={{
+                       height: "100%",
+                       overflow: "scroll",
+                       scrollbarWidth: "thin",
+                       border: "1px solid",
+                       borderColor: "var(--joy-palette-primary-300)",
+                       borderRadius: "sm",
+                       boxShadow: "md",
+                   }}>
 
-            {pinnedWidget && <>
-                <Box sx={{px: 2, pt: 2}}>
+                {pinnedWidget && <Box
+                    sx={[
+                        {
+                            p: 2,
+                            top: 0,
+                            position: "sticky",
+                            zIndex: 500,
+                            backdropFilter: "blur(6px)"
+                        },
+                        widgets.length > 1 ? {
+                            borderBottom: "1px solid",
+                            borderColor: "var(--joy-palette-primary-300)"
+                        } : {}
+                    ]}>
                     {pinnedWidget.component}
-                </Box>
-                {widgets.length > 1 && <Divider sx={{my: 2, boxShadow: "sm"}}/>}
-            </>}
+                </Box>}
 
-            <AccordionGroup
-                disableDivider
-                sx={{
-                    px: 1,
-                    height: "100%",
-                    overflow: "auto",
-                    gap: 1,
-                    [`& .${accordionClasses.root}.${accordionClasses.expanded}`]: {
-                        backgroundColor: 'background.level1',
-                        borderRadius: 'md',
-                        borderBottom: '1px solid',
-                        borderColor: 'background.level2',
-                    },
-                }}>
-
-                {widgets.slice(pinnedWidget ? 1 : undefined).map((widget, index) => (
-                    <Accordion key={`addon-${index}`} defaultExpanded>
-                        <AccordionSummary>
-                            <Typography level="body-xs" sx={{textTransform: "uppercase"}} color="neutral">
-                                {widget.caption || `Widget-${index + 1}`}
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>{widget.component}</AccordionDetails>
-                    </Accordion>
-                ))}
-            </AccordionGroup>
-
-            {/*<Divider/>*/}
-            {/*<Typography level="body-sm" p={2}>v{version.version}</Typography>*/}
-        </Sheet>
+                {widgets.length > 1 && <AccordionGroup disableDivider sx={{mt: 1}}>
+                    {widgets.slice(1).map((widget, index) => (
+                        <Accordion key={`widget-${index}`} defaultExpanded>
+                            <AccordionSummary>
+                                <ListItemContent>
+                                    <Typography level="title-sm">
+                                        {widget.caption || widget.key}
+                                    </Typography>
+                                </ListItemContent>
+                            </AccordionSummary>
+                            <AccordionDetails>{widget.component}</AccordionDetails>
+                        </Accordion>
+                    ))}
+                </AccordionGroup>}
+            </Sheet>
+        </Box>
     );
 }
 
