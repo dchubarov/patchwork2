@@ -9,7 +9,7 @@ const SampleView: React.FC = () => {
     useEffect(() => {
         configureWidgets([
             {component: <div style={{backgroundColor: "rgba(0,0,255,0.1)"}}>Sample add-on</div>, slot: 2},
-            {component: <div style={{height: 1000, backgroundColor: "rgba(255,0,255,0.1)"}}>Sample add-on 2</div>},
+            {component: <div style={{height: 200, backgroundColor: "rgba(255,0,255,0.1)"}}>Sample add-on 2</div>},
         ]);
 
         return () => ejectView()

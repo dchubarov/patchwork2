@@ -42,19 +42,17 @@ type SidebarProps = BoxProps & {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) => {
-    const {widgets, sidebarPlacement} = useMainView();
-    const isVisible = widgets.length > 0;
+    const {sidebarPlacement} = useMainView();
 
     return sidebarPlacement === placement ? (
         <Box {...other}
              sx={[
                  {
-                     display: isVisible ? "initial" : "none",
                      height: "calc(100vh - var(--Header-height))",
                      width: "var(--Sidebar-width)",
                      // overflow: "auto",
                      zIndex: 900,
-                     '& > :first-child': {
+                     '& > *': {
                          minHeight: '100%'
                      }
                  },
@@ -63,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) =>
 
             <GlobalStyles styles={(/*theme*/) => ({
                 ":root": {
-                    "--Sidebar-width": isVisible ? "280px" : 0
+                    "--Sidebar-width": "280px"
                 }
             })}/>
 
