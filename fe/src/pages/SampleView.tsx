@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
 import {Box, Sheet, Typography} from "@mui/joy";
-import {useMainView} from "./ViewContext";
+import {useActiveView} from "../hooks";
 import InfoIcon from "@mui/icons-material/Info";
 
 const SampleView: React.FC = () => {
-    const {configureWidgets, ejectView} = useMainView();
+    const {configureWidgets, ejectView} = useActiveView();
 
     useEffect(() => {
         configureWidgets([

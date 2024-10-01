@@ -2,10 +2,10 @@ import React from "react";
 import {AspectRatio, Divider, Link, Sheet, Typography} from "@mui/joy";
 import {Link as RouterLink} from "react-router-dom";
 import ColorSchemeToggle from "./ColorSchemeToggle";
-import {useMainView} from "./ViewContext";
+import {useActiveView} from "../hooks";
 
 const Header: React.FC = () => {
-    const {title, key} = useMainView();
+    const {title, key} = useActiveView();
 
     return (
         <Sheet variant="soft"

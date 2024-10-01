@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {Box, Sheet} from "@mui/joy";
-import {useMainView} from "./ViewContext";
+import {useActiveView} from "../../../hooks";
 
 const PanoramaRow: React.FC<{header?: boolean}> = ({header}) => {
     return (
@@ -29,7 +29,7 @@ const PanoramaRow: React.FC<{header?: boolean}> = ({header}) => {
 }
 
 const Panorama: React.FC = () => {
-    const {configureView, ejectView} = useMainView();
+    const {configureView, ejectView} = useActiveView();
     useEffect(() => {
         configureView({title: "Panorama"});
         return () => ejectView();
@@ -55,5 +55,7 @@ const Panorama: React.FC = () => {
         </Box>
     );
 }
+
+Panorama.displayName = "Panorama";
 
 export default Panorama;

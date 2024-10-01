@@ -1,4 +1,4 @@
-import React, {createContext, PropsWithChildren, ReactNode, useCallback, useContext, useReducer} from "react";
+import React, {createContext, PropsWithChildren, ReactNode, useCallback, useReducer} from "react";
 
 // Types
 
@@ -106,9 +106,9 @@ function mergeWidgetConfigurations(widgets: Widget[], config: WidgetsConfigurati
 
 // Context
 
-const ViewContext = createContext<ViewState | null>(null);
+export const ActiveViewContext = createContext<ViewState | null>(null);
 
-const ViewProvider: React.FC<PropsWithChildren> = ({children}) => {
+const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
     const [state, dispatch] = useReducer(viewStateReducer, initialViewState);
 
     const contextValue = {
@@ -125,20 +125,10 @@ const ViewProvider: React.FC<PropsWithChildren> = ({children}) => {
     }
 
     return (
-        <ViewContext.Provider value={contextValue}>
+        <ActiveViewContext.Provider value={contextValue}>
             {children}
-        </ViewContext.Provider>
+        </ActiveViewContext.Provider>
     );
 }
 
-export default ViewProvider;
-
-// Hooks
-
-export function useMainView(): ViewState {
-    const context = useContext(ViewContext);
-    if (!context) {
-        throw new Error("useView hook must be used within ViewProvider.");
-    }
-    return context;
-}
+export default ActiveViewProvider;

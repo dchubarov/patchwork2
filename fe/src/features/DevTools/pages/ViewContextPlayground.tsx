@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Box, Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
-import {useMainView} from "./ViewContext";
+import {useActiveView} from "../../../hooks";
 
 const DemoLoadingWidget: React.FC = () => (
     <Typography
@@ -11,7 +11,7 @@ const DemoLoadingWidget: React.FC = () => (
 );
 
 const ViewContextPlayground: React.FC = () => {
-    const {configureView, configureWidgets, ejectView, widgets} = useMainView();
+    const {configureView, configureWidgets, ejectView} = useActiveView();
     const [slot, setSlot] = useState(1);
 
     useEffect(() => {
@@ -46,4 +46,5 @@ const ViewContextPlayground: React.FC = () => {
     );
 }
 
+ViewContextPlayground.displayName = "ViewContextPlayground";
 export default ViewContextPlayground;

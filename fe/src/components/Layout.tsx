@@ -1,6 +1,7 @@
 import React from "react";
 import {Box, BoxProps, GlobalStyles} from "@mui/joy";
-import {SidebarPlacement, useMainView} from "./ViewContext";
+import {SidebarPlacement} from "../providers/ActiveViewProvider";
+import {useActiveView} from "../hooks";
 
 const Root: React.FC<BoxProps> = ({sx, ...other}) => (
     <Box {...other}
@@ -42,7 +43,7 @@ type SidebarProps = BoxProps & {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) => {
-    const {sidebarPlacement} = useMainView();
+    const {sidebarPlacement} = useActiveView();
 
     return sidebarPlacement === placement ? (
         <Box {...other}

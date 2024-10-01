@@ -15,9 +15,9 @@ import {
     Tooltip,
     Typography
 } from "@mui/joy";
-import {useMainView} from "./ViewContext";
-import {LogoutSharp as LogoutIcon, Person4 as UserIcon} from "@mui/icons-material";
 import ColorSchemeToggle from "./ColorSchemeToggle";
+import {useActiveView} from "../hooks";
+import {LogoutSharp as LogoutIcon, Person4 as UserIcon} from "@mui/icons-material";
 
 const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
     <Divider {...other}
@@ -36,7 +36,7 @@ const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
 );
 
 const Sidebar: React.FC = () => {
-    const {widgets, sidebarPlacement, title: viewTitle, key: viewKey} = useMainView();
+    const {widgets, sidebarPlacement, title: viewTitle, key: viewKey} = useActiveView();
     const pinnedWidget = (widgets.length > 0 && widgets[0].slot === 0) ? widgets[0] : null;
     const moreWidgets = (widgets.length > 0 && widgets.find((value) => value.component && value.slot !== 0))
 
@@ -91,7 +91,8 @@ const Sidebar: React.FC = () => {
                         </AspectRatio>
 
                         <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
-                            {viewTitle || viewKey || "!NoViewTitle!"}
+                            {/*TODO this is feature title, not view*/}
+                            {viewTitle || viewKey || "!NoFeatTitle!"}
                         </Typography>
 
                         <ColorSchemeToggle size="sm"/>

@@ -1,10 +1,10 @@
 import React from "react";
 import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider, extendTheme} from "@mui/joy";
-import Layout from "./Layout";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
-import ViewProvider from "./ViewContext";
+import Layout from "./components/Layout";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import ActiveViewProvider from "./providers/ActiveViewProvider";
 
 const theme = extendTheme({})
 
@@ -13,7 +13,7 @@ const App: React.FC = () => {
         <CssVarsProvider theme={theme}>
             <CssBaseline/>
 
-            <ViewProvider>
+            <ActiveViewProvider>
                 <Layout.Root>
                     <Layout.Header>
                         <Header/>
@@ -33,7 +33,7 @@ const App: React.FC = () => {
                         </Layout.Sidebar>
                     </Layout.Main>
                 </Layout.Root>
-            </ViewProvider>
+            </ActiveViewProvider>
         </CssVarsProvider>
     );
 }
