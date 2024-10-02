@@ -1,5 +1,5 @@
 import React, {PropsWithChildren} from "react";
-import {Box, Typography} from "@mui/joy";
+import {Box, Tab, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
 import {useActiveView} from "../lib/useActiveView";
 import {SidebarPlacement} from "../lib/viewStateTypes";
 
@@ -39,9 +39,32 @@ const Centered: React.FC<PropsWithChildren> = ({children}) => {
     );
 }
 
+// EXPERIMENTAL: displays children in tabs
+const Indexed: React.FC<PropsWithChildren> = () => {
+    const {sidebarPlacement} = useActiveView();
+
+    return (
+        <Tabs defaultValue="a"
+              variant="plain"
+              orientation="vertical"
+              sx={{
+                  flexDirection: sidebarPlacement === "left" ? "row-reverse" : "row"
+              }}>
+
+            <TabList underlinePlacement={sidebarPlacement} sx={{py: 2}}>
+                <Tab indicatorPlacement={sidebarPlacement} value="a">View context playground</Tab>
+            </TabList>
+            <TabPanel value="a" sx={{...paddingSxProps(sidebarPlacement)}}>
+                <Typography level="h2" component="h1">Tab panel</Typography>
+            </TabPanel>
+        </Tabs>
+    );
+}
+
 const defaultExports = {
+    Centered,
     Content,
-    Centered
+    Indexed,
 }
 
 export default defaultExports;
