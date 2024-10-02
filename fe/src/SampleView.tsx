@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {Box, Sheet, Typography} from "@mui/joy";
-import {useActiveView} from "../hooks";
+import {useActiveView} from "./lib/useActiveView";
 import InfoIcon from "@mui/icons-material/Info";
 
 const SampleView: React.FC = () => {

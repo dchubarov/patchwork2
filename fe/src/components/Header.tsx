@@ -2,7 +2,7 @@ import React from "react";
 import {AspectRatio, Divider, Link, Sheet, Typography} from "@mui/joy";
 import {Link as RouterLink} from "react-router-dom";
 import ColorSchemeToggle from "./ColorSchemeToggle";
-import {useActiveView} from "../hooks";
+import {useActiveView} from "../lib/useActiveView";
 
 const Header: React.FC = () => {
     const {title, key} = useActiveView();
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
             <Typography level="title-lg">{title || key || "!NoViewTitle!"}</Typography>
             <Link component={RouterLink} to="/" variant="soft">Home</Link>
             <Link component={RouterLink} to="/panorama" variant="soft">Panorama</Link>
-            <Link component={RouterLink} to="/dev/view-context-playground" variant="soft">Dev</Link>
+            <Link component={RouterLink} to="/dev-tools/view-context-playground" variant="soft">Dev</Link>
             <Divider sx={{backgroundColor: "transparent", flexGrow: 1}}/>
             <ColorSchemeToggle variant="plain"/>
         </Sheet>

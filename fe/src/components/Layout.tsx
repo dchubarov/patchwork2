@@ -1,7 +1,7 @@
 import React from "react";
 import {Box, BoxProps, GlobalStyles} from "@mui/joy";
-import {SidebarPlacement} from "../providers/ActiveViewProvider";
-import {useActiveView} from "../hooks";
+import {useActiveView} from "../lib/useActiveView";
+import {SidebarPlacement} from "../lib/viewStateTypes";
 
 const Root: React.FC<BoxProps> = ({sx, ...other}) => (
     <Box {...other}

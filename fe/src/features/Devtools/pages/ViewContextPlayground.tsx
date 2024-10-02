@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Box, Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
-import {useActiveView} from "../../../hooks";
+import {useActiveView} from "../../../lib/useActiveView";
 
 const DemoLoadingWidget: React.FC = () => (
     <Typography

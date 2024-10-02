@@ -1,2 +1,0 @@
-
-export {useActiveView} from "./useActiveView";

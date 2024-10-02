@@ -16,7 +16,7 @@ import {
     Typography
 } from "@mui/joy";
 import ColorSchemeToggle from "./ColorSchemeToggle";
-import {useActiveView} from "../hooks";
+import {useActiveView} from "../lib/useActiveView";
 import {LogoutSharp as LogoutIcon, Person4 as UserIcon} from "@mui/icons-material";
 
 const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
