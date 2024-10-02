@@ -1,6 +1,6 @@
 import React from "react";
-import {isRouteErrorResponse, useRouteError} from "react-router-dom";
-import {Box, CssBaseline, CssVarsProvider, Typography} from "@mui/joy";
+import {isRouteErrorResponse, useRouteError, Link as RouterLink} from "react-router-dom";
+import {Box, CssBaseline, CssVarsProvider, Link, Typography} from "@mui/joy";
 import ErrorIcon from "@mui/icons-material/Error";
 
 const ErrorPage: React.FC = () => {
@@ -33,6 +33,7 @@ const ErrorPage: React.FC = () => {
                 <Typography level="h1">Oops!</Typography>
                 <Typography level="h4">Sorry, an unexpected error has occurred.</Typography>
                 <Typography variant="soft">{errorMessage}</Typography>
+                <Link component={RouterLink} to="/">Home</Link>
             </Box>
         </CssVarsProvider>
     )

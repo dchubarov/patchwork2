@@ -36,7 +36,7 @@ const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
 );
 
 const Sidebar: React.FC = () => {
-    const {widgets, sidebarPlacement, title: viewTitle, key: viewKey} = useActiveView();
+    const {widgets, sidebarPlacement, sectionTitle} = useActiveView();
     const pinnedWidget = (widgets.length > 0 && widgets[0].slot === 0) ? widgets[0] : null;
     const moreWidgets = (widgets.length > 0 && widgets.find((value) => value.component && value.slot !== 0))
 
@@ -92,7 +92,7 @@ const Sidebar: React.FC = () => {
 
                         <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
                             {/*TODO this is feature title, not view*/}
-                            {viewTitle || viewKey || "!NoFeatTitle!"}
+                            {sectionTitle || "!NoFeatTitle!"}
                         </Typography>
 
                         <ColorSchemeToggle size="sm"/>

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Box, Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
+import {Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
 import {useActiveView} from "../../../lib/useActiveView";
+import PageLayout from "../../../components/PageLayout";
 
 const DemoLoadingWidget: React.FC = () => (
     <Typography
@@ -21,7 +22,7 @@ const ViewContextPlayground: React.FC = () => {
     }, [configureView, ejectView]);
 
     return (
-        <Box sx={{p: 2}}>
+        <PageLayout.Content>
             <Stack gap={2} alignItems="flex-start">
                 <Button variant="solid" onClick={() => {
                     configureWidgets({
@@ -42,7 +43,7 @@ const ViewContextPlayground: React.FC = () => {
                               configureWidgets({slot: 0, component: e.target.checked ? <DemoLoadingWidget/> : null});
                           }}/>
             </Stack>
-        </Box>
+        </PageLayout.Content>
     );
 }
 

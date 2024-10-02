@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
-import {Box, Sheet, Typography} from "@mui/joy";
+import {Sheet, Typography} from "@mui/joy";
 import {useActiveView} from "./lib/useActiveView";
 import InfoIcon from "@mui/icons-material/Info";
+import PageLayout from "./components/PageLayout";
 
 const SampleView: React.FC = () => {
     const {configureWidgets, ejectView} = useActiveView();
@@ -16,17 +17,13 @@ const SampleView: React.FC = () => {
     }, [configureWidgets, ejectView]);
 
     return (
-        <Box sx={{/*width: "1200px", height: "1200px",*/
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-        }}>
+        <PageLayout.Centered>
             <Sheet variant="outlined" sx={{borderRadius: 'md', boxShadow: 'md', p: 3}}>
                 <Typography level="h4" component="h1" color="success" startDecorator={<InfoIcon/>}>
                     This app is online
                 </Typography>
             </Sheet>
-        </Box>
+        </PageLayout.Centered>
     );
 }
 

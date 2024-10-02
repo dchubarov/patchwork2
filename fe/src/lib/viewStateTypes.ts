@@ -20,6 +20,8 @@ export interface ViewState {
     key: string | null;
     title: string | null;
     sidebarPlacement: SidebarPlacement;
+    sectionKey: string | null;
+    sectionTitle: string | null;
     widgets: Widget[];
     configureView: (config: ViewConfiguration) => void;
     configureWidgets: (config: WidgetsConfiguration) => void;
@@ -30,6 +32,8 @@ export const initialViewState: ViewState = {
     key: null,
     title: null,
     sidebarPlacement: "left",
+    sectionKey: null,
+    sectionTitle: null,
     widgets: [],
     configureView: () => {
     },
