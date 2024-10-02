@@ -9,15 +9,44 @@ import {
     Box,
     Divider,
     DividerProps,
+    Dropdown,
     IconButton,
     ListItemContent,
+    ListItemDecorator,
+    Menu,
+    MenuButton,
+    MenuItem,
     Sheet,
     Tooltip,
     Typography
 } from "@mui/joy";
 import ColorSchemeToggle from "./ColorSchemeToggle";
 import {useActiveView} from "../lib/useActiveView";
-import {LogoutSharp as LogoutIcon, Person4 as UserIcon} from "@mui/icons-material";
+import {
+    Home as HomeIcon,
+    LogoutSharp as LogoutIcon,
+    Person4 as UserIcon,
+    QuestionMark as PlaceholderIcon
+} from "@mui/icons-material";
+import AppFeatures from "../features";
+import {useNavigate} from "react-router-dom";
+
+const AppLogo: React.FC = () => {
+    return (
+        <AspectRatio ratio="1" variant="plain" sx={(/*theme*/) => ({
+            minWidth: 32, // TODO compute from variables
+            transition: "transform .3s ease-in-out",
+            ":hover": {
+                // /* TODO rotation causes visible clipping of logo corners */
+                // /* TODO hover position at sides causes dribbling sometimes */
+                transform: "rotate(-90deg)"
+            }
+        })}>
+            {/* TODO load logo optimized for color theme */}
+            <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="Logo"/>
+        </AspectRatio>
+    );
+}
 
 const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
     <Divider {...other}
@@ -36,9 +65,10 @@ const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
 );
 
 const Sidebar: React.FC = () => {
-    const {widgets, sidebarPlacement, sectionTitle} = useActiveView();
+    const {widgets, sidebarPlacement, sectionTitle, sectionKey} = useActiveView();
     const pinnedWidget = (widgets.length > 0 && widgets[0].slot === 0) ? widgets[0] : null;
     const moreWidgets = (widgets.length > 0 && widgets.find((value) => value.component && value.slot !== 0))
+    const navigate = useNavigate();
 
     return (
         <Box sx={{
@@ -77,22 +107,49 @@ const Sidebar: React.FC = () => {
 
                     {/*APP HEADER*/}
                     <Box sx={{display: "flex", flexWrap: "nowrap", alignItems: "center", gap: 1, overflow: "hidden"}}>
-                        <AspectRatio ratio="1" variant="plain" sx={(/*theme*/) => ({
-                            minWidth: 32, // TODO compute from variables
-                            transition: "transform .3s ease-in-out",
-                            ":hover": {
-                                // TODO rotation causes visible clipping of logo corners
-                                // TODO hover position at sides causes dribbling sometimes
-                                transform: "rotate(-90deg)"
-                            }
-                        })}>
-                            {/* TODO load logo optimized for color theme */}
-                            <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="Logo"/>
-                        </AspectRatio>
+                        <Dropdown>
+                            <MenuButton
+                                slots={{root: IconButton}}
+                                slotProps={{root: {variant: "plain"}}}>
+                                <AppLogo/>
+                            </MenuButton>
+                            <Menu placement={sidebarPlacement === "left" ? "bottom-start" : "bottom-end"}
+                                  variant="solid"
+                                  color="neutral"
+                                  size="sm"
+                                  invertedColors
+                                  sx={{
+                                      "--List-padding": "0.5rem",
+                                      "--ListItemDecorator-size": "3rem",
+                                      display: "grid",
+                                      gridTemplateColumns: "repeat(3, 100px)",
+                                      gridAutoRows: "100px",
+                                  }}>
+                                <MenuItem orientation="vertical" onClick={() => navigate("/")}>
+                                    <ListItemDecorator>
+                                        <Avatar>
+                                            <HomeIcon/>
+                                        </Avatar>
+                                    </ListItemDecorator>
+                                    Home
+                                </MenuItem>
+
+                                {AppFeatures.map((feature, index) => (
+                                    <MenuItem key={`appMenuItem-${index}`} orientation="vertical"
+                                              onClick={() => navigate(feature.basename)}>
+                                        <ListItemDecorator>
+                                            <Avatar>
+                                                <PlaceholderIcon/>
+                                            </Avatar>
+                                        </ListItemDecorator>
+                                        {feature.displayName || feature.basename}
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                        </Dropdown>
 
                         <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
-                            {/*TODO this is feature title, not view*/}
-                            {sectionTitle || "!NoFeatTitle!"}
+                            {sectionTitle || sectionKey || "!NoFeatTitle!"}
                         </Typography>
 
                         <ColorSchemeToggle size="sm"/>

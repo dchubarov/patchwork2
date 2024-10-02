@@ -2,7 +2,6 @@ import React from "react";
 import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider, extendTheme} from "@mui/joy";
 import Layout from "./components/Layout";
-import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import ActiveViewProvider from "./providers/ActiveViewProvider";
 
@@ -15,9 +14,9 @@ const App: React.FC = () => {
 
             <ActiveViewProvider>
                 <Layout.Root>
-                    <Layout.Header>
-                        <Header/>
-                    </Layout.Header>
+                    {/*<Layout.Header>*/}
+                    {/* Placeholder for header component */}
+                    {/*</Layout.Header>*/}
 
                     <Layout.Main>
                         <Layout.Sidebar placement="left">

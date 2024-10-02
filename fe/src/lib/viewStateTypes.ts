@@ -2,14 +2,14 @@ import {ReactNode} from "react";
 
 export type SidebarPlacement = "left" | "right";
 
-export interface Widget {
+export interface SidebarWidget {
     key: string;
     caption: string;
     slot: number;
     component: ReactNode;
 }
 
-export type WidgetsConfiguration = Partial<Widget> | Partial<Widget>[];
+export type SidebarWidgetsConfiguration = Partial<SidebarWidget> | Partial<SidebarWidget>[];
 export type ViewConfiguration = Partial<Pick<ViewState,
     | "key"
     | "title"
@@ -22,9 +22,9 @@ export interface ViewState {
     sidebarPlacement: SidebarPlacement;
     sectionKey: string | null;
     sectionTitle: string | null;
-    widgets: Widget[];
+    widgets: SidebarWidget[];
     configureView: (config: ViewConfiguration) => void;
-    configureWidgets: (config: WidgetsConfiguration) => void;
+    configureWidgets: (config: SidebarWidgetsConfiguration) => void;
     ejectView: () => void;
 }
 

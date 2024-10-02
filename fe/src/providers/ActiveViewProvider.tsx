@@ -1,5 +1,5 @@
 import React, {createContext, PropsWithChildren, useCallback, useReducer} from "react";
-import {initialViewState, ViewConfiguration, ViewState, WidgetsConfiguration} from "../lib/viewStateTypes";
+import {initialViewState, ViewConfiguration, ViewState, SidebarWidgetsConfiguration} from "../lib/viewStateTypes";
 import {ViewStateActionType, viewStateReducer} from "../lib/viewStateReducer";
 import {Location, useLocation} from "react-router-dom";
 import AppFeatures from "../features";
@@ -16,7 +16,7 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
         configureView: useCallback((config: ViewConfiguration) => {
             dispatch({type: ViewStateActionType.CONFIGURE_VIEW, config});
         }, [dispatch]),
-        configureWidgets: useCallback((config: WidgetsConfiguration) => {
+        configureWidgets: useCallback((config: SidebarWidgetsConfiguration) => {
             dispatch({type: ViewStateActionType.CONFIGURE_WIDGETS, config});
         }, [dispatch]),
         ejectView: useCallback(() => {

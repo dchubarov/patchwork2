@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({placement, children, sx, ...other}) =>
         <Box {...other}
              sx={[
                  {
-                     height: "calc(100vh - var(--Header-height))",
+                     height: "calc(100dvh - var(--Header-height, 0px))",
                      width: "var(--Sidebar-width)",
                      // overflow: "auto",
                      zIndex: 900,
@@ -77,7 +77,7 @@ const View: React.FC<BoxProps> = ({sx, ...other}) => (
          sx={[
              {
                  flex: 1,
-                 height: "calc(100vh - var(--Header-height))",
+                 height: "calc(100dvh - var(--Header-height, 0px))",
                  overflow: "auto",
                  '& > *': {
                      minHeight: '100%'

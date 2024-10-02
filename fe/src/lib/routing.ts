@@ -2,6 +2,8 @@ import {ReactNode} from "react";
 import {createBrowserRouter} from "react-router-dom";
 import AppFeatures from "../features";
 
+const baseUrl = process.env.REACT_APP_UI_ROOT;
+
 export function buildRouter(
     rootElement: ReactNode,
     errorElement: ReactNode,
@@ -9,7 +11,6 @@ export function buildRouter(
 ) {
     return createBrowserRouter(
         [{
-            path: "/",
             element: rootElement,
             errorElement: errorElement,
             children: [
@@ -26,6 +27,6 @@ export function buildRouter(
         }],
         /* opts */
         {
-            basename: process.env.REACT_APP_UI_ROOT,
+            basename: baseUrl,
         });
 }

@@ -1,4 +1,4 @@
-import {initialViewState, ViewConfiguration, ViewState, Widget, WidgetsConfiguration} from "./viewStateTypes";
+import {initialViewState, ViewConfiguration, ViewState, SidebarWidget, SidebarWidgetsConfiguration} from "./viewStateTypes";
 
 export enum ViewStateActionType {
     CONFIGURE_VIEW,
@@ -8,7 +8,7 @@ export enum ViewStateActionType {
 
 export type ViewStateAction =
     | { type: ViewStateActionType.CONFIGURE_VIEW, config: ViewConfiguration }
-    | { type: ViewStateActionType.CONFIGURE_WIDGETS, config: WidgetsConfiguration }
+    | { type: ViewStateActionType.CONFIGURE_WIDGETS, config: SidebarWidgetsConfiguration }
     | { type: ViewStateActionType.EJECT_VIEW };
 
 export function viewStateReducer(state: ViewState, action: ViewStateAction): ViewState {
@@ -30,7 +30,7 @@ export function viewStateReducer(state: ViewState, action: ViewStateAction): Vie
     }
 }
 
-function mergeWidgetConfigurations(widgets: Widget[], config: WidgetsConfiguration): Widget[] {
+function mergeWidgetConfigurations(widgets: SidebarWidget[], config: SidebarWidgetsConfiguration): SidebarWidget[] {
     let normalizedConfigs = Array.isArray(config)
         ? config.reverse().filter(
             (value, index, array) =>
@@ -49,7 +49,7 @@ function mergeWidgetConfigurations(widgets: Widget[], config: WidgetsConfigurati
                 ),
             ...normalizedConfigs
                 .filter((config) => config.component !== undefined)
-                .map((config): Widget => ({
+                .map((config): SidebarWidget => ({
                     key: config.key || `widget-${config.slot || 0}`,
                     caption: config.caption || "",
                     slot: config.slot || 0,
@@ -57,6 +57,6 @@ function mergeWidgetConfigurations(widgets: Widget[], config: WidgetsConfigurati
                 }))
         ];
 
-        return updated.sort((a: Widget, b: Widget) => a.slot - b.slot);
+        return updated.sort((a: SidebarWidget, b: SidebarWidget) => a.slot - b.slot);
     }
 }
