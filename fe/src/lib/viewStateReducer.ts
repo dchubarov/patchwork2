@@ -26,7 +26,10 @@ export function viewStateReducer(state: ViewState, action: ViewStateAction): Vie
             };
 
         case ViewStateActionType.EJECT_VIEW:
-            return initialViewState;
+            return {
+                ...initialViewState,
+                sidebarPlacement: state.sidebarPlacement
+            };
     }
 }
 
