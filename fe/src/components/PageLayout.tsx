@@ -1,7 +1,17 @@
-import React, {PropsWithChildren} from "react";
-import {Box, Tab, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
+import React, {
+    Children,
+    cloneElement,
+    isValidElement,
+    PropsWithChildren,
+    ReactElement,
+    useEffect,
+    useMemo,
+    useState
+} from "react";
+import {Box, BoxProps, Tab, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
 import {useActiveView} from "../lib/useActiveView";
 import {SidebarPlacement} from "../lib/viewStateTypes";
+import {IndexedLayoutChildProps} from "../lib/pageLayoutTypes";
 
 const paddingSxProps = (sidebarPlacement: SidebarPlacement) => ({
     pl: sidebarPlacement === "left" ? 4 : 2,
@@ -9,16 +19,23 @@ const paddingSxProps = (sidebarPlacement: SidebarPlacement) => ({
     py: 2
 });
 
+const PageTitle: React.FC<BoxProps> = ({sx, ...other}) => {
+    const {title, key} = useActiveView();
+
+    return (
+        <Box {...other} sx={[{mb: 2}, ...Array.isArray(sx) ? sx : [sx]]}>
+            {/* TODO show breadcrumbs if available*/}
+            <Typography component="h1" level="h2">{title || key || "!NoViewTitle!"}</Typography>
+        </Box>
+    );
+}
+
 const Content: React.FC<PropsWithChildren> = ({children}) => {
-    const {title, sidebarPlacement} = useActiveView();
+    const {sidebarPlacement} = useActiveView();
 
     return (
         <Box sx={{...paddingSxProps(sidebarPlacement)}}>
-            <Box sx={{mb: 2}}>
-                {/* TODO show breadcrumbs if available*/}
-                <Typography component="h1" level="h2">{title || "!NoViewTitle!"}</Typography>
-            </Box>
-
+            <PageTitle/>
             {children}
         </Box>
     );
@@ -40,23 +57,65 @@ const Centered: React.FC<PropsWithChildren> = ({children}) => {
 }
 
 // EXPERIMENTAL: displays children in tabs
-const Indexed: React.FC<PropsWithChildren> = () => {
-    const {sidebarPlacement} = useActiveView();
+interface TabState {
+    key: string,
+    caption: string,
+    element: ReactElement
+}
+
+const Indexed: React.FC<PropsWithChildren> = ({children}) => {
+    const {sidebarPlacement, configureView} = useActiveView();
+    const tabs = useMemo(() => Children
+        .map(children, (child) => {
+            if (!isValidElement<IndexedLayoutChildProps>(child)) {
+                return null;
+            }
+            return {
+                key: child.props.tabKey,
+                caption: child.props.tabCaption,
+                element: child
+            } as TabState;
+        })
+        ?.filter((item) => item !== null), [children]);
+
+    const [activeTab, setActiveTab] = useState<TabState | null>(tabs?.[0] || null);
+    useEffect(() => {
+        configureView({title: activeTab?.caption})
+    }, [activeTab, configureView]);
+
+    const handleTabChange = (tabKey?: string | number | null) => {
+        const tab = tabs?.find((value) => value.key === tabKey);
+        setActiveTab(tab || null);
+    }
 
     return (
-        <Tabs defaultValue="a"
+        <Tabs value={activeTab?.key}
+              onChange={(_, value) => handleTabChange(value)}
               variant="plain"
               orientation="vertical"
-              sx={{
-                  flexDirection: sidebarPlacement === "left" ? "row-reverse" : "row"
-              }}>
+              sx={{height: "100%", flexDirection: sidebarPlacement === "left" ? "row-reverse" : "row"}}>
 
             <TabList underlinePlacement={sidebarPlacement} sx={{py: 2}}>
-                <Tab indicatorPlacement={sidebarPlacement} value="a">View context playground</Tab>
+                {tabs?.map((tab, index) => (
+                    <Tab key={`tab-${index}`} value={tab.key} indicatorPlacement={sidebarPlacement}>
+                        {tab.caption || tab.key}
+                    </Tab>
+                ))}
             </TabList>
-            <TabPanel value="a" sx={{...paddingSxProps(sidebarPlacement)}}>
-                <Typography level="h2" component="h1">Tab panel</Typography>
-            </TabPanel>
+
+            {tabs?.map((tab, index) => (
+                <TabPanel key={`panel-${index}`}
+                          value={tab.key}
+                          sx={{
+                              ...paddingSxProps(sidebarPlacement),
+                              pl: 4,
+                              overflow: "auto",
+                              backgroundColor: "background.body"
+                          }}>
+                    <PageTitle/>
+                    {cloneElement(tab.element)}
+                </TabPanel>
+            ))}
         </Tabs>
     );
 }
