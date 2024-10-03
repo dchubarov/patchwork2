@@ -57,13 +57,13 @@ const Centered: React.FC<PropsWithChildren> = ({children}) => {
     );
 }
 
-// EXPERIMENTAL: displays children in tabs
 interface TabState {
     key: string,
     caption: string,
     element: ReactElement
 }
 
+// TODO EXPERIMENTAL: displays children in tabs, router navigation is missing
 const Indexed: React.FC<PropsWithChildren> = ({children}) => {
     const {sidebarPlacement, configureView} = useActiveView();
     const tabs = useMemo(() => {

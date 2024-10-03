@@ -11,6 +11,7 @@ import {
     DividerProps,
     Dropdown,
     IconButton,
+    ListItem,
     ListItemContent,
     ListItemDecorator,
     Menu,
@@ -23,6 +24,7 @@ import {
 import ColorSchemeToggle from "./ColorSchemeToggle";
 import {useActiveView} from "../lib/useActiveView";
 import {
+    CloudOff as OfflineIcon,
     Home as HomeIcon,
     LogoutSharp as LogoutIcon,
     Person4 as UserIcon,
@@ -30,6 +32,7 @@ import {
 } from "@mui/icons-material";
 import AppFeatures from "../features";
 import {useNavigate} from "react-router-dom";
+import version from "../version.json";
 
 const AppLogo: React.FC = () => {
     return (
@@ -123,7 +126,7 @@ const Sidebar: React.FC = () => {
                                       "--ListItemDecorator-size": "3rem",
                                       display: "grid",
                                       gridTemplateColumns: "repeat(3, 100px)",
-                                      gridAutoRows: "100px",
+                                      gridTemplateRows: `repeat(${Math.ceil((AppFeatures.length + 1) / 3)}, 100px) calc(2rem + 36px)`,
                                   }}>
                                 <MenuItem orientation="vertical" onClick={() => navigate("/")}>
                                     <ListItemDecorator>
@@ -145,6 +148,18 @@ const Sidebar: React.FC = () => {
                                         {feature.displayName || feature.basename}
                                     </MenuItem>
                                 ))}
+
+                                <ListItem sx={{
+                                    gridColumn: "1 / span 3",
+                                    flexDirection: "column",
+                                    alignItems: "flex-start",
+                                    justifyContent: "flex-end"
+                                }}>
+                                    <Divider/>
+                                    <Typography noWrap
+                                                level="body-sm">{`FE Ver. ${version.version} (#${version.commit})`}</Typography>
+                                    <Typography noWrap level="body-sm" endDecorator={<OfflineIcon/>}>BE</Typography>
+                                </ListItem>
                             </Menu>
                         </Dropdown>
 
