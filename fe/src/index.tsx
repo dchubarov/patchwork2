@@ -30,3 +30,7 @@ root.render(
 );
 
 reportWebVitals(/*console.log*/);
+
+if (process.env.REACT_APP_API_MOCKING === "true") {
+    /*await*/import("./backend-mock");
+}
