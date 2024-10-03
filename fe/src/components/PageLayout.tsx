@@ -12,6 +12,7 @@ import {Box, BoxProps, Tab, TabList, TabPanel, Tabs, Typography} from "@mui/joy"
 import {useActiveView} from "../lib/useActiveView";
 import {SidebarPlacement} from "../lib/viewStateTypes";
 import {IndexedLayoutChildProps} from "../lib/pageLayoutTypes";
+import {developmentLogger} from "../lib/logging";
 
 const paddingSxProps = (sidebarPlacement: SidebarPlacement) => ({
     pl: sidebarPlacement === "left" ? 4 : 2,
@@ -65,18 +66,26 @@ interface TabState {
 
 const Indexed: React.FC<PropsWithChildren> = ({children}) => {
     const {sidebarPlacement, configureView} = useActiveView();
-    const tabs = useMemo(() => Children
-        .map(children, (child) => {
-            if (!isValidElement<IndexedLayoutChildProps>(child)) {
-                return null;
-            }
-            return {
-                key: child.props.tabKey,
-                caption: child.props.tabCaption,
-                element: child
-            } as TabState;
-        })
-        ?.filter((item) => item !== null), [children]);
+    const tabs = useMemo(() => {
+        const childrenArray = Children.toArray(children);
+        const result = Children.map(childrenArray, (child) => {
+                if (!isValidElement<IndexedLayoutChildProps>(child)) {
+                    return null;
+                }
+                return {
+                    key: child.props.tabKey,
+                    caption: child.props.tabCaption,
+                    element: child
+                } as TabState;
+            })
+            ?.filter((item) => item !== null);
+
+        if (result?.length !== childrenArray.length) {
+            developmentLogger.warn("Indexed page layout should only contain IndexedLayoutChildProps elements.")
+        }
+
+        return result;
+    }, [children]);
 
     const [activeTab, setActiveTab] = useState<TabState | null>(tabs?.[0] || null);
     useEffect(() => {
