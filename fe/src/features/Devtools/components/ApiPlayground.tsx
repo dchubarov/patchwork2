@@ -1,9 +1,9 @@
 import React, {useState} from "react";
-import {IndexedLayoutChildProps} from "../../../lib/pageLayoutTypes";
-import {Box, Chip, FormControl, IconButton, Input, Typography} from "@mui/joy";
+import {Box, Button, Chip, FormControl, Input, Typography} from "@mui/joy";
 import axios from "axios";
 import "axios-retry";
 import {CheckCircleOutline as SuccessIcon, PlayArrow as RunIcon, Warning as WarningIcon} from "@mui/icons-material";
+import {IndexedLayoutChildProps} from "../../../lib/pageLayoutTypes";
 
 type RequestState =
     | { status: "empty" }
@@ -37,13 +37,12 @@ const ApiPlayground: React.FC<IndexedLayoutChildProps> = () => {
                     disabled={requestState.status === "loading"}
                     onChange={(e) => setApiUrl(e.target.value)}
                     endDecorator={
-                        <IconButton
+                        <Button
                             type="submit"
                             loading={requestState.status === "loading"}
-                            variant="solid"
-                            color="primary">
-                            <RunIcon/>
-                        </IconButton>
+                            endDecorator={<RunIcon/>}>
+                            Submit
+                        </Button>
                     }/>
             </FormControl>
         </form>

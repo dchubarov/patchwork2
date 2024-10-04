@@ -1,17 +1,25 @@
-import {createServer} from "miragejs";
+import {createServer, JSONAPISerializer} from "miragejs";
+import configureRoutes from "./routes";
+import domain from "./domain";
+
+const defaultSerializer = JSONAPISerializer;
+const baseUrl = process.env.REACT_APP_API_ROOT || "api";
 
 createServer({
-    routes() {
-        this.urlPrefix = process.env.REACT_APP_API_ROOT || "/api";
+    models: domain.models,
+    factories: domain.factories,
 
-        this.get("/info", (/*schema, request*/) => {
-            return {
-                server: "MirageJS",
-                timestamp: new Date().toISOString()
-            }
-        });
+    serializers: {
+        application: defaultSerializer,
+        ...domain.configureSerializers(defaultSerializer)
     },
 
-    seeds(/*server*/) {
-    }
+    seeds(server) {
+        domain.configureSeeds(server);
+    },
+
+    routes() {
+        this.namespace = baseUrl;
+        configureRoutes(this);
+    },
 });
