@@ -5,11 +5,11 @@ import {SerializerInterface} from "miragejs/serializer";
 export type UserStatus = "active" | "suspended";
 
 export interface UserData {
-    firstname: string;
-    lastname: string;
+    username: string;
+    firstname?: string;
+    lastname?: string;
     email: string;
     status: UserStatus;
-    hashedPassword: string;
 }
 
 export const USER_ENTITY_KEY = "user";
@@ -23,16 +23,16 @@ const UserEntity = {
 
     seeds: (server: AppServer) => {
         server.create(USER_ENTITY_KEY, {
-            firstname: "dime",
+            username: "dime",
+            firstname: "Dmitry",
             email: "dime@twowls.org",
-            status: "active",
-            hashedPassword: "34982383238"
+            status: "active"
         });
     },
 
     serializers: (baseSerializer: SerializerInterface) => ({
         [USER_ENTITY_KEY]: baseSerializer.extend?.({
-            attrs: ["firstname", "lastname", "email", "status"]
+            attrs: ["username", "firstname", "lastname", "email"]
         })
     }),
 }
