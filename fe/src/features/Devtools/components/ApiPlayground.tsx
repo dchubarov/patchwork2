@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Box,
     Chip,
@@ -22,50 +22,57 @@ import {
     PlayArrow as RunIcon,
     Warning as WarningIcon
 } from "@mui/icons-material";
+import {DefaultColorPalette} from "@mui/joy/styles/types";
+import {useActiveView} from "../../../lib/useActiveView";
 
 type RequestState =
     | { status: "empty" }
     | { status: "loading" }
-    | { status: "success", response: any }
-    | { status: "failure", response: any };
+    | { status: "success", response: any, elapsedTime?: number }
+    | { status: "failure", response: any, elapsedTime?: number };
 
 interface RequestMethodProps {
     payload?: boolean;
+    color?: DefaultColorPalette;
 }
 
 const RequestMethod: Record<string, RequestMethodProps> = {
-    "GET": {payload: false},
-    "POST": {payload: true},
-    "PUT": {payload: true},
-    "PATCH": {payload: true},
-    "DELETE": {payload: false},
+    "GET": {payload: false, color: "success"},
+    "POST": {payload: true, color: "warning"},
+    "PUT": {payload: true, color: "warning"},
+    "PATCH": {payload: true, color: "warning"},
+    "DELETE": {payload: false, color: "danger"},
 }
 
 type RequestMethodName = keyof typeof RequestMethod;
 
-interface HttpMethodSelectorProps {
-    method: RequestMethodName;
+type RequestMethodSelectorType = React.FC<{
+    method: RequestMethodName,
     onChange?: (method: RequestMethodName) => void;
-}
+}>;
 
-const HttpMethodSelector: React.FC<HttpMethodSelectorProps> = ({method, onChange}) => {
+const RequestMethodSelector: RequestMethodSelectorType = ({method, onChange}) => {
     return (
         <Dropdown>
             <Chip
                 component={MenuButton}
                 variant="soft"
-                color="primary"
+                color={RequestMethod[method].color || "neutral"}
                 endDecorator={<DropdownIcon/>}
                 sx={{
+                    mr: 1,
                     borderRadius: "sm",
                     fontWeight: 600,
-                    mr: 1
+                    "&:hover": {
+                        backgroundColor: `${RequestMethod[method].color || "neutral"}.softHoverBg`,
+                    },
                 }}>
                 {method}
             </Chip>
             <Menu size="sm">
                 {Object.keys(RequestMethod).filter((value) => value !== method).map((value) => (
                     <MenuItem
+                        color={RequestMethod[value].color || "neutral"}
                         key={value}
                         onClick={() => onChange?.(value)}>
                         {value}
@@ -76,13 +83,26 @@ const HttpMethodSelector: React.FC<HttpMethodSelectorProps> = ({method, onChange
     );
 };
 
+const RequestHistoryWidget: React.FC = () => {
+    // TODO implement request history
+    return (
+        <Typography level="body-sm">No saved requests.</Typography>
+    );
+}
+
 const ApiPlayground: React.FC<IndexedLayoutChildProps> = () => {
+    const {configureWidgets} = useActiveView();
     const apiUrlInputRef = useRef<HTMLInputElement | null>(null);
     const [requestResult, setRequestResult] = useState<RequestState>({status: "empty"});
     const [requestMethod, setRequestMethod] = useState<RequestMethodName>("GET");
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
     const apiPrefix = process.env.REACT_APP_API_ROOT + "/";
+
+    useEffect(() => {
+        configureWidgets({slot: 1, caption: "Request history", component: <RequestHistoryWidget/>});
+        return () => configureWidgets({slot: 1, component: null});
+    }, [configureWidgets]);
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});
@@ -116,9 +136,20 @@ const ApiPlayground: React.FC<IndexedLayoutChildProps> = () => {
             }
         }
 
+        const start = performance.now();
         axios.request(requestConfig)
-            .then((response) => setRequestResult({status: "success", response: response}))
-            .catch((reason) => setRequestResult({status: "failure", response: reason}))
+            .then((response) =>
+                setRequestResult({
+                    status: "success",
+                    response: response,
+                    elapsedTime: Math.round(performance.now() - start)
+                }))
+            .catch((reason) =>
+                setRequestResult({
+                    status: "failure",
+                    response: reason,
+                    elapsedTime: Math.round(performance.now() - start)
+                }))
             .finally(() => {
                 apiUrlInputRef.current?.focus();
             });
@@ -134,7 +165,7 @@ const ApiPlayground: React.FC<IndexedLayoutChildProps> = () => {
                     disabled={requestResult.status === "loading"}
                     onChange={(e) => setApiUrl(e.target.value.trim())}
                     startDecorator={<>
-                        <HttpMethodSelector
+                        <RequestMethodSelector
                             method={requestMethod}
                             onChange={handleRequestMethodChange}/>
                         {apiPrefix}
@@ -177,7 +208,8 @@ const ApiPlayground: React.FC<IndexedLayoutChildProps> = () => {
                     fontWeight="bold"
                     color={requestResult.status === "success" ? "success" : "danger"}
                     startDecorator={requestResult.status === "success" ? <SuccessIcon/> : <WarningIcon/>}>
-                    {(requestResult.status === "success" ? "Success: " : "Error: ") + (requestResult.response.status || "unknown")}
+                    {(requestResult.status === "success" ? "Success: " : "Error: ") + (requestResult.response.status || "unknown") +
+                        (requestResult.elapsedTime ? ` (${requestResult.elapsedTime} ms)` : "")}
                 </Typography>
 
                 <Typography level="body-sm" fontWeight="bold" ml={3} mt={1}>Response:</Typography>
