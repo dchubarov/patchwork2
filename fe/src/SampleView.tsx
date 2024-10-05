@@ -1,30 +1,29 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {IconButton, Sheet, Typography} from "@mui/joy";
 import {useActiveView} from "./lib/useActiveView";
 import InfoIcon from "@mui/icons-material/Info";
 import PageLayout from "./components/PageLayout";
-import axios from "axios";
 import "axios-retry";
 import {Refresh as RefreshIcon} from "@mui/icons-material";
+import useCall from "./lib/useCall";
 
 const SampleView: React.FC = () => {
+    const {status, data: serverInfo, execute: refreshServerInfo} = useCall({path: "server-info"}, false);
     const {configureWidgets, ejectView} = useActiveView();
-    const [serverInfo, setServerInfo] = useState<any | null>(null);
-
-    const refreshBackendInfo = () => {
-        axios.get(process.env.REACT_APP_API_ROOT + "/info", {"axios-retry": {retries: 3}})
-            .then((response) => setServerInfo(response.data))
-            .catch(() => setServerInfo(null));
-    }
 
     useEffect(() => {
-        refreshBackendInfo();
+        const interval = setInterval(() => refreshServerInfo(), 5000);
+
         configureWidgets([
             {component: <div style={{backgroundColor: "rgba(0,0,255,0.1)"}}>Sample add-on</div>, slot: 2},
             {component: <div style={{height: 200, backgroundColor: "rgba(255,0,255,0.1)"}}>Sample add-on 2</div>},
         ]);
-        return () => ejectView()
-    }, [configureWidgets, ejectView]);
+
+        return () => {
+            clearInterval(interval);
+            ejectView();
+        }
+    }, [configureWidgets, ejectView, refreshServerInfo]);
 
     return (
         <PageLayout.Centered>
@@ -34,7 +33,7 @@ const SampleView: React.FC = () => {
                         ? serverInfo.server + " (" + serverInfo.timestamp + ")"
                         : "Backend is not available"}
                 </Typography>
-                <IconButton onClick={refreshBackendInfo}>
+                <IconButton loading={status === "loading"} onClick={() => refreshServerInfo()}>
                     <RefreshIcon/>
                 </IconButton>
             </Sheet>
