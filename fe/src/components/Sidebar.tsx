@@ -19,7 +19,8 @@ import {
     MenuItem,
     Sheet,
     Tooltip,
-    Typography
+    Typography,
+    useColorScheme
 } from "@mui/joy";
 import ColorSchemeToggle from "./ColorSchemeToggle";
 import {useActiveView} from "../lib/useActiveView";
@@ -35,6 +36,10 @@ import {useNavigate} from "react-router-dom";
 import version from "../version.json";
 
 const AppLogo: React.FC = () => {
+    const {mode} = useColorScheme();
+    const logoUrl = process.env.PUBLIC_URL + "/logo192" +
+        ((mode === "light") ? "" : "-dark") + ".png";
+
     return (
         <AspectRatio ratio="1" variant="plain" sx={(/*theme*/) => ({
             minWidth: 32, // TODO compute from variables
@@ -45,8 +50,7 @@ const AppLogo: React.FC = () => {
                 transform: "rotate(-90deg)"
             }
         })}>
-            {/* TODO load logo optimized for color theme */}
-            <img src={process.env.PUBLIC_URL + "/logo192.png"} alt="Logo"/>
+            <img src={logoUrl} alt="Logo"/>
         </AspectRatio>
     );
 }
