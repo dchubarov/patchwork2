@@ -1,15 +1,14 @@
 import React, {Suspense} from "react";
 import {Outlet} from "react-router-dom";
-import {CssBaseline, CssVarsProvider, extendTheme} from "@mui/joy";
+import {CssBaseline, CssVarsProvider} from "@mui/joy";
 import Layout from "./components/Layout";
 import Sidebar from "./components/Sidebar";
 import ActiveViewProvider from "./providers/ActiveViewProvider";
-
-const theme = extendTheme({})
+import appTheme from "./lib/theme";
 
 const App: React.FC = () => {
     return (
-        <CssVarsProvider theme={theme}>
+        <CssVarsProvider theme={appTheme}>
             <CssBaseline/>
 
             <ActiveViewProvider>
@@ -24,6 +23,7 @@ const App: React.FC = () => {
                         </Layout.Sidebar>
 
                         <Layout.View>
+                            {/* TODO provide a clear fallback */}
                             <Suspense>
                                 <Outlet/>
                             </Suspense>
