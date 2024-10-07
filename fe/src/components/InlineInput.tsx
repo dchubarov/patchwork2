@@ -19,6 +19,7 @@ const InlineInput: React.FC<InlineInputComponentType> = ({inputRef, sx, ...other
                 "--Input-radius": 0,
                 "--Input-paddingInLine": 0,
                 "--Input-minHeight": 0,
+                background: "transparent",
                 "&:focus-within": {
                     background: "transparent",
                 }

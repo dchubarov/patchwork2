@@ -1,56 +1,71 @@
-import React, {ChangeEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
-import {Box, Typography} from "@mui/joy";
+import React, {ChangeEvent, KeyboardEvent, useRef, useState} from "react";
+import {Box, CircularProgress, Typography} from "@mui/joy";
 import {ChecklistItemData} from "../types";
 import InlineInput from "../../../components/InlineInput";
+import {Add as AddIcon, RadioButtonUnchecked as UncheckedIcon, TaskAlt as CheckedIcon} from "@mui/icons-material";
 
 type ChecklistItemComponentType = React.FC<{
     checklistItem?: ChecklistItemData,
     onUpdate?: (updated: ChecklistItemData) => void;
+    busy?: boolean;
 }>;
 
-const ChecklistItem: ChecklistItemComponentType = ({checklistItem}) => {
+const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, busy}) => {
     const noteInputRef = useRef<HTMLInputElement | null>(null);
-    const [itemState, setItemState] = useState(checklistItem || {note: ""});
+    const [editedItem, setEditedItem] = useState(checklistItem || {note: ""});
     const [editMode, setEditMode] = useState(false);
+    const isNew = !checklistItem?.id
 
-    useEffect(() => {
-        if (editMode) {
-            noteInputRef.current?.focus();
-        }
-    }, [editMode]);
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setItemState((prev) => ({...prev, note: e.target.value}));
+    const handleNoteInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setEditedItem((prev) => ({...prev, note: e.target.value}));
     }
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (!(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
-            if (e.code === "Enter" || e.code === "Escape") {
-                e.preventDefault();
-                noteInputRef.current?.blur();
-            }
+    const handleNoteInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if ((e.code === "Enter" || e.code === "Escape") && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
+            e.preventDefault();
+            noteEdited(e.code === "Escape");
         }
+    }
+
+    const noteEdited = (cancelled?: boolean)=> {
+        if (!cancelled) {
+            onUpdate?.(editedItem);
+        }
+        if (cancelled || !checklistItem?.id) {
+            setEditedItem(checklistItem || {note: ""});
+        }
+        setEditMode(false);
     }
 
     return (
         <Box
-            sx={(theme) => ({
+            sx={{
                 display: "flex",
                 alignItems: "center",
                 borderRadius: "3rem",
-                border: `2px dashed ${theme.palette.neutral.outlinedBorder}`,
+                border: `2px ${isNew ? "dashed" : "solid"} var(--joy-palette-neutral-300)`,
                 minWidth: "300px",
+                gap: 0.5,
                 py: 0.5,
-                px: 2,
-            })}>
+                px: 1,
+            }}>
+
+            {busy && <CircularProgress size="sm" color="neutral" variant="soft"/>}
+            {checklistItem?.id
+                ? checklistItem.done ? <CheckedIcon/> : <UncheckedIcon/>
+                : <AddIcon sx={{color: "var(--joy-palette-neutral-300)"}}/>}
+
             <Box sx={{flexGrow: 1}}>
                 {editMode
                     ? (
                         <InlineInput
-                            value={itemState.note}
-                            onChange={handleChange}
-                            onBlur={() => setEditMode(false)}
-                            onKeyDown={handleKeyDown}
+                            autoFocus
+                            autoComplete="off"
+                            name={`note-input-${checklistItem?.id || "new"}`}
+                            value={editedItem.note}
+                            onChange={handleNoteInputChange}
+                            onBlur={() => noteEdited()}
+                            onKeyDown={handleNoteInputKeyDown}
                             inputRef={noteInputRef}
                             placeholder="Type what to do"
                             size="lg"/>
@@ -59,7 +74,7 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem}) => {
                             onClick={() => setEditMode(true)}
                             level="body-lg"
                             noWrap>
-                            {itemState.note || "Click here to add a new item."}
+                            {editedItem.note || (isNew ? "Click here to add a new item" : "No content")}
                         </Typography>
                     )}
             </Box>
