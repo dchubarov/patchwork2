@@ -1,12 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Box, Input, Typography} from "@mui/joy";
-import {TodoItemData} from "../types";
+import {Box, Typography} from "@mui/joy";
+import {ChecklistItemData} from "../types";
+import InlineInput from "../../../components/InlineInput";
 
-type TodoItemComponentType = React.FC<{
-    todoItem?: TodoItemData,
+type ChecklistItemComponentType = React.FC<{
+    checklistItem?: ChecklistItemData,
 }>;
 
-const TodoItem: TodoItemComponentType = ({todoItem}) => {
+const ChecklistItem: ChecklistItemComponentType = ({checklistItem}) => {
     const inlineEditorRef = useRef<HTMLInputElement | null>(null);
     const [editMode, setEditMode] = useState(false);
 
@@ -28,30 +29,18 @@ const TodoItem: TodoItemComponentType = ({todoItem}) => {
             <Box sx={{flexGrow: 1}}>
                 {editMode
                     ? (
-                        <Input
-                            slotProps={{
-                                input: {ref: inlineEditorRef},
-                            }}
+                        <InlineInput
+                            inputRef={inlineEditorRef}
                             onBlur={() => setEditMode(false)}
                             placeholder="Type what to do"
                             variant="plain"
-                            size="lg"
-                            sx={{
-                                p: 0,
-                                "--Input-focusedThickness": 0,
-                                "--Input-radius": 0,
-                                "--Input-paddingInLine": 0,
-                                "--Input-minHeight": 0,
-                                "&:focus-within": {
-                                    background: "transparent",
-                                }
-                            }}/>
+                            size="lg"/>
                     ) : (
                         <Typography
                             onClick={() => setEditMode(true)}
                             level="body-lg"
                             noWrap>
-                            {todoItem?.message || "Click here to add a new item."}
+                            {checklistItem?.message || "Click here to add a new item."}
                         </Typography>
                     )}
             </Box>
@@ -59,4 +48,4 @@ const TodoItem: TodoItemComponentType = ({todoItem}) => {
     );
 }
 
-export default TodoItem;
+export default ChecklistItem;

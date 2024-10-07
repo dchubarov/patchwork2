@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Suspense} from "react";
 import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider, extendTheme} from "@mui/joy";
 import Layout from "./components/Layout";
@@ -15,7 +15,7 @@ const App: React.FC = () => {
             <ActiveViewProvider>
                 <Layout.Root>
                     {/*<Layout.Header>*/}
-                    {/* Placeholder for header component */}
+                    {/* Placeholder for the header component */}
                     {/*</Layout.Header>*/}
 
                     <Layout.Main>
@@ -24,7 +24,9 @@ const App: React.FC = () => {
                         </Layout.Sidebar>
 
                         <Layout.View>
-                            <Outlet/>
+                            <Suspense>
+                                <Outlet/>
+                            </Suspense>
                         </Layout.View>
 
                         <Layout.Sidebar placement="right">

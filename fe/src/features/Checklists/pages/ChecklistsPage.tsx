@@ -1,13 +1,13 @@
 import React, {useEffect} from "react";
 import PageLayout from "../../../components/PageLayout";
 import {useActiveView} from "../../../lib/useActiveView";
-import TodoList from "../components/TodoList";
+import Checklist from "../components/Checklist";
 
-const TodoPage: React.FC = () => {
+const ChecklistsPage: React.FC = () => {
     const {configureView, ejectView} = useActiveView();
 
     useEffect(() => {
-        configureView({title: "Todo List"});
+        configureView({title: "Checklist"});
         return () => {
             ejectView();
         }
@@ -15,9 +15,9 @@ const TodoPage: React.FC = () => {
 
     return (
         <PageLayout.Content>
-            <TodoList/>
+            <Checklist/>
         </PageLayout.Content>
     );
 }
 
-export default TodoPage;
+export default ChecklistsPage;

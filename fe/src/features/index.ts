@@ -1,10 +1,10 @@
 import {AppFeature} from "../lib/appFeatureTypes";
 import PanoramaFeature from "./Panorama";
 import DevtoolsFeature from "./Devtools";
-import TodoFeature from "./Todo";
+import ChecklistsFeature from "./Checklists";
 
 const AppFeatures: readonly AppFeature[] = [
-    TodoFeature,
+    ChecklistsFeature,
     PanoramaFeature,
     DevtoolsFeature, // TODO devtools should be excluded in production mode
 ];
