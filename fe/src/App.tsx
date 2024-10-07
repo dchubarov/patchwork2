@@ -14,7 +14,7 @@ const App: React.FC = () => {
             <ActiveViewProvider>
                 <Layout.Root>
                     {/*<Layout.Header>*/}
-                    {/* Placeholder for the header component */}
+                    {/* Placeholder for header component */}
                     {/*</Layout.Header>*/}
 
                     <Layout.Main>

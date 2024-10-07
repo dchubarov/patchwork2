@@ -1,19 +1,36 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
 import {Box, Typography} from "@mui/joy";
 import {ChecklistItemData} from "../types";
 import InlineInput from "../../../components/InlineInput";
 
 type ChecklistItemComponentType = React.FC<{
     checklistItem?: ChecklistItemData,
+    onUpdate?: (updated: ChecklistItemData) => void;
 }>;
 
 const ChecklistItem: ChecklistItemComponentType = ({checklistItem}) => {
-    const inlineEditorRef = useRef<HTMLInputElement | null>(null);
+    const noteInputRef = useRef<HTMLInputElement | null>(null);
+    const [itemState, setItemState] = useState(checklistItem || {note: ""});
     const [editMode, setEditMode] = useState(false);
 
     useEffect(() => {
-        if (editMode) inlineEditorRef.current?.focus();
+        if (editMode) {
+            noteInputRef.current?.focus();
+        }
     }, [editMode]);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setItemState((prev) => ({...prev, note: e.target.value}));
+    }
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (!(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
+            if (e.code === "Enter" || e.code === "Escape") {
+                e.preventDefault();
+                noteInputRef.current?.blur();
+            }
+        }
+    }
 
     return (
         <Box
@@ -30,17 +47,19 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem}) => {
                 {editMode
                     ? (
                         <InlineInput
-                            inputRef={inlineEditorRef}
+                            value={itemState.note}
+                            onChange={handleChange}
                             onBlur={() => setEditMode(false)}
+                            onKeyDown={handleKeyDown}
+                            inputRef={noteInputRef}
                             placeholder="Type what to do"
-                            variant="plain"
                             size="lg"/>
                     ) : (
                         <Typography
                             onClick={() => setEditMode(true)}
                             level="body-lg"
                             noWrap>
-                            {checklistItem?.message || "Click here to add a new item."}
+                            {itemState.note || "Click here to add a new item."}
                         </Typography>
                     )}
             </Box>

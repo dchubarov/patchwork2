@@ -1,4 +1,4 @@
 
 export interface ChecklistItemData {
-    message?: string;
+    note?: string;
 }
