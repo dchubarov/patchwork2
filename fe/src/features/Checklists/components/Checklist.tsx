@@ -1,45 +1,55 @@
 import React, {useState} from "react";
-import ChecklistItem from "./ChecklistItem";
-import {ChecklistItemData} from "../types";
 import {Stack} from "@mui/joy";
-import _ from "lodash";
+import ChecklistItem from "./ChecklistItem";
+import {ChecklistItemData, ChecklistItemResponse, ChecklistItemsResponse} from "../types";
+import useCall from "../../../lib/useCall";
 
-const Checklist: React.FC = () => {
+type ChecklistComponentType = React.FC<{
+    listName?: string
+}>;
+
+const Checklist: ChecklistComponentType = ({listName = "default"}) => {
     const [items, setItems] = useState<ChecklistItemData[]>([]);
-    const [count, setCount] = useState(1);
+
+    /*const fetchItemsCall =*/ useCall<{}, ChecklistItemsResponse>(
+        {path: `checklists/v1/checklist/${listName}`},
+        true, (data) => setItems(data.checklistItems));
+
+    const addItemCall = useCall<ChecklistItemData, ChecklistItemResponse>(
+        {path: `checklists/v1/checklist/${listName}`, method: "POST"},
+        false, (data) => addItem(data.checklistItem)
+    );
+
+    const updateItemCall = useCall<ChecklistItemData, ChecklistItemResponse>(
+        {path: `checklists/v1/checklist/${listName}`, method: "PUT"},
+        false, (data) => updateItem(data.checklistItem)
+    );
 
     const addItem = (item: ChecklistItemData) => {
-        if (item.note) {
-            setItems((prev) => ([{...item, id: count}, ...prev]));
-            setCount((prev) => prev + 1);
+        if (item && item.note) {
+            setItems((prev) => ([item, ...prev]));
         }
     }
 
     const updateItem = (updatedItem: ChecklistItemData) => {
         if (updatedItem.id) {
-            setItems((prev) => {
-                let isUpdated = false;
-                const updated = prev.map((item) => {
-                    if (item.id === updatedItem.id && !_.isEqual(item, updatedItem)) {
-                        isUpdated = true;
-                        return updatedItem;
-                    }
-                    return item;
-                });
-                return isUpdated ? updated : prev;
-            });
+            setItems((prev) => prev.map((item) => item.id === updatedItem.id ? updatedItem : item));
         }
     }
 
     return (
         <Stack gap={1}>
-            <ChecklistItem onUpdate={addItem}/>
+            <ChecklistItem
+                defaultEdit
+                busy={addItemCall.status === "loading"}
+                onUpdate={(item) => addItemCall.execute({data: item})}/>
 
             {items.map((item) => (
                 <ChecklistItem
                     key={`item-${item.id}`}
                     checklistItem={item}
-                    onUpdate={updateItem}/>
+                    busy={updateItemCall.status === "loading"}
+                    onUpdate={(item) => updateItemCall.execute({data: item})}/>
             ))}
         </Stack>
     );

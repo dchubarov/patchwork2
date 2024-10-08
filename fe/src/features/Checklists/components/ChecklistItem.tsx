@@ -7,13 +7,14 @@ import {Add as AddIcon, RadioButtonUnchecked as UncheckedIcon, TaskAlt as Checke
 type ChecklistItemComponentType = React.FC<{
     checklistItem?: ChecklistItemData,
     onUpdate?: (updated: ChecklistItemData) => void;
+    defaultEdit?: boolean
     busy?: boolean;
 }>;
 
-const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, busy}) => {
+const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, defaultEdit, busy}) => {
     const noteInputRef = useRef<HTMLInputElement | null>(null);
     const [editedItem, setEditedItem] = useState(checklistItem || {note: ""});
-    const [editMode, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(defaultEdit || false);
     const isNew = !checklistItem?.id
 
     const handleNoteInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +28,8 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, bus
         }
     }
 
-    const noteEdited = (cancelled?: boolean)=> {
-        if (!cancelled) {
+    const noteEdited = (cancelled?: boolean) => {
+        if (!cancelled && editedItem.note !== (checklistItem?.note || "")) {
             onUpdate?.(editedItem);
         }
         if (cancelled || !checklistItem?.id) {
@@ -50,10 +51,10 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, bus
                 px: 1,
             }}>
 
-            {busy && <CircularProgress size="sm" color="neutral" variant="soft"/>}
-            {checklistItem?.id
-                ? checklistItem.done ? <CheckedIcon/> : <UncheckedIcon/>
-                : <AddIcon sx={{color: "var(--joy-palette-neutral-300)"}}/>}
+            {busy ? <CircularProgress color="neutral" variant="soft" size="sm" thickness={2}/> :
+                (checklistItem?.id
+                    ? (checklistItem?.done ? <CheckedIcon/> : <UncheckedIcon/>)
+                    : <AddIcon sx={{color: "var(--joy-palette-neutral-300)"}}/>)}
 
             <Box sx={{flexGrow: 1}}>
                 {editMode
@@ -64,8 +65,8 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, bus
                             name={`note-input-${checklistItem?.id || "new"}`}
                             value={editedItem.note}
                             onChange={handleNoteInputChange}
-                            onBlur={() => noteEdited()}
                             onKeyDown={handleNoteInputKeyDown}
+                            onBlur={() => noteEdited()}
                             inputRef={noteInputRef}
                             placeholder="Type what to do"
                             size="lg"/>
