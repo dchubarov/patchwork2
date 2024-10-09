@@ -4,6 +4,11 @@ import {SerializerInterface} from "miragejs/serializer";
 import UserEntity from "./userEntity";
 import ChecklistEntity from "./checklistEntity";
 
+export interface EntityCommonAttributes {
+    createdAt: Date,
+    updatedAt: Date
+}
+
 const models = {
     ...UserEntity.models,
     ...ChecklistEntity.models,

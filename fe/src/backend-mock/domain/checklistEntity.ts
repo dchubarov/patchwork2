@@ -1,12 +1,12 @@
 import {SerializerInterface} from "miragejs/serializer";
-import {Model, RestSerializer} from "miragejs";
-import {AppServer} from "./index";
+import {Factory, Model, RestSerializer} from "miragejs";
+import {AppServer, EntityCommonAttributes} from "./index";
 
-export interface ChecklistItemDb {
+export type ChecklistItemDb = {
     list: string;
-    note: string,
-    done: boolean
-}
+    note: string;
+    done: boolean;
+} & EntityCommonAttributes
 
 export const CHECKLIST_ITEM = "checklistItem";
 
@@ -15,7 +15,12 @@ const ChecklistEntity = {
         [CHECKLIST_ITEM]: Model.extend<Partial<ChecklistItemDb>>({}),
     },
 
-    factories: {},
+    factories: {
+        [CHECKLIST_ITEM]: Factory.extend<Partial<ChecklistItemDb>>({
+            createdAt: () => new Date(),
+            updatedAt: () => new Date(),
+        })
+    },
 
     seeds: (server: AppServer) => {
         server.create("checklistItem", {list: "default", note: "Drop #car for service", done: false});

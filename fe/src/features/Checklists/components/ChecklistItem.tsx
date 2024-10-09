@@ -7,13 +7,14 @@ import {Add as AddIcon, RadioButtonUnchecked as UncheckedIcon, TaskAlt as Checke
 type ChecklistItemComponentType = React.FC<{
     checklistItem?: ChecklistItemData,
     onUpdate?: (updated: ChecklistItemData) => void;
-    defaultEdit?: boolean
+    defaultEdit?: boolean;
+    placeholder?: string;
     busy?: boolean;
 }>;
 
-const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, defaultEdit, busy}) => {
+const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, defaultEdit, placeholder, busy}) => {
     const noteInputRef = useRef<HTMLInputElement | null>(null);
-    const [editedItem, setEditedItem] = useState(checklistItem || {note: ""});
+    const [editedItem, setEditedItem] = useState<ChecklistItemData>(checklistItem || {note: ""});
     const [editMode, setEditMode] = useState(defaultEdit || false);
     const isNew = !checklistItem?.id
 
@@ -56,29 +57,36 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, def
                     ? (checklistItem?.done ? <CheckedIcon/> : <UncheckedIcon/>)
                     : <AddIcon sx={{color: "var(--joy-palette-neutral-300)"}}/>)}
 
-            <Box sx={{flexGrow: 1}}>
-                {editMode
-                    ? (
-                        <InlineInput
-                            autoFocus
-                            autoComplete="off"
-                            name={`note-input-${checklistItem?.id || "new"}`}
-                            value={editedItem.note}
-                            onChange={handleNoteInputChange}
-                            onKeyDown={handleNoteInputKeyDown}
-                            onBlur={() => noteEdited()}
-                            inputRef={noteInputRef}
-                            placeholder="Type what to do"
-                            size="lg"/>
-                    ) : (
-                        <Typography
-                            onClick={() => setEditMode(true)}
-                            level="body-lg"
-                            noWrap>
-                            {editedItem.note || (isNew ? "Click here to add a new item" : "No content")}
-                        </Typography>
-                    )}
-            </Box>
+            {editMode
+                ? (
+                    <InlineInput
+                        autoFocus
+                        autoComplete="off"
+                        name={`note-input-${checklistItem?.id || "new"}`}
+                        value={editedItem.note}
+                        disabled={busy}
+                        onChange={handleNoteInputChange}
+                        onKeyDown={handleNoteInputKeyDown}
+                        onBlur={() => noteEdited()}
+                        inputRef={noteInputRef}
+                        placeholder="Type what to do"
+                        size="lg"
+                        sx={{
+                            flexGrow: 1
+                        }}/>
+                ) : (
+                    <Typography
+                        onClick={() => setEditMode(true)}
+                        level="body-lg"
+                        noWrap
+                        sx={{
+                            fontStyle: editedItem.note === "" ? "italic" : "initial",
+                            color: editedItem.note === "" ? "var(--joy-palette-neutral-500)" : "initial",
+                            flexGrow: 1,
+                        }}>
+                        {editedItem.note || placeholder}
+                    </Typography>
+                )}
         </Box>
     );
 }

@@ -5,24 +5,30 @@ import {ChecklistItemData, ChecklistItemResponse, ChecklistItemsResponse} from "
 import useCall from "../../../lib/useCall";
 
 type ChecklistComponentType = React.FC<{
-    listName?: string
+    checklistName?: string
 }>;
 
-const Checklist: ChecklistComponentType = ({listName = "default"}) => {
+const Checklist: ChecklistComponentType = ({checklistName = "default"}) => {
     const [items, setItems] = useState<ChecklistItemData[]>([]);
+    const [updateId, setUpdateId] = useState<number | undefined>();
 
-    /*const fetchItemsCall =*/ useCall<{}, ChecklistItemsResponse>(
-        {path: `checklists/v1/checklist/${listName}`},
+    const fetchItemsCall = useCall<{}, ChecklistItemsResponse>(
+        {path: `checklists/v1/checklist/${checklistName}`},
         true, (data) => setItems(data.checklistItems));
 
     const addItemCall = useCall<ChecklistItemData, ChecklistItemResponse>(
-        {path: `checklists/v1/checklist/${listName}`, method: "POST"},
+        {path: `checklists/v1/checklist/${checklistName}`, method: "POST"},
         false, (data) => addItem(data.checklistItem)
     );
 
     const updateItemCall = useCall<ChecklistItemData, ChecklistItemResponse>(
-        {path: `checklists/v1/checklist/${listName}`, method: "PUT"},
+        {path: `checklists/v1/checklist/${checklistName}`, method: "PUT"},
         false, (data) => updateItem(data.checklistItem)
+    );
+
+    const deleteItemCall = useCall(
+        {path: `checklists/v1/checklist/${checklistName}`, method: "DELETE"},
+        false, (data) => { deleteItem(data.checklistItem) }
     );
 
     const addItem = (item: ChecklistItemData) => {
@@ -31,25 +37,42 @@ const Checklist: ChecklistComponentType = ({listName = "default"}) => {
         }
     }
 
+    const fireUpdateItem = (item: ChecklistItemData) => {
+        setUpdateId(item.id);
+        if (item.note === "") {
+            deleteItemCall.execute({params: {id: item.id}});
+        } else {
+            updateItemCall.execute({data: item});
+        }
+    }
+
     const updateItem = (updatedItem: ChecklistItemData) => {
         if (updatedItem.id) {
-            setItems((prev) => prev.map((item) => item.id === updatedItem.id ? updatedItem : item));
+            setItems((prev) =>
+                prev.map((item) => item.id === updatedItem.id ? updatedItem : item));
         }
+    }
+
+    const deleteItem = (deletedItem: ChecklistItemData) => {
+        setItems((prev) =>
+            prev.filter((item) => item.id !== deletedItem.id))
     }
 
     return (
         <Stack gap={1}>
             <ChecklistItem
                 defaultEdit
-                busy={addItemCall.status === "loading"}
+                placeholder="Click here to add a new item"
+                busy={fetchItemsCall.status === "loading" || addItemCall.status === "loading"}
                 onUpdate={(item) => addItemCall.execute({data: item})}/>
 
             {items.map((item) => (
                 <ChecklistItem
-                    key={`item-${item.id}`}
+                    key={item.id}
                     checklistItem={item}
-                    busy={updateItemCall.status === "loading"}
-                    onUpdate={(item) => updateItemCall.execute({data: item})}/>
+                    placeholder="No content"
+                    busy={(updateItemCall.status === "loading" || deleteItemCall.status === "loading") && updateId === item.id}
+                    onUpdate={fireUpdateItem}/>
             ))}
         </Stack>
     );
