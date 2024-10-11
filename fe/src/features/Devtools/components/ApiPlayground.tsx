@@ -37,7 +37,7 @@ interface RequestMethodProps {
 }
 
 const RequestMethod: Record<string, RequestMethodProps> = {
-    "GET": {payload: false, color: "emerald"},
+    "GET": {payload: false, color: "lime"},
     "POST": {payload: true, color: "teal"},
     "PUT": {payload: true, color: "indigo"},
     "PATCH": {payload: true, color: "fuchsia"},

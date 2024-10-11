@@ -1,10 +1,9 @@
 import _ from "lodash";
 import React from "react";
-import {Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, useTheme} from "@mui/joy";
+import {Dropdown, IconButton, IconButtonProps, ListItemDecorator, Menu, MenuButton, MenuItem, useTheme} from "@mui/joy";
 import {labelColorsByName} from "../lib/theme";
-import {DefaultVariantProp} from "@mui/joy/styles/types";
 
-const Spot: React.FC<{ labelName?: string }> = ({labelName}) => {
+const Spot: React.FC<{ labelName?: string | null }> = ({labelName}) => {
     const theme = useTheme();
     const labelColors = labelColorsByName(labelName, theme);
 
@@ -50,11 +49,10 @@ const MenuItems: React.FC<ColorLabelMenuProps> = ({showNames, showNoColor, onCha
     </>);
 }
 
-type SelectorComponentType = React.FC<ColorLabelMenuProps & {
-    variant?: DefaultVariantProp;
-    size?: "sm" | "md" | "lg";
-    selectedLabel?: string;
-}>
+type SelectorComponentType = React.FC<
+    & ColorLabelMenuProps
+    & Pick<IconButtonProps, "disabled" | "size" | "variant" | "color" | "sx">
+    & { selectedLabel?: string | null }>
 
 const Selector: SelectorComponentType = (props) => {
     const handleChange = (value: string | undefined) => {
@@ -67,7 +65,15 @@ const Selector: SelectorComponentType = (props) => {
         <Dropdown>
             <MenuButton
                 slots={{root: IconButton}}
-                slotProps={{root: {size: props.size, variant: props.variant}}}>
+                slotProps={{
+                    root: {
+                        disabled: props.disabled,
+                        size: props.size,
+                        variant: props.variant,
+                        color: props.color,
+                        sx: Array.isArray(props.sx) ? props.sx : [props.sx]
+                    }
+                }}>
                 <Spot labelName={props.selectedLabel}/>
             </MenuButton>
             <Menu
