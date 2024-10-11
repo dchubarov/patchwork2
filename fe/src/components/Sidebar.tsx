@@ -128,6 +128,7 @@ const Sidebar: React.FC = () => {
                                   sx={{
                                       "--List-padding": "0.5rem",
                                       "--ListItemDecorator-size": "3rem",
+                                      "--ListItem-radius": "var(--joy-radius-sm)",
                                       display: "grid",
                                       gridTemplateColumns: "repeat(3, 100px)",
                                       gridTemplateRows: `repeat(${Math.ceil((AppFeatures.length + 1) / 3)}, 100px) calc(2rem + 36px)`,
