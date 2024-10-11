@@ -22,6 +22,7 @@ export default function checklistRoutes(server: AppServer) {
             list: request.params.checklistName,
             note: json.note || "",
             done: json.done || false,
+            colorLabel: json.colorLabel,
         });
 
         persistChecklistItems(schema);
@@ -31,8 +32,10 @@ export default function checklistRoutes(server: AppServer) {
     server.put(checklistRouteBasename, async (schema, request) => {
         const json = JSON.parse(request.requestBody);
         schema.db.checklistItems.update(json.id, {
-            ...json,
             list: request.params.checklistName,
+            note: json.note || "",
+            done: json.done || false,
+            colorLabel: json.colorLabel || null,
             updatedAt: new Date()
         });
 

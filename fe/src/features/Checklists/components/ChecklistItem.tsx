@@ -1,12 +1,17 @@
 import React, {ChangeEvent, KeyboardEvent, useRef, useState} from "react";
-import {Box, CircularProgress, Typography} from "@mui/joy";
-import {ChecklistItemData} from "../types";
+import {Box, IconButton, Typography} from "@mui/joy";
+import {ChecklistItemState} from "../types";
 import InlineInput from "../../../components/InlineInput";
-import {Add as AddIcon, RadioButtonUnchecked as UncheckedIcon, TaskAlt as CheckedIcon} from "@mui/icons-material";
+import {
+    Add as AddIcon,
+    CheckBoxOutlineBlank as UncheckedIcon,
+    CheckBoxOutlined as CheckedIcon
+} from "@mui/icons-material";
+import ColorLabel from "../../../components/ColorLabel";
 
 type ChecklistItemComponentType = React.FC<{
-    checklistItem?: ChecklistItemData,
-    onUpdate?: (updated: ChecklistItemData) => void;
+    checklistItem?: ChecklistItemState,
+    onUpdate?: (updated: ChecklistItemState) => void;
     defaultEdit?: boolean;
     placeholder?: string;
     busy?: boolean;
@@ -14,7 +19,7 @@ type ChecklistItemComponentType = React.FC<{
 
 const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, defaultEdit, placeholder, busy}) => {
     const noteInputRef = useRef<HTMLInputElement | null>(null);
-    const [editedItem, setEditedItem] = useState<ChecklistItemData>(checklistItem || {note: ""});
+    const [editedItem, setEditedItem] = useState<ChecklistItemState>(checklistItem || {note: ""});
     const [editMode, setEditMode] = useState(defaultEdit || false);
     const isNew = !checklistItem?.id
 
@@ -39,23 +44,64 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, def
         setEditMode(false);
     }
 
+    const handleColorLabelChange = (value: string | undefined) => {
+        setEditedItem((prev) => {
+            const next: ChecklistItemState = {...prev, colorLabel: value === undefined ? null : value};
+            if (!isNew && next.colorLabel !== editedItem.colorLabel) onUpdate?.(next);
+            return next;
+        })
+    }
+
+    const handleDoneToggle = () => {
+        setEditedItem((prev) => {
+            const next: ChecklistItemState = {...prev, done: !prev.done};
+            onUpdate?.(next);
+            return next;
+        })
+    }
+
+    const bgColor = editedItem.colorLabel
+        ? `var(--joy-palette-colorLabel-${editedItem.colorLabel}-100, --joy-palette-neutral-100)`
+        : "background.body";
+
+    const foreColor = editedItem.colorLabel
+        ? `var(--joy-palette-colorLabel-${editedItem.colorLabel}-700, --joy-palette-neutral-700)`
+        : "text.primary";
+
+    const borderColor = editedItem.colorLabel
+        ? `var(--joy-palette-colorLabel-${editedItem.colorLabel}-300, --joy-palette-neutral-300)`
+        : "var(--joy-palette-neutral-300)";
+
     return (
         <Box
             sx={{
                 display: "flex",
                 alignItems: "center",
                 borderRadius: "3rem",
-                border: `2px ${isNew ? "dashed" : "solid"} var(--joy-palette-neutral-300)`,
+                backgroundColor: bgColor,
+                border: `2px ${isNew ? "dashed" : "solid"} ${borderColor}`,
                 minWidth: "300px",
                 gap: 0.5,
                 py: 0.5,
                 px: 1,
             }}>
 
-            {busy ? <CircularProgress color="neutral" variant="soft" size="sm" thickness={2}/> :
-                (checklistItem?.id
-                    ? (checklistItem?.done ? <CheckedIcon/> : <UncheckedIcon/>)
-                    : <AddIcon sx={{color: "var(--joy-palette-neutral-300)"}}/>)}
+            <IconButton
+                loading={busy}
+                disabled={isNew}
+                onClick={handleDoneToggle}
+                size="sm"
+                sx={{
+                    borderRadius: "50%",
+                    "&:hover": {
+                        backgroundColor: bgColor
+                    }
+                }}>
+
+                {editedItem.id
+                    ? editedItem.done ? <CheckedIcon sx={{color: foreColor}}/> : <UncheckedIcon sx={{color: foreColor}}/>
+                    : <AddIcon/>}
+            </IconButton>
 
             {editMode
                 ? (
@@ -72,7 +118,11 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, def
                         placeholder="Type what to do"
                         size="lg"
                         sx={{
-                            flexGrow: 1
+                            flexGrow: 1,
+                            color: foreColor,
+                            "&:hover": {
+                                color: foreColor
+                            }
                         }}/>
                 ) : (
                     <Typography
@@ -81,12 +131,24 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, def
                         noWrap
                         sx={{
                             fontStyle: editedItem.note === "" ? "italic" : "initial",
-                            color: editedItem.note === "" ? "var(--joy-palette-neutral-500)" : "initial",
+                            textDecoration: editedItem.done ? "line-through" : "initial",
+                            color: foreColor,
                             flexGrow: 1,
                         }}>
                         {editedItem.note || placeholder}
                     </Typography>
                 )}
+
+            <ColorLabel.Selector
+                showNoColor
+                selectedLabel={editedItem.colorLabel}
+                onChange={handleColorLabelChange}
+                sx={{
+                    borderRadius: "50%",
+                    "&:hover": {
+                        backgroundColor: bgColor
+                    }
+                }}/>
         </Box>
     );
 }

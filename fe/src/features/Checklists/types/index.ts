@@ -1,15 +1,16 @@
 
-export interface ChecklistItemData {
+export interface ChecklistItemState {
     id?: number;
     list?: string;
     note?: string;
     done?: boolean;
+    colorLabel?: string | null;
 }
 
 export interface ChecklistItemsResponse {
-    checklistItems: ChecklistItemData[];
+    checklistItems: ChecklistItemState[];
 }
 
 export interface ChecklistItemResponse {
-    checklistItem: ChecklistItemData;
+    checklistItem: ChecklistItemState;
 }

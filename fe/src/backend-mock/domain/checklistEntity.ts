@@ -6,6 +6,7 @@ export type ChecklistItemDb = {
     list: string;
     note: string;
     done: boolean;
+    colorLabel: string | null;
 } & EntityCommonAttributes
 
 export const CHECKLIST_ITEM = "checklistItem";
@@ -23,9 +24,9 @@ const ChecklistEntity = {
     },
 
     seeds: (server: AppServer) => {
-        server.create("checklistItem", {list: "default", note: "Drop #car for service", done: false});
-        server.create("checklistItem", {list: "default", note: "Buy groceries", done: false});
-        server.create("checklistItem", {list: "secondary", note: "Learn MirageJS", done: false});
+        server.create("checklistItem", {list: "default", note: "Drop #car for service", done: false, colorLabel: null});
+        server.create("checklistItem", {list: "default", note: "Buy groceries", done: false, colorLabel: "teal"});
+        server.create("checklistItem", {list: "secondary", note: "Learn MirageJS", done: false, colorLabel: null});
     },
 
     serializers: (_: SerializerInterface) => ({
