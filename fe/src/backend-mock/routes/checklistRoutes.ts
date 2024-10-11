@@ -4,7 +4,7 @@ import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ITEM} from "../domain/checklistEntity";
 import {BadRequestResponse} from "./index";
 
-const checklistRouteBasename = "checklists/v1/checklist/:checklistName";
+const checklistRouteBasename = "x/checklists/v1/checklist/:checklistName";
 
 export default function checklistRoutes(server: AppServer) {
     server.get(checklistRouteBasename, async (schema, request) => {

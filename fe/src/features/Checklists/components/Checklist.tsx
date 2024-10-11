@@ -13,21 +13,21 @@ const Checklist: ChecklistComponentType = ({checklistName = "default"}) => {
     const [updateId, setUpdateId] = useState<number | undefined>();
 
     const fetchItemsCall = useCall<{}, ChecklistItemsResponse>(
-        {path: `checklists/v1/checklist/${checklistName}`},
+        {path: `x/checklists/v1/checklist/${checklistName}`},
         true, (data) => setItems(data.checklistItems));
 
     const addItemCall = useCall<ChecklistItemState, ChecklistItemResponse>(
-        {path: `checklists/v1/checklist/${checklistName}`, method: "POST"},
+        {path: `x/checklists/v1/checklist/${checklistName}`, method: "POST"},
         false, (data) => addItem(data.checklistItem)
     );
 
     const updateItemCall = useCall<ChecklistItemState, ChecklistItemResponse>(
-        {path: `checklists/v1/checklist/${checklistName}`, method: "PUT"},
+        {path: `x/checklists/v1/checklist/${checklistName}`, method: "PUT"},
         false, (data) => updateItem(data.checklistItem)
     );
 
     const deleteItemCall = useCall(
-        {path: `checklists/v1/checklist/${checklistName}`, method: "DELETE"},
+        {path: `x/checklists/v1/checklist/${checklistName}`, method: "DELETE"},
         false, (data) => { deleteItem(data.checklistItem) }
     );
 
