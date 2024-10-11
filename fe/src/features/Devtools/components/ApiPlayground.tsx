@@ -22,8 +22,8 @@ import {
     PlayArrow as RunIcon,
     Warning as WarningIcon
 } from "@mui/icons-material";
-import {DefaultColorPalette} from "@mui/joy/styles/types";
 import {useActiveView} from "../../../lib/useActiveView";
+import {labelColorsByName} from "../../../lib/theme";
 
 type RequestState =
     | { status: "empty" }
@@ -33,15 +33,15 @@ type RequestState =
 
 interface RequestMethodProps {
     payload?: boolean;
-    color?: DefaultColorPalette;
+    color?: string;
 }
 
 const RequestMethod: Record<string, RequestMethodProps> = {
-    "GET": {payload: false, color: "success"},
-    "POST": {payload: true, color: "warning"},
-    "PUT": {payload: true, color: "warning"},
-    "PATCH": {payload: true, color: "warning"},
-    "DELETE": {payload: false, color: "danger"},
+    "GET": {payload: false, color: "emerald"},
+    "POST": {payload: true, color: "teal"},
+    "PUT": {payload: true, color: "indigo"},
+    "PATCH": {payload: true, color: "fuchsia"},
+    "DELETE": {payload: false, color: "pink"},
 }
 
 type RequestMethodName = keyof typeof RequestMethod;
@@ -52,29 +52,30 @@ type RequestMethodSelectorType = React.FC<{
 }>;
 
 const RequestMethodSelector: RequestMethodSelectorType = ({method, onChange}) => {
+    const palette = labelColorsByName(RequestMethod[method].color);
     return (
         <Dropdown>
             <Chip
                 component={MenuButton}
                 variant="soft"
-                color={RequestMethod[method].color || "neutral"}
+                // color={RequestMethod[method].color || "neutral"}
                 endDecorator={<DropdownIcon/>}
                 sx={{
                     mr: 1,
                     borderRadius: "sm",
                     fontWeight: 600,
-                    "&:hover": {
-                        backgroundColor: `${RequestMethod[method].color || "neutral"}.softHoverBg`,
-                    },
+                    backgroundColor: palette[300],
+                    color: palette[800],
+                    "&:hover": {backgroundColor: palette[200]},
                 }}>
                 {method}
             </Chip>
             <Menu size="sm">
                 {Object.keys(RequestMethod).filter((value) => value !== method).map((value) => (
                     <MenuItem
-                        color={RequestMethod[value].color || "neutral"}
                         key={value}
-                        onClick={() => onChange?.(value)}>
+                        onClick={() => onChange?.(value)}
+                        sx={{color: labelColorsByName(RequestMethod[value].color)[800]}}>
                         {value}
                     </MenuItem>
                 ))}
