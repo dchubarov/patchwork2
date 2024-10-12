@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
 import {useActiveView} from "../../../lib/useActiveView";
 import {IndexedLayoutChildProps} from "../../../lib/pageLayoutTypes";
-import ApiPlayground from "./ApiPlayground";
 
 const DemoLoadingWidget: React.FC = () => (
     <Typography
@@ -44,7 +43,7 @@ const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
 
             <Button
                 variant="solid"
-                onClick={() => openDrawer(<ApiPlayground/>, "API Playground")}>
+                onClick={() => openDrawer(<Typography m={2}>Drawer contents</Typography>, "Drawer")}>
                 Open drawer
             </Button>
         </Stack>

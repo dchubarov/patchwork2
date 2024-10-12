@@ -21,7 +21,7 @@ import {
     PlayArrow as RunIcon,
     Warning as WarningIcon
 } from "@mui/icons-material";
-import {labelColorsByName} from "../../../lib/theme";
+import {labelColorsByName} from "../lib/theme";
 
 type RequestState =
     | { status: "empty" }
