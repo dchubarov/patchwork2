@@ -16,13 +16,23 @@ export interface ColorLabelPalette extends Record<string, ColorLabelPaletteRange
 }
 
 declare module "@mui/joy/styles" {
-    // noinspection
     interface Palette {
         colorLabel: ColorLabelPalette
     }
 }
 
 const defaultColorLabels: ColorLabelPalette = {
+    ivory: {
+        100: "#faf7d1",
+        200: "#f5eea3",
+        300: "#f0e575",
+        400: "#ebdd47",
+        500: "#e6d41a",
+        600: "#b8aa14",
+        700: "#8a7f0f",
+        800: "#5c550a",
+        900: "#454008",
+    },
     // Credit: https://github.com/tailwindlabs/tailwindcss/blob/main/src/public/colors.js
     teal: {
         100: "#ccfbf1",
@@ -36,15 +46,15 @@ const defaultColorLabels: ColorLabelPalette = {
         900: "#134e4a",
     },
     pink: {
-        100: "#fce7f3",
-        200: "#fbcfe8",
-        300: "#f9a8d4",
-        400: "#f472b6",
-        500: "#ec4899",
-        600: "#db2777",
-        700: "#be185d",
-        800: "#9d174d",
-        900: "#831843",
+        100: "#fad1e6",
+        200: "#f5a3cc",
+        300: "#f075b3",
+        400: "#eb4799",
+        500: "#e61a80",
+        600: "#b81466",
+        700: "#8e104f",
+        800: "#5c0a33",
+        900: "#450826",
     },
     lime: {
         100: '#ecfccb',
