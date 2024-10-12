@@ -5,7 +5,6 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@fontsource/inter": "^5.1.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "npm:@mui/joy@latest",
@@ -51,7 +50,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/lodash": "^4.17.10"
   },
   "resolutions": {
     "@mui/material": "npm:@mui/joy@latest"
