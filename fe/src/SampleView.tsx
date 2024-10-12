@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import {IconButton, Sheet, Typography} from "@mui/joy";
-import {useActiveView} from "./lib/useActiveView";
 import InfoIcon from "@mui/icons-material/Info";
 import PageLayout from "./components/PageLayout";
 import "axios-retry";
 import {Refresh as RefreshIcon} from "@mui/icons-material";
 import useCall from "./lib/useCall";
+import {useActiveView} from "./providers/ActiveViewProvider";
 
 const SampleView: React.FC = () => {
     const {status, data: serverInfo, execute: refreshServerInfo} = useCall({path: "server-info"}, false);

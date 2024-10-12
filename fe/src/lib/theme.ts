@@ -103,6 +103,10 @@ const defaultColorLabels: ColorLabelPalette = {
 }
 
 const appTheme = extendTheme({
+    fontFamily: {
+        display: "Noto Sans",
+        body: "Noto Sans",
+    },
     colorSchemes: {
         light: {
             palette: {

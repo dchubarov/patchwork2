@@ -6,18 +6,7 @@ import {buildRouter} from "./lib/routing";
 import App from "./App";
 import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
-
-// Inter font
-import "@fontsource/inter/300.css";
-import "@fontsource/inter/300-italic.css";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/400-italic.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/500-italic.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/600-italic.css";
-import "@fontsource/inter/700.css";
-import "@fontsource/inter/700-italic.css";
+import EnvironmentProvider from "./providers/EnvironmentProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -25,12 +14,15 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
+        <EnvironmentProvider>
+            <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
+        </EnvironmentProvider>
     </React.StrictMode>
 );
 
 reportWebVitals(/*console.log*/);
 
 if (process.env.REACT_APP_API_MOCKING === "true") {
-    /*await*/import("./backend-mock");
+    /*await*/
+    import("./backend-mock");
 }
