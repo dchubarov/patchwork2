@@ -29,6 +29,7 @@ import {
 import {
     Api as ApiIcon,
     CloudOff as OfflineIcon,
+    CloudOutlined as OnlineIcon,
     DarkMode as DarkModeIcon,
     Home as HomeIcon,
     LightMode as LightModeIcon,
@@ -86,7 +87,7 @@ const SettingsMenu: React.FC = () => {
     const {sidebarPlacement, configureView, openDrawer} = useActiveView();
     const [mounted, setMounted] = useState(false);
     const [open, setOpen] = useState(false);
-    const {environment, versionInfo} = useEnvironment();
+    const {environment, versionInfo, backendStatus, backendInfo} = useEnvironment();
 
     useEffect(() => {
         setMounted(true);
@@ -174,12 +175,13 @@ const SettingsMenu: React.FC = () => {
                     </MenuItem>
                 </>}
 
-                {/* TODO read app version from environment, provide BE information */}
                 <ListSubheader>About</ListSubheader>
                 <MenuItem>{versionInfo}</MenuItem>
-                <MenuItem color="danger">
-                    <ListItemDecorator><OfflineIcon/></ListItemDecorator>
-                    Backend offline
+                <MenuItem color={backendStatus !== "online" ? "danger" : "neutral"}>
+                    <ListItemDecorator>
+                        {backendStatus === "online" ? <OnlineIcon/> : <OfflineIcon/>}
+                    </ListItemDecorator>
+                    {backendInfo || "Backend is not available"}
                 </MenuItem>
             </Menu>
         </Dropdown>

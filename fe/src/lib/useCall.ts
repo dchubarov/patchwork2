@@ -37,6 +37,7 @@ export default function useCall<D = any, R = any>(
     endpoint: Endpoint<D>,
     start: boolean = false,
     onSuccess?: (data: R) => void,
+    onError?: (error: any) => void,
 ): CallResult<D, R> {
     const [requestLifecycle, setRequestLifecycle] = useState<RequestLifecycle<D>>({
         phase: start ? LifecyclePhase.INITIATED : LifecyclePhase.IDLE,
@@ -76,9 +77,9 @@ export default function useCall<D = any, R = any>(
                     //TODO: restore original endpoint?
                     //endpoint: endpoint,
                 }));
-            }, onSuccess);
+            }, onSuccess, onError);
         }
-    }, [requestLifecycle, onSuccess]);
+    }, [requestLifecycle, onSuccess, onError]);
 
     return result;
 }
@@ -89,7 +90,8 @@ function executeRequest<D, R>(
     endpoint: Endpoint<D>,
     dispatch: React.Dispatch<React.SetStateAction<CallResult<D, R>>>,
     finalizer: () => void,
-    onSuccess?: (data: R) => void
+    onSuccess?: (data: R) => void,
+    onError?: (error: any) => void
 ) {
     dispatch((prev) => ({...prev, status: "loading"}));
 
@@ -110,6 +112,7 @@ function executeRequest<D, R>(
             }));
         })
         .catch((reason) => {
+            onError?.(reason);
             dispatch((prev) => ({
                 ...prev,
                 status: "failure",

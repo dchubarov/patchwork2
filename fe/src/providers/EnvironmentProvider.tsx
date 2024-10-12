@@ -1,6 +1,7 @@
-import React, {createContext, PropsWithChildren, useContext, useReducer} from "react";
-import {EnvironmentState, environmentStateReducer} from "../lib/env";
+import React, {createContext, PropsWithChildren, useContext, useEffect, useReducer} from "react";
+import {EnvironmentState, EnvironmentStateActionType, environmentStateReducer} from "../lib/env";
 import version from "../version.json";
+import useCall from "../lib/useCall";
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
 
@@ -20,7 +21,21 @@ const initialEnvironmentState: EnvironmentState = {
 }
 
 const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const [state/*, dispatch*/] = useReducer(environmentStateReducer, initialEnvironmentState);
+    const [state, dispatch] = useReducer(environmentStateReducer, initialEnvironmentState);
+    const {execute: refreshBackendInfo} = useCall({path: "server-info"}, false,
+        (data) => dispatch({type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS, backendStatus: "online", backendInfo: data.server}),
+        () => dispatch({type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS, backendStatus: "offline"}));
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            refreshBackendInfo();
+        }, 5000);
+
+        return () => {
+            clearInterval(timer);
+        }
+    }, [refreshBackendInfo]);
+
     return (
         <EnvironmentContext.Provider value={state}>
             {children}
