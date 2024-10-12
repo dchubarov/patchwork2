@@ -9,10 +9,10 @@ import React, {
     useState
 } from "react";
 import {Box, BoxProps, Tab, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
-import {useActiveView} from "../lib/useActiveView";
 import {SidebarPlacement} from "../lib/viewStateTypes";
 import {IndexedLayoutChildProps} from "../lib/pageLayoutTypes";
 import {developmentLogger} from "../lib/logging";
+import {useActiveView} from "../providers/ActiveViewProvider";
 
 const paddingSxProps = (sidebarPlacement: SidebarPlacement) => ({
     pl: sidebarPlacement === "left" ? 4 : 2,

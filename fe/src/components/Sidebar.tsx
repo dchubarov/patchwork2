@@ -26,7 +26,6 @@ import {
     Typography,
     useColorScheme
 } from "@mui/joy";
-import {useActiveView} from "../lib/useActiveView";
 import {
     Api as ApiIcon,
     CloudOff as OfflineIcon,
@@ -43,6 +42,8 @@ import AppFeatures from "../features";
 import {useNavigate} from "react-router-dom";
 import {SidebarPlacement} from "../lib/viewStateTypes";
 import ApiPlayground from "./ApiPlayground";
+import {useEnvironment} from "../providers/EnvironmentProvider";
+import {useActiveView} from "../providers/ActiveViewProvider";
 
 const AppLogo: React.FC = () => {
     const {mode} = useColorScheme();
@@ -85,12 +86,13 @@ const SettingsMenu: React.FC = () => {
     const {sidebarPlacement, configureView, openDrawer} = useActiveView();
     const [mounted, setMounted] = useState(false);
     const [open, setOpen] = useState(false);
+    const {environment, versionInfo} = useEnvironment();
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    const handleColorSchemeButtonClick = (mode: SupportedColorScheme)=> {
+    const handleColorSchemeButtonClick = (mode: SupportedColorScheme) => {
         if (mode !== colorScheme) {
             setColorScheme(mode);
         }
@@ -153,7 +155,7 @@ const SettingsMenu: React.FC = () => {
                             onClick={() => handleSidebarPlacementButtonClick("left")}
                             startDecorator={<SidebarIcon sx={{transform: "rotate(180deg)"}}/>}
                             sx={{backgroundColor: sidebarPlacement === "left" ? "background.level1" : "initial"}}>
-                        Left
+                            Left
                         </Button>
                         <Button
                             onClick={() => handleSidebarPlacementButtonClick("right")}
@@ -164,16 +166,17 @@ const SettingsMenu: React.FC = () => {
                     </ButtonGroup>
                 </ListItem>
 
-                {/* TODO should only be available in developer mode */}
-                <ListSubheader>Developer tools</ListSubheader>
-                <MenuItem onClick={() => handleOpenApiPlaygroundItemClick()}>
-                    <ListItemDecorator><ApiIcon/></ListItemDecorator>
-                    Open API playground
-                </MenuItem>
+                {environment === "development" && <>
+                    <ListSubheader>Developer tools</ListSubheader>
+                    <MenuItem onClick={() => handleOpenApiPlaygroundItemClick()}>
+                        <ListItemDecorator><ApiIcon/></ListItemDecorator>
+                        Open API playground
+                    </MenuItem>
+                </>}
 
                 {/* TODO read app version from environment, provide BE information */}
                 <ListSubheader>About</ListSubheader>
-                <MenuItem>Version 1.2.3</MenuItem>
+                <MenuItem>{versionInfo}</MenuItem>
                 <MenuItem color="danger">
                     <ListItemDecorator><OfflineIcon/></ListItemDecorator>
                     Backend offline
