@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, BoxProps, GlobalStyles} from "@mui/joy";
+import {Box, BoxProps, GlobalStyles, Drawer as JoyDrawer, ModalClose, DialogTitle, DialogContent} from "@mui/joy";
 import {useActiveView} from "../lib/useActiveView";
 import {SidebarPlacement} from "../lib/viewStateTypes";
 
@@ -87,7 +87,25 @@ const View: React.FC<BoxProps> = ({sx, ...other}) => (
          ]}/>
 );
 
+const Drawer: React.FC = () => {
+    const {drawerOpen, drawerTitle, drawerComponent, closeDrawer, sidebarPlacement} = useActiveView();
+    return (
+        <JoyDrawer
+            open={drawerOpen}
+            anchor={sidebarPlacement === "left" ? "right" : "left"}
+            onClose={closeDrawer}
+            sx={{
+                zIndex: 1100,
+            }}>
+            <ModalClose/>
+            {drawerTitle && <DialogTitle>{drawerTitle}</DialogTitle>}
+            {drawerComponent && <DialogContent>{drawerComponent}</DialogContent>}
+        </JoyDrawer>
+    );
+}
+
 const defaultExports = {
+    Drawer,
     Header,
     Main,
     Root,

@@ -34,6 +34,8 @@ const App: React.FC = () => {
                         </Layout.Sidebar>
                     </Layout.Main>
                 </Layout.Root>
+
+                <Layout.Drawer/>
             </ActiveViewProvider>
         </CssVarsProvider>
     );

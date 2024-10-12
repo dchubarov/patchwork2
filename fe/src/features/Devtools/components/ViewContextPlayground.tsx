@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
 import {useActiveView} from "../../../lib/useActiveView";
 import {IndexedLayoutChildProps} from "../../../lib/pageLayoutTypes";
+import ApiPlayground from "./ApiPlayground";
 
 const DemoLoadingWidget: React.FC = () => (
     <Typography
@@ -12,7 +13,7 @@ const DemoLoadingWidget: React.FC = () => (
 );
 
 const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
-    const {configureView, configureWidgets, ejectView} = useActiveView();
+    const {configureView, configureWidgets, ejectView, openDrawer} = useActiveView();
     const [slot, setSlot] = useState(1);
 
     useEffect(() => {
@@ -40,6 +41,12 @@ const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
                       onChange={(e) => {
                           configureWidgets({slot: 0, component: e.target.checked ? <DemoLoadingWidget/> : null});
                       }}/>
+
+            <Button
+                variant="solid"
+                onClick={() => openDrawer(<ApiPlayground/>, "API Playground")}>
+                Open drawer
+            </Button>
         </Stack>
     );
 }
