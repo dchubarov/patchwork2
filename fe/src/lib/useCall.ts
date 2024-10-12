@@ -35,7 +35,9 @@ interface RequestLifecycle<D> {
 
 export default function useCall<D = any, R = any>(
     endpoint: Endpoint<D>,
-    start: boolean = false
+    start: boolean = false,
+    onSuccess?: (data: R) => void,
+    onError?: (error: any) => void,
 ): CallResult<D, R> {
     const [requestLifecycle, setRequestLifecycle] = useState<RequestLifecycle<D>>({
         phase: start ? LifecyclePhase.INITIATED : LifecyclePhase.IDLE,
@@ -75,9 +77,9 @@ export default function useCall<D = any, R = any>(
                     //TODO: restore original endpoint?
                     //endpoint: endpoint,
                 }));
-            });
+            }, onSuccess, onError);
         }
-    }, [requestLifecycle]);
+    }, [requestLifecycle, onSuccess, onError]);
 
     return result;
 }
@@ -87,8 +89,12 @@ export default function useCall<D = any, R = any>(
 function executeRequest<D, R>(
     endpoint: Endpoint<D>,
     dispatch: React.Dispatch<React.SetStateAction<CallResult<D, R>>>,
-    finalizer: () => void
+    finalizer: () => void,
+    onSuccess?: (data: R) => void,
+    onError?: (error: any) => void
 ) {
+    dispatch((prev) => ({...prev, status: "loading"}));
+
     const start = performance.now();
     axios.request<R, AxiosResponse<R>, D>({
         url: process.env.REACT_APP_API_ROOT + "/" + endpoint.path,
@@ -97,6 +103,7 @@ function executeRequest<D, R>(
         data: endpoint.data
     })
         .then((response) => {
+            onSuccess?.(response.data);
             dispatch((prev) => ({
                 ...prev,
                 status: "success",
@@ -105,6 +112,7 @@ function executeRequest<D, R>(
             }));
         })
         .catch((reason) => {
+            onError?.(reason);
             dispatch((prev) => ({
                 ...prev,
                 status: "failure",
