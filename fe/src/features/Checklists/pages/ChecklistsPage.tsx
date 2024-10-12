@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import PageLayout from "../../../components/PageLayout";
-import {useActiveView} from "../../../lib/useActiveView";
 import Checklist from "../components/Checklist";
+import {useActiveView} from "../../../providers/ActiveViewProvider";
 
 const ChecklistsPage: React.FC = () => {
     const {configureView, ejectView} = useActiveView();
