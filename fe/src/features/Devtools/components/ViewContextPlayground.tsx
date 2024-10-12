@@ -12,7 +12,7 @@ const DemoLoadingWidget: React.FC = () => (
 );
 
 const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
-    const {configureView, configureWidgets, ejectView} = useActiveView();
+    const {configureView, configureWidgets, ejectView, openDrawer} = useActiveView();
     const [slot, setSlot] = useState(1);
 
     useEffect(() => {
@@ -40,6 +40,12 @@ const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
                       onChange={(e) => {
                           configureWidgets({slot: 0, component: e.target.checked ? <DemoLoadingWidget/> : null});
                       }}/>
+
+            <Button
+                variant="solid"
+                onClick={() => openDrawer(<Typography m={2}>Drawer contents</Typography>, "Drawer")}>
+                Open drawer
+            </Button>
         </Stack>
     );
 }

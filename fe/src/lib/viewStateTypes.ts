@@ -23,9 +23,14 @@ export interface ViewState {
     sectionKey: string | null;
     sectionTitle: string | null;
     widgets: SidebarWidget[];
+    drawerOpen: boolean;
+    drawerTitle?: string;
+    drawerComponent: ReactNode | null;
     configureView: (config: ViewConfiguration) => void;
     configureWidgets: (config: SidebarWidgetsConfiguration) => void;
     ejectView: () => void;
+    openDrawer: (component: ReactNode, title?: string) => void;
+    closeDrawer: () => void;
 }
 
 export const initialViewState: ViewState = {
@@ -35,10 +40,17 @@ export const initialViewState: ViewState = {
     sectionKey: null,
     sectionTitle: null,
     widgets: [],
+    drawerOpen: false,
+    drawerTitle: undefined,
+    drawerComponent: null,
     configureView: () => {
     },
     configureWidgets: () => {
     },
     ejectView: () => {
-    }
+    },
+    openDrawer: () => {
+    },
+    closeDrawer: () => {
+    },
 }

@@ -1,4 +1,4 @@
-import React, {createContext, PropsWithChildren, useCallback, useReducer} from "react";
+import React, {createContext, PropsWithChildren, ReactNode, useCallback, useReducer} from "react";
 import {initialViewState, ViewConfiguration, ViewState, SidebarWidgetsConfiguration} from "../lib/viewStateTypes";
 import {ViewStateActionType, viewStateReducer} from "../lib/viewStateReducer";
 import {Location, useLocation} from "react-router-dom";
@@ -21,6 +21,12 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
         }, [dispatch]),
         ejectView: useCallback(() => {
             dispatch({type: ViewStateActionType.EJECT_VIEW});
+        }, [dispatch]),
+        openDrawer: useCallback((component: ReactNode, title?: string) => {
+            dispatch({type: ViewStateActionType.OPEN_DRAWER, component, title});
+        }, [dispatch]),
+        closeDrawer: useCallback(() => {
+            dispatch({type: ViewStateActionType.CLOSE_DRAWER});
         }, [dispatch])
     }
 

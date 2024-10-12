@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
     Accordion,
     AccordionDetails,
@@ -7,6 +7,8 @@ import {
     AspectRatio,
     Avatar,
     Box,
+    Button,
+    ButtonGroup,
     Divider,
     DividerProps,
     Dropdown,
@@ -14,26 +16,33 @@ import {
     ListItem,
     ListItemContent,
     ListItemDecorator,
+    ListSubheader,
     Menu,
     MenuButton,
     MenuItem,
     Sheet,
+    SupportedColorScheme,
     Tooltip,
     Typography,
     useColorScheme
 } from "@mui/joy";
-import ColorSchemeToggle from "./ColorSchemeToggle";
 import {useActiveView} from "../lib/useActiveView";
 import {
+    Api as ApiIcon,
     CloudOff as OfflineIcon,
+    DarkMode as DarkModeIcon,
     Home as HomeIcon,
+    LightMode as LightModeIcon,
     LogoutSharp as LogoutIcon,
+    MoreVert as SettingsIcon,
     Person4 as UserIcon,
-    QuestionMark as PlaceholderIcon
+    QuestionMark as PlaceholderIcon,
+    ViewSidebarOutlined as SidebarIcon,
 } from "@mui/icons-material";
 import AppFeatures from "../features";
 import {useNavigate} from "react-router-dom";
-import version from "../version.json";
+import {SidebarPlacement} from "../lib/viewStateTypes";
+import ApiPlayground from "./ApiPlayground";
 
 const AppLogo: React.FC = () => {
     const {mode} = useColorScheme();
@@ -70,6 +79,109 @@ const SidebarDivider: React.FC<DividerProps> = ({sx, ...other}) => (
                  ...(Array.isArray(sx) ? sx : [sx])
              ]}/>
 );
+
+const SettingsMenu: React.FC = () => {
+    const {mode: colorScheme, setMode: setColorScheme} = useColorScheme();
+    const {sidebarPlacement, configureView, openDrawer} = useActiveView();
+    const [mounted, setMounted] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const handleColorSchemeButtonClick = (mode: SupportedColorScheme)=> {
+        if (mode !== colorScheme) {
+            setColorScheme(mode);
+        }
+        setOpen(false);
+    }
+
+    const handleSidebarPlacementButtonClick = (placement: SidebarPlacement) => {
+        if (placement !== sidebarPlacement) {
+            configureView({sidebarPlacement: placement});
+        }
+        setOpen(false);
+    }
+
+    const handleOpenApiPlaygroundItemClick = () => {
+        openDrawer(<ApiPlayground/>, "API playground");
+    }
+
+    return (
+        <Dropdown
+            open={open}
+            onOpenChange={(_, isOpen) => setOpen(isOpen)}>
+
+            <MenuButton
+                slots={{root: IconButton}}
+                slotProps={{root: {variant: "plain", size: "sm"}}}>
+                <SettingsIcon/>
+            </MenuButton>
+
+            <Menu size="sm">
+                <ListSubheader>Color scheme</ListSubheader>
+                <ListItem>
+                    {/*<ColorSchemeToggle size="sm"/>*/}
+                    <ButtonGroup
+                        disabled={!mounted}
+                        size="sm"
+                        buttonFlex={1}
+                        sx={{width: "100%", resize: "horizontal"}}>
+                        <Button
+                            onClick={() => handleColorSchemeButtonClick("light")}
+                            startDecorator={<LightModeIcon/>}
+                            sx={{backgroundColor: colorScheme === "light" ? "background.level1" : "initial"}}>
+                            Light
+                        </Button>
+                        <Button
+                            onClick={() => handleColorSchemeButtonClick("dark")}
+                            startDecorator={<DarkModeIcon/>}
+                            sx={{backgroundColor: colorScheme === "dark" ? "background.level1" : "initial"}}>
+                            Dark
+                        </Button>
+                    </ButtonGroup>
+                </ListItem>
+
+                <ListSubheader>Sidebar placement</ListSubheader>
+                <ListItem>
+                    <ButtonGroup
+                        size="sm"
+                        buttonFlex={1}
+                        sx={{width: "100%", resize: "horizontal"}}>
+                        <Button
+                            onClick={() => handleSidebarPlacementButtonClick("left")}
+                            startDecorator={<SidebarIcon sx={{transform: "rotate(180deg)"}}/>}
+                            sx={{backgroundColor: sidebarPlacement === "left" ? "background.level1" : "initial"}}>
+                        Left
+                        </Button>
+                        <Button
+                            onClick={() => handleSidebarPlacementButtonClick("right")}
+                            endDecorator={<SidebarIcon/>}
+                            sx={{backgroundColor: sidebarPlacement === "right" ? "background.level1" : "initial"}}>
+                            Right
+                        </Button>
+                    </ButtonGroup>
+                </ListItem>
+
+                {/* TODO should only be available in developer mode */}
+                <ListSubheader>Developer tools</ListSubheader>
+                <MenuItem onClick={() => handleOpenApiPlaygroundItemClick()}>
+                    <ListItemDecorator><ApiIcon/></ListItemDecorator>
+                    Open API playground
+                </MenuItem>
+
+                {/* TODO read app version from environment, provide BE information */}
+                <ListSubheader>About</ListSubheader>
+                <MenuItem>Version 1.2.3</MenuItem>
+                <MenuItem color="danger">
+                    <ListItemDecorator><OfflineIcon/></ListItemDecorator>
+                    Backend offline
+                </MenuItem>
+            </Menu>
+        </Dropdown>
+    );
+}
 
 const Sidebar: React.FC = () => {
     const {widgets, sidebarPlacement, sectionTitle, sectionKey} = useActiveView();
@@ -131,7 +243,7 @@ const Sidebar: React.FC = () => {
                                       "--ListItem-radius": "var(--joy-radius-sm)",
                                       display: "grid",
                                       gridTemplateColumns: "repeat(3, 100px)",
-                                      gridTemplateRows: `repeat(${Math.ceil((AppFeatures.length + 1) / 3)}, 100px) calc(2rem + 36px)`,
+                                      gridAutoRows: "100px",
                                   }}>
                                 <MenuItem orientation="vertical" onClick={() => navigate("/")}>
                                     <ListItemDecorator>
@@ -153,18 +265,6 @@ const Sidebar: React.FC = () => {
                                         {feature.displayName || feature.basename}
                                     </MenuItem>
                                 ))}
-
-                                <ListItem sx={{
-                                    gridColumn: "1 / span 3",
-                                    flexDirection: "column",
-                                    alignItems: "flex-start",
-                                    justifyContent: "flex-end"
-                                }}>
-                                    <Divider/>
-                                    <Typography noWrap
-                                                level="body-sm">{`FE Ver. ${version.version} (#${version.commit})`}</Typography>
-                                    <Typography noWrap level="body-sm" endDecorator={<OfflineIcon/>}>BE</Typography>
-                                </ListItem>
                             </Menu>
                         </Dropdown>
 
@@ -172,7 +272,7 @@ const Sidebar: React.FC = () => {
                             {sectionTitle || sectionKey || "!NoFeatTitle!"}
                         </Typography>
 
-                        <ColorSchemeToggle size="sm"/>
+                        <SettingsMenu/>
                     </Box>
 
                     {/*PINNED WIDGET*/}
