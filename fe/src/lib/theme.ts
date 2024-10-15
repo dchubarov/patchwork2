@@ -104,8 +104,21 @@ const defaultColorLabels: ColorLabelPalette = {
 
 const appTheme = extendTheme({
     fontFamily: {
-        display: "Noto Sans",
-        body: "Noto Sans",
+        display: "Roboto",
+        body: "Roboto",
+    },
+    typography: {
+        h1: {fontWeight: 700},
+        h2: {fontWeight: 500},
+        h3: {fontWeight: 500},
+        h4: {fontWeight: 500},
+        "title-lg": {fontWeight: 500},
+        "title-md": {fontWeight: 500},
+        "title-sm": {fontWeight: 400},
+        "body-lg": {},
+        "body-md": {},
+        "body-sm": {},
+        "body-xs": {fontWeight: 500},
     },
     colorSchemes: {
         light: {

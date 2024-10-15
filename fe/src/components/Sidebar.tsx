@@ -167,8 +167,14 @@ const SettingsMenu: React.FC = () => {
                     </ButtonGroup>
                 </ListItem>
 
+                <ListSubheader>Backend</ListSubheader>
+                <MenuItem color={backendStatus !== "online" ? "danger" : "neutral"}>
+                    <ListItemDecorator>
+                        {backendStatus === "online" ? <OnlineIcon/> : <OfflineIcon/>}
+                    </ListItemDecorator>
+                    {(backendInfo || "No info") + ": " + backendStatus}
+                </MenuItem>
                 {environment === "development" && <>
-                    <ListSubheader>Developer tools</ListSubheader>
                     <MenuItem onClick={() => handleOpenApiPlaygroundItemClick()}>
                         <ListItemDecorator><ApiIcon/></ListItemDecorator>
                         Open API playground
@@ -177,12 +183,6 @@ const SettingsMenu: React.FC = () => {
 
                 <ListSubheader>About</ListSubheader>
                 <MenuItem>{versionInfo}</MenuItem>
-                <MenuItem color={backendStatus !== "online" ? "danger" : "neutral"}>
-                    <ListItemDecorator>
-                        {backendStatus === "online" ? <OnlineIcon/> : <OfflineIcon/>}
-                    </ListItemDecorator>
-                    {backendInfo || "Backend is not available"}
-                </MenuItem>
             </Menu>
         </Dropdown>
     );
