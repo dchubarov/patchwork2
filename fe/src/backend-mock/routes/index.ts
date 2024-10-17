@@ -3,7 +3,9 @@ import {Response} from "miragejs";
 import userRoutes from "./userRoutes";
 import infoRoutes from "./infoRoutes";
 import authRoutes from "./authRoutes";
+import checklistRoutes from "./checklistRoutes";
 
+export const BadRequestResponse = new Response(400);
 export const NotFoundResponse = new Response(404);
 export const UnauthorizedResponse = new Response(401);
 
@@ -11,6 +13,7 @@ export default function configureRoutes(server: AppServer) {
     infoRoutes(server);
     authRoutes(server);
     userRoutes(server);
+    checklistRoutes(server);
     fallbackRoutes(server);
 }
 
