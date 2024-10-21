@@ -1,78 +1,75 @@
-import React, {useState} from "react";
+import React from "react";
+import {QueryKey, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {ChecklistsEndpoints} from "../api";
 import {Stack} from "@mui/joy";
 import ChecklistItem from "./ChecklistItem";
-import {ChecklistItemState, ChecklistItemResponse, ChecklistItemsResponse} from "../types";
-import useCall from "../../../lib/useCall";
+import {ChecklistItemState} from "../types";
 
-type ChecklistComponentType = React.FC<{
-    checklistName?: string
-}>;
+interface ChecklistProps {
+    checklistName?: string;
+}
 
-const Checklist: ChecklistComponentType = ({checklistName = "default"}) => {
-    const [items, setItems] = useState<ChecklistItemState[]>([]);
-    const [updateId, setUpdateId] = useState<number | undefined>();
+const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
+    const queryClient = useQueryClient();
+    const queryKey: QueryKey = ["checklist", checklistName];
 
-    const fetchItemsCall = useCall<{}, ChecklistItemsResponse>(
-        {path: `x/checklists/v1/checklist/${checklistName}`},
-        true, (data) => setItems(data.checklistItems));
+    const fetchItemsQuery = useQuery({
+        queryKey,
+        queryFn: ChecklistsEndpoints.fetchChecklistItems(checklistName),
+    });
 
-    const addItemCall = useCall<ChecklistItemState, ChecklistItemResponse>(
-        {path: `x/checklists/v1/checklist/${checklistName}`, method: "POST"},
-        false, (data) => addItem(data.checklistItem)
-    );
+    const addItemMutation = useMutation({
+        mutationFn: ChecklistsEndpoints.addChecklistItem(checklistName),
+        onSuccess: (addedItem) => {
+            queryClient.setQueryData<ChecklistItemState[]>(
+                queryKey,
+                (prev) =>
+                    Array.isArray(prev) ? [addedItem, ...prev] : [addedItem]);
 
-    const updateItemCall = useCall<ChecklistItemState, ChecklistItemResponse>(
-        {path: `x/checklists/v1/checklist/${checklistName}`, method: "PUT"},
-        false, (data) => updateItem(data.checklistItem)
-    );
-
-    const deleteItemCall = useCall(
-        {path: `x/checklists/v1/checklist/${checklistName}`, method: "DELETE"},
-        false, (data) => { deleteItem(data.checklistItem) }
-    );
-
-    const addItem = (item: ChecklistItemState) => {
-        if (item && item.note) {
-            setItems((prev) => ([item, ...prev]));
+            queryClient.invalidateQueries({queryKey: ["availableChecklists"]}).then();
         }
-    }
+    });
 
-    const fireUpdateItem = (item: ChecklistItemState) => {
-        setUpdateId(item.id);
-        if (item.note === "") {
-            deleteItemCall.execute({params: {id: item.id}});
-        } else {
-            updateItemCall.execute({data: item});
+    const updateItemMutation = useMutation({
+        mutationFn: ChecklistsEndpoints.updateChecklistItem(checklistName),
+        onSuccess: (updatedItem) => {
+            queryClient.setQueryData<ChecklistItemState[]>(
+                queryKey,
+                (prev) => Array.isArray(prev) ?
+                    prev.map((item) => item.id === updatedItem.id ? updatedItem : item) :
+                    prev);
         }
-    }
+    });
 
-    const updateItem = (updatedItem: ChecklistItemState) => {
-        if (updatedItem.id) {
-            setItems((prev) =>
-                prev.map((item) => item.id === updatedItem.id ? updatedItem : item));
+    const deleteItemMutation = useMutation({
+        mutationFn: ChecklistsEndpoints.deleteChecklistItem(checklistName),
+        onSuccess: (_, variables) => {
+            queryClient.setQueryData<ChecklistItemState[]>(
+                queryKey,
+                (prev) => Array.isArray(prev) ?
+                    prev.filter((item) => item.id !== variables) :
+                    prev);
         }
-    }
-
-    const deleteItem = (deletedItem: ChecklistItemState) => {
-        setItems((prev) =>
-            prev.filter((item) => item.id !== deletedItem.id))
-    }
+    });
 
     return (
         <Stack gap={1}>
             <ChecklistItem
                 defaultEdit
                 placeholder="Click here to add a new item"
-                busy={fetchItemsCall.status === "loading" || addItemCall.status === "loading"}
-                onUpdate={(item) => addItemCall.execute({data: item})}/>
+                busy={addItemMutation.isPending}
+                onUpdate={(addedItem) => addItemMutation.mutate(addedItem)}/>
 
-            {items.map((item) => (
+            {fetchItemsQuery.isSuccess && fetchItemsQuery.data.map(item => (
                 <ChecklistItem
                     key={item.id}
                     checklistItem={item}
                     placeholder="No content"
-                    busy={(updateItemCall.status === "loading" || deleteItemCall.status === "loading") && updateId === item.id}
-                    onUpdate={fireUpdateItem}/>
+                    busy={(updateItemMutation.isPending && updateItemMutation.variables.id === item.id) ||
+                        (deleteItemMutation.isPending && deleteItemMutation.variables === item.id)}
+                    onUpdate={(updatedItem) => updatedItem.note !== "" ?
+                        updateItemMutation.mutate(updatedItem) :
+                        deleteItemMutation.mutate(item.id)}/>
             ))}
         </Stack>
     );

@@ -7,6 +7,16 @@ import {BadRequestResponse} from "./index";
 const checklistRouteBasename = "x/checklists/v1/checklist/:checklistName";
 
 export default function checklistRoutes(server: AppServer) {
+    server.get("x/checklists/v1", async (schema, _) => {
+        const uniqueChecklists = schema.all("checklistItem").models
+            .map((item) => item.list)
+            .filter((item, index, arr) => arr.indexOf(item) === index);
+
+        return {
+            "availableChecklists": uniqueChecklists.indexOf("default") < 0 ? ["default", ...uniqueChecklists] : uniqueChecklists
+        }
+    });
+
     server.get(checklistRouteBasename, async (schema, request) => {
         return schema.where("checklistItem", (item) => item.list === request.params.checklistName)
             .sort((a, b) => {

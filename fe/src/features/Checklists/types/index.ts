@@ -14,3 +14,7 @@ export interface ChecklistItemsResponse {
 export interface ChecklistItemResponse {
     checklistItem: ChecklistItemState;
 }
+
+export interface AvailableChecklistsResponse {
+    availableChecklists: string[];
+}

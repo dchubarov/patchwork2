@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import {RouterProvider} from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import {buildRouter} from "./lib/routing";
+import {QueryClientProvider} from "@tanstack/react-query";
+import queryClient from "./lib/query";
 import App from "./App";
 import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
@@ -14,9 +16,11 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <EnvironmentProvider>
-            <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
-        </EnvironmentProvider>
+        <QueryClientProvider client={queryClient}>
+            <EnvironmentProvider>
+                <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
+            </EnvironmentProvider>
+        </QueryClientProvider>
     </React.StrictMode>
 );
 
