@@ -29,7 +29,7 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
     useEffect(() => {
         const timer = setInterval(() => {
             refreshBackendInfo();
-        }, 5000);
+        }, 30000);
 
         return () => {
             clearInterval(timer);

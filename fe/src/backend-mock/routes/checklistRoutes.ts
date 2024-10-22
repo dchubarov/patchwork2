@@ -4,10 +4,11 @@ import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ITEM} from "../domain/checklistEntity";
 import {BadRequestResponse} from "./index";
 
-const checklistRouteBasename = "x/checklists/v1/checklist/:checklistName";
+const checklistRouteBasename = "/checklists/v1";
+const checklistRouteList = checklistRouteBasename + "/checklist/:checklistName";
 
 export default function checklistRoutes(server: AppServer) {
-    server.get("x/checklists/v1", async (schema, _) => {
+    server.get(checklistRouteBasename, async (schema, _) => {
         const uniqueChecklists = schema.all("checklistItem").models
             .map((item) => item.list)
             .filter((item, index, arr) => arr.indexOf(item) === index);
@@ -17,7 +18,7 @@ export default function checklistRoutes(server: AppServer) {
         }
     });
 
-    server.get(checklistRouteBasename, async (schema, request) => {
+    server.get(checklistRouteList, async (schema, request) => {
         return schema.where("checklistItem", (item) => item.list === request.params.checklistName)
             .sort((a, b) => {
                 const t1 = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
@@ -26,7 +27,7 @@ export default function checklistRoutes(server: AppServer) {
             });
     });
 
-    server.post(checklistRouteBasename, async (schema, request) => {
+    server.post(checklistRouteList, async (schema, request) => {
         const json = JSON.parse(request.requestBody);
         const created = server.create(CHECKLIST_ITEM, {
             list: request.params.checklistName,
@@ -39,7 +40,7 @@ export default function checklistRoutes(server: AppServer) {
         return created;
     });
 
-    server.put(checklistRouteBasename, async (schema, request) => {
+    server.put(checklistRouteList, async (schema, request) => {
         const json = JSON.parse(request.requestBody);
         schema.db.checklistItems.update(json.id, {
             list: request.params.checklistName,
@@ -53,7 +54,7 @@ export default function checklistRoutes(server: AppServer) {
         return schema.find(CHECKLIST_ITEM, json.id);
     });
 
-    server.delete(checklistRouteBasename, async (schema, request) => {
+    server.delete(checklistRouteList, async (schema, request) => {
         const id = request.queryParams.id;
         if (id === undefined || typeof id !== "string")
             return BadRequestResponse;

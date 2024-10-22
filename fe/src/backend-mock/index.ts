@@ -1,11 +1,13 @@
-import {createServer, JSONAPISerializer} from "miragejs";
+import _ from "lodash";
+import {createServer, RestSerializer} from "miragejs";
 import configureRoutes from "./routes";
 import domain from "./domain";
 
-const defaultSerializer = JSONAPISerializer;
-const baseUrl = process.env.REACT_APP_API_ROOT || "api";
+const baseUrl = "/" + _.trim(process.env.REACT_APP_API_ROOT || "api", "/");
+const defaultSerializer = RestSerializer;
 
 createServer({
+    environment: process.env.REACT_APP_ENV === "development" ? "development" : "production",
     models: domain.models,
     factories: domain.factories,
 
@@ -19,7 +21,6 @@ createServer({
     },
 
     routes() {
-        this.namespace = baseUrl;
-        configureRoutes(this);
+        configureRoutes(this, baseUrl);
     },
 });
