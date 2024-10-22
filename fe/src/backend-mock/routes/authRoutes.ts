@@ -10,6 +10,13 @@ export default function authRoutes(server: AppServer) {
             const user = schema.findBy(USER_ENTITY_KEY,
                 (record) => record.username === json.login || record.email === json.login)
 
+            /*
+            if (request.queryParams.noCookie === undefined) {
+                const cookieExpiration = new Date(new Date().getTime() + 24 * 3600 * 1000);
+                document.cookie = `auth-token=123456; path=/; expires=${cookieExpiration.toUTCString()}`;
+            }
+            */
+
             if (user) {
                 return new Response(200, undefined, {
                     user: {

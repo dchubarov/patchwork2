@@ -95,6 +95,7 @@ const Drawer: React.FC = () => {
             anchor={sidebarPlacement === "left" ? "right" : "left"}
             onClose={closeDrawer}
             sx={{
+                "--Drawer-horizontalSize": "clamp(250px, 520px, calc(100vw - var(--Sidebar-width)))",
                 zIndex: 1100,
             }}>
             <ModalClose/>

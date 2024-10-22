@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, {useRef, useState} from "react";
 import {
     Box,
@@ -13,7 +14,7 @@ import {
     Textarea,
     Typography
 } from "@mui/joy";
-import axios, {AxiosRequestConfig} from "axios";
+import {AxiosRequestConfig} from "axios";
 import "axios-retry";
 import {
     ArrowDropDown as DropdownIcon,
@@ -22,6 +23,7 @@ import {
     Warning as WarningIcon
 } from "@mui/icons-material";
 import {labelColorsByName} from "../lib/theme";
+import apiClient, {apiUrl as baseApiUrl} from "../lib/apiClient";
 
 type RequestState =
     | { status: "empty" }
@@ -88,7 +90,7 @@ const ApiPlayground: React.FC = () => {
     const [requestMethod, setRequestMethod] = useState<RequestMethodName>("GET");
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
-    const apiPrefix = process.env.REACT_APP_API_ROOT + "/";
+    const apiPrefix = baseApiUrl();
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});
@@ -105,7 +107,7 @@ const ApiPlayground: React.FC = () => {
 
         let requestConfig: AxiosRequestConfig = {
             method: requestMethod,
-            url: apiPrefix + apiUrl,
+            url: baseApiUrl(apiUrl),
             "axios-retry": {
                 retries: 3,
             }
@@ -123,7 +125,7 @@ const ApiPlayground: React.FC = () => {
         }
 
         const start = performance.now();
-        axios.request(requestConfig)
+        apiClient.request(requestConfig)
             .then((response) =>
                 setRequestResult({
                     status: "success",
@@ -148,7 +150,7 @@ const ApiPlayground: React.FC = () => {
                     <Input
                         autoFocus
                         value={apiUrl}
-                        name="api-url"
+                        name={`api-url-${_.lowerCase(requestMethod)}`}
                         slotProps={{input: {ref: apiUrlInputRef}}}
                         disabled={requestResult.status === "loading"}
                         onChange={(e) => setApiUrl(e.target.value.trim())}
@@ -156,7 +158,7 @@ const ApiPlayground: React.FC = () => {
                             <RequestMethodSelector
                                 method={requestMethod}
                                 onChange={handleRequestMethodChange}/>
-                            {apiPrefix}
+                            {_.trimStart(apiPrefix, "/") + "/"}
                         </>}
                         endDecorator={
                             <IconButton

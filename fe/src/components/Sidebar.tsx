@@ -38,6 +38,7 @@ import {
     Person4 as UserIcon,
     QuestionMark as PlaceholderIcon,
     ViewSidebarOutlined as SidebarIcon,
+    Webhook as ReactQueryDevtoolsIcon,
 } from "@mui/icons-material";
 import AppFeatures from "../features";
 import {useNavigate} from "react-router-dom";
@@ -45,6 +46,8 @@ import {SidebarPlacement} from "../lib/viewStateTypes";
 import ApiPlayground from "./ApiPlayground";
 import {useEnvironment} from "../providers/EnvironmentProvider";
 import {useActiveView} from "../providers/ActiveViewProvider";
+import {ReactQueryDevtoolsPanel} from "@tanstack/react-query-devtools";
+import {useQueryClient} from "@tanstack/react-query";
 
 const AppLogo: React.FC = () => {
     const {mode} = useColorScheme();
@@ -88,6 +91,7 @@ const SettingsMenu: React.FC = () => {
     const [mounted, setMounted] = useState(false);
     const [open, setOpen] = useState(false);
     const {environment, versionInfo, backendStatus, backendInfo} = useEnvironment();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         setMounted(true);
@@ -109,6 +113,10 @@ const SettingsMenu: React.FC = () => {
 
     const handleOpenApiPlaygroundItemClick = () => {
         openDrawer(<ApiPlayground/>, "API playground");
+    }
+
+    const handleOpenReactQueryDevtoolsItemClick = () => {
+        openDrawer(<ReactQueryDevtoolsPanel client={queryClient} style={{minHeight: "100%"}}/>, "React Query Devtools");
     }
 
     return (
@@ -167,19 +175,25 @@ const SettingsMenu: React.FC = () => {
                     </ButtonGroup>
                 </ListItem>
 
+                {environment === "development" && <>
+                    <ListSubheader>Developer</ListSubheader>
+                    <MenuItem onClick={handleOpenApiPlaygroundItemClick}>
+                        <ListItemDecorator><ApiIcon/></ListItemDecorator>
+                        Open API playground
+                    </MenuItem>
+                    <MenuItem onClick={handleOpenReactQueryDevtoolsItemClick}>
+                        <ListItemDecorator><ReactQueryDevtoolsIcon/></ListItemDecorator>
+                        Open ReactQuery Devtools
+                    </MenuItem>
+                </>}
+
                 <ListSubheader>Backend</ListSubheader>
                 <MenuItem color={backendStatus !== "online" ? "danger" : "neutral"}>
                     <ListItemDecorator>
                         {backendStatus === "online" ? <OnlineIcon/> : <OfflineIcon/>}
                     </ListItemDecorator>
-                    {(backendInfo || "No info") + ": " + backendStatus}
+                    {backendInfo ? `${backendInfo}: ${backendStatus}` : "Backend is not available"}
                 </MenuItem>
-                {environment === "development" && <>
-                    <MenuItem onClick={() => handleOpenApiPlaygroundItemClick()}>
-                        <ListItemDecorator><ApiIcon/></ListItemDecorator>
-                        Open API playground
-                    </MenuItem>
-                </>}
 
                 <ListSubheader>About</ListSubheader>
                 <MenuItem>{versionInfo}</MenuItem>
