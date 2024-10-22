@@ -14,7 +14,7 @@ import {
     Textarea,
     Typography
 } from "@mui/joy";
-import axios, {AxiosRequestConfig} from "axios";
+import {AxiosRequestConfig} from "axios";
 import "axios-retry";
 import {
     ArrowDropDown as DropdownIcon,
@@ -23,7 +23,7 @@ import {
     Warning as WarningIcon
 } from "@mui/icons-material";
 import {labelColorsByName} from "../lib/theme";
-import {apiUrl as baseApiUrl} from "../lib/apiClient";
+import apiClient, {apiUrl as baseApiUrl} from "../lib/apiClient";
 
 type RequestState =
     | { status: "empty" }
@@ -125,7 +125,7 @@ const ApiPlayground: React.FC = () => {
         }
 
         const start = performance.now();
-        axios.request(requestConfig)
+        apiClient.request(requestConfig)
             .then((response) =>
                 setRequestResult({
                     status: "success",
