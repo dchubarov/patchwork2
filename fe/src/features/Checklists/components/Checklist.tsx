@@ -1,9 +1,8 @@
 import React from "react";
-import {QueryKey, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {ChecklistsEndpoints} from "../api";
 import {Stack} from "@mui/joy";
 import ChecklistItem from "./ChecklistItem";
-import {ChecklistItemState} from "../types";
 
 interface ChecklistProps {
     checklistName?: string;
@@ -11,18 +10,18 @@ interface ChecklistProps {
 
 const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
     const queryClient = useQueryClient();
-    const queryKey: QueryKey = ["checklist", checklistName];
-
-    const fetchItemsQuery = useQuery({
-        queryKey,
+    const opts = queryOptions({
+        queryKey: ["x/checklists/v1/checklist", checklistName],
         queryFn: ChecklistsEndpoints.fetchChecklistItems(checklistName),
     });
+
+    const fetchItemsQuery = useQuery(opts);
 
     const addItemMutation = useMutation({
         mutationFn: ChecklistsEndpoints.addChecklistItem(checklistName),
         onSuccess: (addedItem) => {
-            queryClient.setQueryData<ChecklistItemState[]>(
-                queryKey,
+            queryClient.setQueryData(
+                opts.queryKey,
                 (prev) =>
                     Array.isArray(prev) ? [addedItem, ...prev] : [addedItem]);
 
@@ -33,8 +32,8 @@ const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
     const updateItemMutation = useMutation({
         mutationFn: ChecklistsEndpoints.updateChecklistItem(checklistName),
         onSuccess: (updatedItem) => {
-            queryClient.setQueryData<ChecklistItemState[]>(
-                queryKey,
+            queryClient.setQueryData(
+                opts.queryKey,
                 (prev) => Array.isArray(prev) ?
                     prev.map((item) => item.id === updatedItem.id ? updatedItem : item) :
                     prev);
@@ -44,8 +43,8 @@ const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
     const deleteItemMutation = useMutation({
         mutationFn: ChecklistsEndpoints.deleteChecklistItem(checklistName),
         onSuccess: (_, variables) => {
-            queryClient.setQueryData<ChecklistItemState[]>(
-                queryKey,
+            queryClient.setQueryData(
+                opts.queryKey,
                 (prev) => Array.isArray(prev) ?
                     prev.filter((item) => item.id !== variables) :
                     prev);

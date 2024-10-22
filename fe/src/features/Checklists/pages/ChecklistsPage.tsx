@@ -9,14 +9,14 @@ import {useQuery} from "@tanstack/react-query";
 import {ChecklistsEndpoints} from "../api";
 
 const AvailableChecklistsWidget: React.FC = () => {
-    const fetchAvailableChecklistsQuery = useQuery({
-        queryKey: ["availableChecklists"],
+    const {isSuccess, data: checklistNames} = useQuery({
+        queryKey: ["x/checklists/availableChecklists"],
         queryFn: ChecklistsEndpoints.fetchChecklistNames()
     });
 
     return (
         <List size="sm" sx={{pl: 2}}>
-            {fetchAvailableChecklistsQuery.isSuccess && fetchAvailableChecklistsQuery.data.map((checklist) => (
+            {isSuccess && checklistNames.map((checklist) => (
                 <ListItem key={checklist}>
                     <ListItemContent>
                         <Link component={RouterLink} typography="body-sm"

@@ -1,29 +1,32 @@
-import axios, {AxiosResponse} from "axios";
 import {AvailableChecklistsResponse, ChecklistItemResponse, ChecklistItemsResponse, ChecklistItemState} from "../types";
+import {QueryFunctionContext} from "@tanstack/react-query";
+import apiClient from "../../../lib/apiClient";
+
+const basename = "/x/checklists/v1";
 
 export const ChecklistsEndpoints = {
     fetchChecklistNames: () =>
-        async () => axios
-            .get<AvailableChecklistsResponse>(`/api/x/checklists/v1`)
+        async ({signal}: QueryFunctionContext) => apiClient
+            .get<AvailableChecklistsResponse>(basename, {signal})
             .then(response => response.data.availableChecklists),
 
     fetchChecklistItems: (checklistName: string) =>
-        async () => axios
-            .get<ChecklistItemsResponse>(`/api/x/checklists/v1/checklist/${checklistName}`)
+        async ({signal}: QueryFunctionContext) => apiClient
+            .get<ChecklistItemsResponse>(`${basename}/checklist/${checklistName}`, {signal})
             .then(response => response.data.checklistItems),
 
     addChecklistItem: (checklistName: string) =>
-        async (addedItem: ChecklistItemState) => axios
-            .post<ChecklistItemResponse, AxiosResponse<ChecklistItemResponse>, ChecklistItemState>(`/api/x/checklists/v1/checklist/${checklistName}`, addedItem)
+        async (addedItem: ChecklistItemState) => apiClient
+            .post<ChecklistItemResponse>(`${basename}/${checklistName}`, addedItem)
             .then(response => response.data.checklistItem),
 
     updateChecklistItem: (checklistName: string) =>
-        async (updatedItem: ChecklistItemState) => axios
-            .put<ChecklistItemResponse, AxiosResponse<ChecklistItemResponse>, ChecklistItemState>(`/api/x/checklists/v1/checklist/${checklistName}`, updatedItem)
+        async (updatedItem: ChecklistItemState) => apiClient
+            .put<ChecklistItemResponse>(`${basename}/checklist/${checklistName}`, updatedItem)
             .then(response => response.data.checklistItem),
 
     deleteChecklistItem: (checklistName: string) =>
-        async (deletedItemId?: number) => axios
-            .delete<ChecklistItemResponse>(`/api/x/checklists/v1/checklist/${checklistName}?id=${deletedItemId}`)
+        async (deletedItemId?: number) => apiClient
+            .delete<ChecklistItemResponse>(`${basename}/checklist/${checklistName}?id=${deletedItemId}`)
             .then(response => response.data.checklistItem),
 }
