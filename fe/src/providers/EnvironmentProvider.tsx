@@ -1,4 +1,4 @@
-import React, {createContext, PropsWithChildren, useContext, useReducer} from "react";
+import React, {createContext, PropsWithChildren, useContext, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {EnvironmentState, EnvironmentStateActionType, environmentStateReducer} from "../lib/env";
 import apiClient, {apiUrl} from "../lib/apiClient";
@@ -21,35 +21,37 @@ const initialEnvironmentState: EnvironmentState = {
     backendStatus: "unknown",
 }
 
-const MONITORING_INTERVAL_MILLIS = 30_000;
+const SERVER_MONITORING_INTERVAL_MILLIS = 30_000;
 
 const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
     const [state, dispatch] = useReducer(environmentStateReducer, initialEnvironmentState);
-    useQuery({
+
+    // Backend monitoring
+    const {status: serverInfoStatus, data: serverInfo} = useQuery({
         queryKey: ["/server-info"],
         queryFn: async () => {
             return apiClient
                 .get(apiUrl("/server-info"))
                 .then((response => response.data))
-                .then((data) => {
-                    dispatch({
-                        type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS,
-                        backendStatus: "online",
-                        backendInfo: data.server
-                    });
-                    return data;
-                })
-                .catch(() => {
-                    dispatch({
-                        type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS,
-                        backendStatus: "offline"
-                    });
-                    return null;
-                });
         },
-        refetchInterval: MONITORING_INTERVAL_MILLIS,
-        staleTime: 0
+        refetchInterval: SERVER_MONITORING_INTERVAL_MILLIS,
+        staleTime: SERVER_MONITORING_INTERVAL_MILLIS
     });
+
+    useEffect(() => {
+        if (serverInfoStatus === "success") {
+            dispatch({
+                type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS,
+                backendInfo: serverInfo.server,
+                backendStatus: "online"
+            });
+        } else if (serverInfoStatus === "error") {
+            dispatch({
+                type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS,
+                backendStatus: "offline"
+            });
+        }
+    }, [serverInfoStatus, serverInfo]);
 
     return (
         <EnvironmentContext.Provider value={state}>

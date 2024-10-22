@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import {Sheet, Typography} from "@mui/joy";
 import InfoIcon from "@mui/icons-material/Info";
 import PageLayout from "./components/PageLayout";
-import "axios-retry";
 import {useActiveView} from "./providers/ActiveViewProvider";
 
 const SampleView: React.FC = () => {

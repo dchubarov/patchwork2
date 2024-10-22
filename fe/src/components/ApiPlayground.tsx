@@ -15,7 +15,6 @@ import {
     Typography
 } from "@mui/joy";
 import {AxiosRequestConfig} from "axios";
-import "axios-retry";
 import {
     ArrowDropDown as DropdownIcon,
     CheckCircleOutline as SuccessIcon,
@@ -108,9 +107,6 @@ const ApiPlayground: React.FC = () => {
         let requestConfig: AxiosRequestConfig = {
             method: requestMethod,
             url: baseApiUrl(apiUrl),
-            "axios-retry": {
-                retries: 3,
-            }
         }
 
         if (RequestMethod[requestMethod].payload) {
