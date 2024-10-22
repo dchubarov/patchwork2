@@ -6,12 +6,12 @@ import {useActiveView} from "../../../providers/ActiveViewProvider";
 import Checklist from "../components/Checklist";
 import {Link, List, ListItem, ListItemContent} from "@mui/joy";
 import {useQuery} from "@tanstack/react-query";
-import {ChecklistsEndpoints} from "../api";
+import {ChecklistsApi} from "../api";
 
 const AvailableChecklistsWidget: React.FC = () => {
     const {isSuccess, data: checklistNames} = useQuery({
         queryKey: ["x/checklists/availableChecklists"],
-        queryFn: ChecklistsEndpoints.fetchChecklistNames()
+        queryFn: ChecklistsApi.fetchChecklistNames()
     });
 
     return (

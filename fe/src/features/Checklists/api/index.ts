@@ -4,7 +4,7 @@ import apiClient, {apiExtensionUrl} from "../../../lib/apiClient";
 
 const basename = apiExtensionUrl("checklists", "v1");
 
-export const ChecklistsEndpoints = {
+export const ChecklistsApi = {
     fetchChecklistNames: () =>
         async ({signal}: QueryFunctionContext) => apiClient
             .get<AvailableChecklistsResponse>(basename, {signal})

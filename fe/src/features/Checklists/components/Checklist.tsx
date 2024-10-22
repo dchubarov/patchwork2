@@ -1,6 +1,6 @@
 import React from "react";
 import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {ChecklistsEndpoints} from "../api";
+import {ChecklistsApi} from "../api";
 import {Stack} from "@mui/joy";
 import ChecklistItem from "./ChecklistItem";
 
@@ -12,13 +12,13 @@ const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
     const queryClient = useQueryClient();
     const opts = queryOptions({
         queryKey: ["x/checklists/v1/checklist", checklistName],
-        queryFn: ChecklistsEndpoints.fetchChecklistItems(checklistName),
+        queryFn: ChecklistsApi.fetchChecklistItems(checklistName),
     });
 
     const fetchItemsQuery = useQuery(opts);
 
     const addItemMutation = useMutation({
-        mutationFn: ChecklistsEndpoints.addChecklistItem(checklistName),
+        mutationFn: ChecklistsApi.addChecklistItem(checklistName),
         onSuccess: (addedItem) => {
             queryClient.setQueryData(
                 opts.queryKey,
@@ -30,7 +30,7 @@ const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
     });
 
     const updateItemMutation = useMutation({
-        mutationFn: ChecklistsEndpoints.updateChecklistItem(checklistName),
+        mutationFn: ChecklistsApi.updateChecklistItem(checklistName),
         onSuccess: (updatedItem) => {
             queryClient.setQueryData(
                 opts.queryKey,
@@ -41,7 +41,7 @@ const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
     });
 
     const deleteItemMutation = useMutation({
-        mutationFn: ChecklistsEndpoints.deleteChecklistItem(checklistName),
+        mutationFn: ChecklistsApi.deleteChecklistItem(checklistName),
         onSuccess: (_, variables) => {
             queryClient.setQueryData(
                 opts.queryKey,

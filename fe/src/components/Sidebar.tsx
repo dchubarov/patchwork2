@@ -112,11 +112,17 @@ const SettingsMenu: React.FC = () => {
     }
 
     const handleOpenApiPlaygroundItemClick = () => {
-        openDrawer(<ApiPlayground/>, "API playground");
+        openDrawer(
+            <ApiPlayground/>,
+            "API playground"
+        );
     }
 
     const handleOpenReactQueryDevtoolsItemClick = () => {
-        openDrawer(<ReactQueryDevtoolsPanel client={queryClient} style={{minHeight: "100%"}}/>, "React Query Devtools");
+        openDrawer(
+            <ReactQueryDevtoolsPanel client={queryClient} style={{minHeight: "100%", height: "100%"}}/>,
+            "React Query Devtools"
+        );
     }
 
     return (
@@ -183,7 +189,7 @@ const SettingsMenu: React.FC = () => {
                     </MenuItem>
                     <MenuItem onClick={handleOpenReactQueryDevtoolsItemClick}>
                         <ListItemDecorator><ReactQueryDevtoolsIcon/></ListItemDecorator>
-                        Open ReactQuery Devtools
+                        Open React Query Devtools
                     </MenuItem>
                 </>}
 
