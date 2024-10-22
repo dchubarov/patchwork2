@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, {useRef, useState} from "react";
 import {
     Box,
@@ -22,6 +23,7 @@ import {
     Warning as WarningIcon
 } from "@mui/icons-material";
 import {labelColorsByName} from "../lib/theme";
+import {apiUrl as baseApiUrl} from "../lib/apiClient";
 
 type RequestState =
     | { status: "empty" }
@@ -88,7 +90,7 @@ const ApiPlayground: React.FC = () => {
     const [requestMethod, setRequestMethod] = useState<RequestMethodName>("GET");
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
-    const apiPrefix = process.env.REACT_APP_API_ROOT + "/";
+    const apiPrefix = baseApiUrl();
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});
@@ -105,7 +107,7 @@ const ApiPlayground: React.FC = () => {
 
         let requestConfig: AxiosRequestConfig = {
             method: requestMethod,
-            url: apiPrefix + apiUrl,
+            url: baseApiUrl(apiUrl),
             "axios-retry": {
                 retries: 3,
             }
@@ -156,7 +158,7 @@ const ApiPlayground: React.FC = () => {
                             <RequestMethodSelector
                                 method={requestMethod}
                                 onChange={handleRequestMethodChange}/>
-                            {apiPrefix}
+                            {_.trimStart(apiPrefix, "/") + "/"}
                         </>}
                         endDecorator={
                             <IconButton

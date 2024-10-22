@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios, {AxiosResponse, Method} from "axios";
 import {logger} from "./logging";
+import {apiUrl} from "./apiClient";
 
 export interface RequestData<D = any> {
     params?: any;
@@ -33,6 +34,9 @@ interface RequestLifecycle<D> {
     endpoint: Endpoint<D>;
 }
 
+/**
+ * @deprecated
+ */
 export default function useCall<D = any, R = any>(
     endpoint: Endpoint<D>,
     start: boolean = false,
@@ -97,7 +101,7 @@ function executeRequest<D, R>(
 
     const start = performance.now();
     axios.request<R, AxiosResponse<R>, D>({
-        url: process.env.REACT_APP_API_ROOT + "/" + endpoint.path,
+        url: apiUrl(endpoint.path),
         method: (endpoint.method as Method) || (endpoint.data ? "POST" : "GET"),
         params: endpoint.params,
         data: endpoint.data

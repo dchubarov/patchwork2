@@ -1,9 +1,8 @@
-import _ from "lodash";
 import {createServer, RestSerializer} from "miragejs";
+import {apiUrl} from "../lib/apiClient";
 import configureRoutes from "./routes";
 import domain from "./domain";
 
-const baseUrl = "/" + _.trim(process.env.REACT_APP_API_ROOT || "api", "/");
 const defaultSerializer = RestSerializer;
 
 createServer({
@@ -21,6 +20,6 @@ createServer({
     },
 
     routes() {
-        configureRoutes(this, baseUrl);
+        configureRoutes(this, apiUrl());
     },
 });

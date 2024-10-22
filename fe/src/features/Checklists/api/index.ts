@@ -1,8 +1,8 @@
 import {AvailableChecklistsResponse, ChecklistItemResponse, ChecklistItemsResponse, ChecklistItemState} from "../types";
 import {QueryFunctionContext} from "@tanstack/react-query";
-import apiClient from "../../../lib/apiClient";
+import apiClient, {apiExtensionUrl} from "../../../lib/apiClient";
 
-const basename = "/x/checklists/v1";
+const basename = apiExtensionUrl("checklists", "v1");
 
 export const ChecklistsEndpoints = {
     fetchChecklistNames: () =>
@@ -17,7 +17,7 @@ export const ChecklistsEndpoints = {
 
     addChecklistItem: (checklistName: string) =>
         async (addedItem: ChecklistItemState) => apiClient
-            .post<ChecklistItemResponse>(`${basename}/${checklistName}`, addedItem)
+            .post<ChecklistItemResponse>(`${basename}/checklist/${checklistName}`, addedItem)
             .then(response => response.data.checklistItem),
 
     updateChecklistItem: (checklistName: string) =>
