@@ -150,7 +150,7 @@ const ApiPlayground: React.FC = () => {
                     <Input
                         autoFocus
                         value={apiUrl}
-                        name="api-url"
+                        name={`api-url-${_.lowerCase(requestMethod)}`}
                         slotProps={{input: {ref: apiUrlInputRef}}}
                         disabled={requestResult.status === "loading"}
                         onChange={(e) => setApiUrl(e.target.value.trim())}
