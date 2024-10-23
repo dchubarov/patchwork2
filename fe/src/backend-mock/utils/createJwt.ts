@@ -1,5 +1,26 @@
+/**
+ * See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
+ */
+export interface JwtPayload {
+    /** Issuer */
+    iss?: string;
+    /** Subject */
+    sub?: string;
+    /** Audience */
+    aud?: string;
+    /** Not before time */
+    nbf?: number;
+    /** Issued at time */
+    iat?: number;
+    /** Expiration time */
+    exp: number;
+    /** JWT ID */
+    jti?: string;
 
-export async function createJWT(payload: any, secret: string): Promise<string> {
+    [claim: string]: string | number | boolean | undefined;
+}
+
+export async function createJWT(payload: JwtPayload, secret: string): Promise<string> {
     const encoder = new TextEncoder();
 
     // Create the header
