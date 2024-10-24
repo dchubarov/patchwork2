@@ -1,11 +1,14 @@
 import _ from "lodash";
 import React, {createContext, PropsWithChildren, useContext, useEffect, useRef, useState} from "react";
-import {AxiosInstance, AxiosResponse} from "axios";
+import {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
 import {decodeJwt} from "../lib/jwt";
 import {apiUrl} from "../lib/apiClient";
 import {AuthState, LoginResponse, UserCredentials} from "../lib/auth";
 import {useApiClient} from "./EnvironmentProvider";
+
+const MAX_REFRESH_RETRY_COUNT = 3;
+const INITIAL_REFRESH_DELAY_MILLIS = 15;
 
 const refreshRequest = (client: AxiosInstance) =>
     async () => client
@@ -35,7 +38,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     const apiClient = useApiClient();
     const accessTokenRef = useRef<string | null>(null);
     const requestInterceptorRef = useRef<number | null>(null);
-    const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(_.now() + 250); // TODO initial delay
+    const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(0); // causes immediate refresh attempt
 
     const handleSuccessfulLogin = (data: LoginResponse) => {
         if (data.accessToken) {
@@ -79,6 +82,14 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         }
     }
 
+    const shouldRetryRefreshAttempt = (failureCount: number, error: Error): boolean => {
+        // Error 404 excluded for now since if mock backend isn't ready yet, it will return 404, so we need to retry.
+        if (error instanceof AxiosError && [-1, 400, 401/*, 404*/].includes(error.status || -1)) {
+            return false;
+        }
+        return (failureCount < MAX_REFRESH_RETRY_COUNT);
+    }
+
     const setPendingState = () => {
         setContext(prev => ({
             ...prev,
@@ -92,6 +103,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         onMutate: setPendingState,
         onSuccess: handleSuccessfulLogin,
         onError: handleLogout,
+        retry: shouldRetryRefreshAttempt,
         gcTime: 0,
     });
 
@@ -115,20 +127,20 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     useEffect(() => {
         let timeoutId = null;
         if (tokenExpiresMillis !== null) {
+            const timeout = tokenExpiresMillis - _.now();
             timeoutId = setTimeout(() => {
                 doRefresh();
-            }, tokenExpiresMillis - _.now());
+            }, timeout <= 0 ? INITIAL_REFRESH_DELAY_MILLIS : timeout);
         }
-        return () => {
-            if (timeoutId !== null) {
-                clearTimeout(timeoutId);
-            }
+
+        if (timeoutId !== null) {
+            return () => clearTimeout(timeoutId);
         }
     }, [tokenExpiresMillis, doRefresh]);
 
     const createInitialState = () => ({
         user: null,
-        isPending: false,
+        isPending: true, // because an attempt to refresh is always made on mount (see useEffect)
         isAuthenticated: false,
         login: (credentials: UserCredentials) => {
             doLogin(credentials);
