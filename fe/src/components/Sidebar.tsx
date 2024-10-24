@@ -41,7 +41,6 @@ import {
     Login as LoginIcon,
     LogoutSharp as LogoutIcon,
     MoreVert as SettingsIcon,
-    Person4 as UserIcon,
     QuestionMark as PlaceholderIcon,
     ViewSidebarOutlined as SidebarIcon,
     Webhook as ReactQueryDevtoolsIcon,
@@ -289,11 +288,15 @@ const UserPanel: React.FC = () => {
     const [loginDrawerOpen, setLoginDrawerOpen] = useState(false);
 
     let userDisplayName = "";
+    let userStringAvatar = "";
     if (isAuthenticated && user) {
         if (user.firstname || user.lastname) {
-            userDisplayName = [user.firstname, user.lastname].filter(value => value !== undefined).join(" ");
+            const names = [user.firstname, user.lastname]
+            userDisplayName = names.filter(value => value !== undefined).join(" ");
+            userStringAvatar = names.map(value => value ? value.substring(0, 1).toUpperCase() : "").join("");
         } else {
             userDisplayName = user.username;
+            userStringAvatar = user.username.substring(0, 1).toUpperCase();
         }
     }
 
@@ -311,9 +314,12 @@ const UserPanel: React.FC = () => {
             gap: 1,
             minHeight: "38px",
         }}>
-            {isAuthenticated ? (<>
-                <Avatar size="sm">
-                    <UserIcon/>
+            {isAuthenticated && user ? (<>
+                <Avatar
+                    size="sm"
+                    alt={userDisplayName}
+                    src={`${process.env.PUBLIC_URL}/uploads/avatar/user/${user.username}.png`}>
+                    {userStringAvatar}
                 </Avatar>
 
                 <Box sx={{flexGrow: 1, minWidth: 0}}>
