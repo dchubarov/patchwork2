@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {FormEvent, KeyboardEvent, useEffect, useState} from "react";
 import {
     Accordion,
     AccordionDetails,
@@ -9,10 +9,13 @@ import {
     Box,
     Button,
     ButtonGroup,
+    CircularProgress,
     Divider,
     DividerProps,
     Dropdown,
+    FormControl,
     IconButton,
+    Input,
     ListItem,
     ListItemContent,
     ListItemDecorator,
@@ -32,7 +35,10 @@ import {
     CloudOutlined as OnlineIcon,
     DarkMode as DarkModeIcon,
     Home as HomeIcon,
+    KeyboardArrowDown as ArrowDownIcon,
+    KeyboardArrowUp as ArrowUpIcon,
     LightMode as LightModeIcon,
+    Login as LoginIcon,
     LogoutSharp as LogoutIcon,
     MoreVert as SettingsIcon,
     Person4 as UserIcon,
@@ -49,6 +55,7 @@ import {useActiveView} from "../providers/ActiveViewProvider";
 import {ReactQueryDevtoolsPanel} from "@tanstack/react-query-devtools";
 import {useQueryClient} from "@tanstack/react-query";
 import {useAuth} from "../providers/AuthProvider";
+import {UserCredentials} from "../lib/auth";
 
 const AppLogo: React.FC = () => {
     const {mode} = useColorScheme();
@@ -209,14 +216,100 @@ const SettingsMenu: React.FC = () => {
     );
 }
 
+interface LoginFormProps {
+    disabled?: boolean;
+    onSubmitCredentials?: (credentials?: UserCredentials) => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({disabled, onSubmitCredentials}) => {
+    const [usernameValue, setUsernameValue] = useState("");
+    const [passwordValue, setPasswordValue] = useState("");
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        onSubmitCredentials?.({login: usernameValue, password: passwordValue});
+        setUsernameValue("");
+        setPasswordValue("");
+        e.preventDefault();
+    }
+
+    const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.code === "Escape") {
+            onSubmitCredentials?.(undefined);
+            setUsernameValue("");
+            setPasswordValue("");
+            e.preventDefault();
+        }
+    }
+
+    return (
+        <Box sx={{flex: 1, display: "flex", flexDirection: "column", gap: 1}}>
+            <form onSubmit={handleSubmit} style={{display: "contents"}}>
+                <FormControl>
+                    <Input
+                        autoFocus
+                        autoComplete="off"
+                        disabled={disabled}
+                        value={usernameValue}
+                        onChange={(e) => setUsernameValue(e.target.value)}
+                        onKeyDown={handleInputKeyDown}
+                        placeholder="Username or E-mail"
+                        name="username"
+                        type="text"
+                        size="sm"
+                    />
+                </FormControl>
+                <FormControl>
+                    <Input
+                        value={passwordValue}
+                        onChange={(e) => setPasswordValue(e.target.value)}
+                        onKeyDown={handleInputKeyDown}
+                        disabled={disabled}
+                        placeholder="Password"
+                        name="password"
+                        type="password"
+                        size="sm"
+                    />
+                </FormControl>
+                <FormControl>
+                    <Button
+                        disabled={disabled}
+                        type="submit"
+                        variant="solid"
+                        endDecorator={usernameValue && passwordValue ? <LoginIcon/> : <ArrowDownIcon/>}>
+                        LOGIN
+                    </Button>
+                </FormControl>
+            </form>
+        </Box>
+    )
+}
+
 const UserPanel: React.FC = () => {
-    const {isAuthenticated, user, logout} = useAuth();
+    const {isAuthenticated, isPending, user, login, logout} = useAuth();
+    const [loginDrawerOpen, setLoginDrawerOpen] = useState(false);
+
+    let userDisplayName = "";
+    if (isAuthenticated && user) {
+        if (user.firstname || user.lastname) {
+            userDisplayName = [user.firstname, user.lastname].filter(value => value !== undefined).join(" ");
+        } else {
+            userDisplayName = user.username;
+        }
+    }
+
+    const handleSubmitCredentials = (credentials?: UserCredentials) => {
+        if (credentials?.login && credentials?.password) {
+            login(credentials);
+        }
+        setLoginDrawerOpen(false);
+    }
 
     return (
         <Box sx={{
             display: "flex",
             alignItems: "center",
             gap: 1,
+            minHeight: "38px",
         }}>
             {isAuthenticated ? (<>
                 <Avatar size="sm">
@@ -224,7 +317,7 @@ const UserPanel: React.FC = () => {
                 </Avatar>
 
                 <Box sx={{flexGrow: 1, minWidth: 0}}>
-                    <Typography level="title-sm" noWrap>{user?.username}</Typography>
+                    <Typography level="title-sm" noWrap>{userDisplayName}</Typography>
                     <Typography level="body-xs" noWrap>{user?.email}</Typography>
                 </Box>
 
@@ -233,9 +326,21 @@ const UserPanel: React.FC = () => {
                         <LogoutIcon/>
                     </IconButton>
                 </Tooltip>
-            </>) : (
-                <Typography level="title-sm" noWrap>Not logged in</Typography>
-            )}
+            </>) : (<>
+                {loginDrawerOpen ? (
+                    <LoginForm onSubmitCredentials={handleSubmitCredentials} disabled={isPending}/>
+                ) : (
+                    <Button
+                        onClick={() => setLoginDrawerOpen(true)}
+                        size="md"
+                        variant="plain"
+                        disabled={isPending}
+                        endDecorator={isPending ? <CircularProgress/> : <ArrowUpIcon/>}
+                        sx={{flex: 1}}>
+                        LOGIN
+                    </Button>
+                )}
+            </>)}
         </Box>
     )
 }
