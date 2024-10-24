@@ -5,7 +5,7 @@ import {useMutation} from "@tanstack/react-query";
 import {decodeJwt} from "../lib/jwt";
 import {apiUrl} from "../lib/apiClient";
 import {AuthState, LoginResponse, UserCredentials} from "../lib/auth";
-import {useEnvironment} from "./EnvironmentProvider";
+import {useApiClient} from "./EnvironmentProvider";
 
 const refreshRequest = (client: AxiosInstance) =>
     async () => client
@@ -32,7 +32,7 @@ export const useAuth = () => {
 }
 
 const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const {apiClient} = useEnvironment();
+    const apiClient = useApiClient();
     const accessTokenRef = useRef<string | null>(null);
     const requestInterceptorRef = useRef<number | null>(null);
     const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(_.now() + 250); // TODO initial delay

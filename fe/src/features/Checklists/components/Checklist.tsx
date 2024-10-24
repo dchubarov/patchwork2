@@ -3,14 +3,14 @@ import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/rea
 import {ChecklistsApi} from "../api";
 import {Stack} from "@mui/joy";
 import ChecklistItem from "./ChecklistItem";
-import {useEnvironment} from "../../../providers/EnvironmentProvider";
+import {useApiClient} from "../../../providers/EnvironmentProvider";
 
 interface ChecklistProps {
     checklistName?: string;
 }
 
 const Checklist: React.FC<ChecklistProps> = ({checklistName = "default"}) => {
-    const {apiClient} = useEnvironment();
+    const apiClient = useApiClient();
     const queryClient = useQueryClient();
     const opts = queryOptions({
         queryKey: ["x/checklists/v1/checklist", checklistName],

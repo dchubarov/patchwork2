@@ -3,6 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import {EnvironmentState, EnvironmentStateActionType, environmentStateReducer} from "../lib/env";
 import {createApiClient, apiUrl} from "../lib/apiClient";
 import version from "../version.json";
+import {AxiosInstance} from "axios";
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
 
@@ -12,6 +13,11 @@ export function useEnvironment(): EnvironmentState {
         throw new Error("useEnvironment() hook should be used within EnvironmentProvider.")
     }
     return context;
+}
+
+export function useApiClient(): AxiosInstance {
+    const {apiClient} = useEnvironment();
+    return apiClient;
 }
 
 const SERVER_MONITORING_INTERVAL_MILLIS = 30_000;
