@@ -9,6 +9,7 @@ import App from "./App";
 import ErrorPage from "./ErrorPage";
 import SampleView from "./SampleView";
 import EnvironmentProvider from "./providers/EnvironmentProvider";
+import AuthProvider from "./providers/AuthProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -18,7 +19,9 @@ root.render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <EnvironmentProvider>
-                <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
+                <AuthProvider>
+                    <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
+                </AuthProvider>
             </EnvironmentProvider>
         </QueryClientProvider>
     </React.StrictMode>

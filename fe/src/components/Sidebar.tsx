@@ -48,6 +48,7 @@ import {useEnvironment} from "../providers/EnvironmentProvider";
 import {useActiveView} from "../providers/ActiveViewProvider";
 import {ReactQueryDevtoolsPanel} from "@tanstack/react-query-devtools";
 import {useQueryClient} from "@tanstack/react-query";
+import {useAuth} from "../providers/AuthProvider";
 
 const AppLogo: React.FC = () => {
     const {mode} = useColorScheme();
@@ -208,6 +209,37 @@ const SettingsMenu: React.FC = () => {
     );
 }
 
+const UserPanel: React.FC = () => {
+    const {isAuthenticated, user, logout} = useAuth();
+
+    return (
+        <Box sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+        }}>
+            {isAuthenticated ? (<>
+                <Avatar size="sm">
+                    <UserIcon/>
+                </Avatar>
+
+                <Box sx={{flexGrow: 1, minWidth: 0}}>
+                    <Typography level="title-sm" noWrap>{user?.username}</Typography>
+                    <Typography level="body-xs" noWrap>{user?.email}</Typography>
+                </Box>
+
+                <Tooltip title="Logout">
+                    <IconButton size="sm" variant="plain" onClick={logout}>
+                        <LogoutIcon/>
+                    </IconButton>
+                </Tooltip>
+            </>) : (
+                <Typography level="title-sm" noWrap>Not logged in</Typography>
+            )}
+        </Box>
+    )
+}
+
 const Sidebar: React.FC = () => {
     const {widgets, sidebarPlacement, sectionTitle, sectionKey} = useActiveView();
     const pinnedWidget = (widgets.length > 0 && widgets[0].slot === 0) ? widgets[0] : null;
@@ -336,30 +368,7 @@ const Sidebar: React.FC = () => {
                     backdropFilter: "blur(6px)",
                 }}>
                     <SidebarDivider sx={{mb: 2}}/>
-
-                    {/*USER PANEL*/}
-                    <Box sx={{
-                        // p: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                    }}>
-                        <Avatar size="sm">
-                            <UserIcon/>
-                        </Avatar>
-
-                        <Box sx={{flexGrow: 1, minWidth: 0}}>
-                            <Typography level="title-sm" noWrap>Very very long username, Very very long
-                                username, </Typography>
-                            <Typography level="body-xs" noWrap>user@example.com</Typography>
-                        </Box>
-
-                        <Tooltip title="Logout">
-                            <IconButton size="sm" variant="outlined">
-                                <LogoutIcon/>
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
+                    <UserPanel/>
                 </Box>
             </Sheet>
         </Box>

@@ -1,3 +1,5 @@
+import {jwtDecode} from "jwt-decode";
+
 /**
  * See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
  */
@@ -20,7 +22,7 @@ export interface JwtPayload {
     [claim: string]: string | number | boolean | undefined;
 }
 
-export async function createJWT(payload: JwtPayload, secret: string): Promise<string> {
+export async function createJwt(payload: JwtPayload, secret: string): Promise<string> {
     const encoder = new TextEncoder();
 
     // Create the header
@@ -76,4 +78,8 @@ export async function createJWT(payload: JwtPayload, secret: string): Promise<st
 
     // Combine the parts to form the JWT
     return `${dataToSign}.${encodedSignature}`;
+}
+
+export function decodeJwt(token: string): JwtPayload {
+    return jwtDecode<JwtPayload>(token);
 }
