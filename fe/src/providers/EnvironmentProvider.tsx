@@ -1,7 +1,7 @@
 import React, {createContext, PropsWithChildren, useContext, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {EnvironmentState, EnvironmentStateActionType, environmentStateReducer} from "../lib/env";
-import apiClient, {apiUrl} from "../lib/apiClient";
+import {createApiClient, apiUrl} from "../lib/apiClient";
 import version from "../version.json";
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
@@ -15,9 +15,9 @@ export function useEnvironment(): EnvironmentState {
 }
 
 const SERVER_MONITORING_INTERVAL_MILLIS = 30_000;
+const apiClient = createApiClient();
 
 const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
-
     // Backend monitoring
     const {status: serverInfoStatus, data: serverInfo} = useQuery({
         queryKey: ["/server-info"],

@@ -22,7 +22,7 @@ import {
     Warning as WarningIcon
 } from "@mui/icons-material";
 import {labelColorsByName} from "../lib/theme";
-import apiClient, {apiUrl as baseApiUrl} from "../lib/apiClient";
+import {createApiClient, apiUrl as baseApiUrl} from "../lib/apiClient";
 
 type RequestState =
     | { status: "empty" }
@@ -90,6 +90,7 @@ const ApiPlayground: React.FC = () => {
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
     const apiPrefix = baseApiUrl();
+    const apiClient = createApiClient();
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});

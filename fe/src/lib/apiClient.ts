@@ -14,6 +14,4 @@ export function apiExtensionUrl(...paths: string[]) {
     return apiUrl("x", ...paths);
 }
 
-const apiClient = axios.create();
-
-export default apiClient;
+export const createApiClient = () => axios.create();

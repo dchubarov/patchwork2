@@ -7,11 +7,13 @@ import Checklist from "../components/Checklist";
 import {Link, List, ListItem, ListItemContent} from "@mui/joy";
 import {useQuery} from "@tanstack/react-query";
 import {ChecklistsApi} from "../api";
+import {useEnvironment} from "../../../providers/EnvironmentProvider";
 
 const AvailableChecklistsWidget: React.FC = () => {
+    const {apiClient} = useEnvironment();
     const {isSuccess, data: checklistNames} = useQuery({
         queryKey: ["x/checklists/availableChecklists"],
-        queryFn: ChecklistsApi.fetchChecklistNames()
+        queryFn: ChecklistsApi.fetchChecklistNames(apiClient)
     });
 
     return (
