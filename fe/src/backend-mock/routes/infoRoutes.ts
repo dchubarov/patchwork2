@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {AppServer} from "../domain";
 
 export default function infoRoutes(server: AppServer) {
@@ -5,7 +6,7 @@ export default function infoRoutes(server: AppServer) {
         return {
             server: "Mock/MirageJS",
             status: "operational",
-            timestamp: new Date().toISOString()
+            timestamp: _.now()
         }
     }, {timing: 0});
 }

@@ -3,8 +3,9 @@ import React, {createContext, PropsWithChildren, useContext, useEffect, useRef, 
 import {AxiosInstance, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
 import {decodeJwt} from "../lib/jwt";
-import apiClient, {apiUrl} from "../lib/apiClient";
+import {apiUrl} from "../lib/apiClient";
 import {AuthState, LoginResponse, UserCredentials} from "../lib/auth";
+import {useEnvironment} from "./EnvironmentProvider";
 
 const refreshRequest = (client: AxiosInstance) =>
     async () => client
@@ -31,8 +32,10 @@ export const useAuth = () => {
 }
 
 const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(_.now() + 250); // TODO initial delay
+    const {apiClient} = useEnvironment();
     const accessTokenRef = useRef<string | null>(null);
+    const requestInterceptorRef = useRef<number | null>(null);
+    const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(_.now() + 250); // TODO initial delay
 
     const handleSuccessfulLogin = (data: LoginResponse) => {
         if (data.accessToken) {
@@ -47,6 +50,17 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
             isAuthenticated: true,
             isPending: false,
         }));
+
+        if (requestInterceptorRef.current === null) {
+            requestInterceptorRef.current = apiClient.interceptors.request.use(
+                (config) => {
+                    config.headers.Authorization = `Bearer: ${accessTokenRef.current}`;
+                    return config;
+                },
+                (error) => {
+                    return Promise.reject(error);
+                });
+        }
     }
 
     const handleLogout = () => {
@@ -58,6 +72,11 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
             isAuthenticated: false,
             isPending: false,
         }));
+
+        if (requestInterceptorRef.current !== null) {
+            apiClient.interceptors.request.eject(requestInterceptorRef.current);
+            requestInterceptorRef.current = null;
+        }
     }
 
     const setPendingState = () => {

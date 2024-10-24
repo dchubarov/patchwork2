@@ -11,7 +11,7 @@ const SERVER_JWT_SECRET = "A02B5BD6-188E-4C73-B595-D6CE3725072B";
 
 const REFRESH_TOKEN_COOKIE_NAME = "REFRESH_TOKEN";
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
-const ACCESS_TOKEN_TTL_SECONDS = 5 * 60;
+const ACCESS_TOKEN_TTL_SECONDS = 60; // TODO 1min for debugging purposes
 
 export default function authRoutes(server: AppServer) {
     server.post("/auth/login", async (schema, request) => {

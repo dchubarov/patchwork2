@@ -14,17 +14,9 @@ export function useEnvironment(): EnvironmentState {
     return context;
 }
 
-const initialEnvironmentState: EnvironmentState = {
-    environment: (process.env.REACT_APP_ENV === "development" || process.env.REACT_APP_ENV === "production") ?
-        process.env.REACT_APP_ENV : "production",
-    versionInfo: "Version " + version.number,
-    backendStatus: "unknown",
-}
-
 const SERVER_MONITORING_INTERVAL_MILLIS = 30_000;
 
 const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const [state, dispatch] = useReducer(environmentStateReducer, initialEnvironmentState);
 
     // Backend monitoring
     const {status: serverInfoStatus, data: serverInfo} = useQuery({
@@ -53,8 +45,16 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
         }
     }, [serverInfoStatus, serverInfo]);
 
+    const createInitialState = () => ({
+        environment: process.env.REACT_APP_ENV === "development" ? "development" : "production",
+        apiClient,
+        backendStatus: "unknown",
+        versionInfo: "Version " + version.number,
+    } as EnvironmentState);
+
+    const [environment, dispatch] = useReducer(environmentStateReducer, null, createInitialState);
     return (
-        <EnvironmentContext.Provider value={state}>
+        <EnvironmentContext.Provider value={environment}>
             {children}
         </EnvironmentContext.Provider>
     );
