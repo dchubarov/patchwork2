@@ -20,7 +20,7 @@ export function buildRouter(
                 },
 
                 ...AppFeatures.map((feature => ({
-                    path: feature.basename,
+                    path: feature.basePath || feature.name,
                     children: feature.routes()
                 }))),
             ]

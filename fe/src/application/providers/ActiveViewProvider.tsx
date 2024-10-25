@@ -63,12 +63,12 @@ export default ActiveViewProvider;
 function getSectionInfoFromLocation(location: Location) {
     const first = location.pathname.split("/").find((value) => value !== "");
     const feature = first
-        ? AppFeatures.find((feature) => feature.basename === first)
+        ? AppFeatures.find((feature) => feature.basePath ? feature.basePath === first : feature.name === first)
         : null;
 
     return {
         sectionKey: first || null,
-        sectionTitle: feature?.displayName || null
+        sectionTitle: feature?.defaultDisplayName || null
     }
 }
 

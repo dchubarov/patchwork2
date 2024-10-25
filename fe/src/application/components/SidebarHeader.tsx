@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import {Box, Typography} from "@mui/joy";
 import AppSettingsMenu from "./AppSettingsMenu";
@@ -30,7 +31,7 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
                 <AppFeaturesMenu/>
 
                 <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
-                    {sectionTitle || sectionKey || "!NoFeatTitle!"}
+                    {_.capitalize(sectionTitle || sectionKey || "!NoFeatTitle!")}
                 </Typography>
 
                 <AppSettingsMenu/>

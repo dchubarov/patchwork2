@@ -3,10 +3,10 @@ import {useNavigate} from "react-router-dom";
 import {Avatar, Badge, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem} from "@mui/joy";
 import {Home as HomeIcon, Lock as LockIcon, QuestionMark as PlaceholderIcon} from "@mui/icons-material";
 import AppLogo from "./AppLogo";
-import AppFeatures from "@/features";
-import {useActiveView} from "@/hooks";
+import {useActiveView, useEnvironment} from "@/hooks";
 
 const AppFeaturesMenu: React.FC = () => {
+    const {availableFeatures} = useEnvironment();
     const {sidebarPlacement} = useActiveView();
     const navigate = useNavigate();
 
@@ -40,9 +40,9 @@ const AppFeaturesMenu: React.FC = () => {
                     Home
                 </MenuItem>
 
-                {AppFeatures.map((feature, index) => (
+                {availableFeatures.map((feature, index) => (
                     <MenuItem key={`appMenuItem-${index}`} orientation="vertical"
-                              onClick={() => navigate(feature.basename)}>
+                              onClick={() => navigate(feature.basePath)}>
                         <ListItemDecorator>
                             <Badge
                                 size="sm"
@@ -57,7 +57,7 @@ const AppFeaturesMenu: React.FC = () => {
                                 </Avatar>
                             </Badge>
                         </ListItemDecorator>
-                        {feature.displayName || feature.basename}
+                        {feature.localizedDisplayName}
                     </MenuItem>
                 ))}
             </Menu>

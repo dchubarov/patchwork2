@@ -4,8 +4,7 @@ import React from "react";
 const LazyChecklistsPage = React.lazy(() => import("./pages/ChecklistsPage"));
 
 const ChecklistsFeature : AppFeature = {
-    basename: "checklists",
-    displayName: "Checklists",
+    name: "checklists",
     routes: () => ([{
         index: true,
         Component: LazyChecklistsPage

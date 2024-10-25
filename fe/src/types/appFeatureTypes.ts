@@ -1,8 +1,9 @@
 import {RouteObject} from "react-router-dom";
 
 export interface AppFeature {
-    basename: string;
-    displayName?: string;
+    name: string;
+    basePath?: string;
+    defaultDisplayName?: string;
     category?: string;
     routes: () => RouteObject[];
 }

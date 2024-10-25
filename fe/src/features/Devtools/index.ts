@@ -3,8 +3,9 @@ import {AppFeature} from "@/types/appFeatureTypes";
 import DevtoolsPage from "./pages/DevtoolsPage";
 
 const DevtoolsFeature: AppFeature = {
-    basename: "dev-tools",
-    displayName: "Developer",
+    name: "devtools",
+    basePath: "dev-tools",
+    defaultDisplayName: "Developer",
     routes: (): RouteObject[] => ([{
         index: true,
         Component: DevtoolsPage

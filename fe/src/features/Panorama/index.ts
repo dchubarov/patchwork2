@@ -7,8 +7,7 @@ const PanoramaDynamic = async () => {
 }
 
 const PanoramaFeature: AppFeature = {
-    basename: "panorama",
-    displayName: "Panorama",
+    name: "panorama",
     routes: (): RouteObject[] => ([{
         index: true,
         lazy: async () => ({Component: await PanoramaDynamic()}),
