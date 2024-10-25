@@ -1,13 +1,13 @@
 import _ from "lodash";
-import React, {createContext, PropsWithChildren, useContext, useEffect, useRef, useState} from "react";
+import React, {PropsWithChildren, useEffect, useRef, useState} from "react";
 import {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
-import {decodeJwt} from "../lib/jwtUtils";
-import {apiUrl} from "../lib/apiClient";
-import {AuthState, LoginResponse, UserCredentials} from "../lib/authTypes";
-import {useApiClient} from "./EnvironmentProvider";
-import {displayNotification} from "../lib/displayNotification";
-import {logger} from "../lib/logging";
+import {decodeJwt} from "../../utils/jwt";
+import {apiUrl} from "../../utils/api";
+import {AuthContext, AuthState, LoginResponse, UserCredentials} from "../../types/authTypes";
+import {useApiClient} from "../../hooks";
+import {displayNotification} from "../../utils/notification";
+import {logger} from "../../utils/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
 const INITIAL_REFRESH_DELAY_MILLIS = 15;
@@ -25,16 +25,6 @@ const loginRequest = (client: AxiosInstance) =>
 const logoutRequest = (client: AxiosInstance) =>
     async () => client
         .get(apiUrl("auth", "logout"));
-
-export const AuthContext = createContext<AuthState | null>(null);
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === null) {
-        throw new Error("useAuth() hook must be used within AuthProvider.")
-    }
-    return context;
-}
 
 const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     const apiClient = useApiClient();

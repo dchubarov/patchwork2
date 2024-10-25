@@ -1,5 +1,5 @@
 import {createServer, RestSerializer} from "miragejs";
-import {apiUrl} from "../lib/apiClient";
+import {apiUrl} from "../utils/api";
 import configureRoutes from "./routes";
 import domain from "./domain";
 

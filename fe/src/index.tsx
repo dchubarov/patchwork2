@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {RouterProvider} from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
-import {buildRouter} from "./lib/routing";
+import {buildRouter} from "./application/utils/routing";
 import {QueryClientProvider} from "@tanstack/react-query";
 import {App, DefaultPage, ErrorPage}  from "./application";
-import {EnvironmentProvider, AuthProvider} from "./providers";
-import createQueryClient from "./lib/queryClient";
+import EnvironmentProvider from "./application/providers/EnvironmentProvider";
+import AuthProvider from "./application/providers/AuthProvider";
+import createQueryClient from "./application/utils/queryClient";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

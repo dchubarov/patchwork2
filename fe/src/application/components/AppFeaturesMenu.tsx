@@ -4,7 +4,7 @@ import AppLogo from "./AppLogo";
 import {Home as HomeIcon, Lock as LockIcon, QuestionMark as PlaceholderIcon} from "@mui/icons-material";
 import AppFeatures from "../../features";
 import {useNavigate} from "react-router-dom";
-import {useActiveView} from "../../providers/ActiveViewProvider";
+import {useActiveView} from "../../hooks";
 
 const AppFeaturesMenu: React.FC = () => {
     const {sidebarPlacement} = useActiveView();

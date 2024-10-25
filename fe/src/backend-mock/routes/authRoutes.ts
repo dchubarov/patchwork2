@@ -2,7 +2,7 @@ import {Response} from "miragejs";
 import {AppServer} from "../domain";
 import {USER_ENTITY_KEY} from "../domain/userEntity";
 import {UnauthorizedResponse} from "./index";
-import {createJwt, decodeJwt, JwtPayload} from "../../lib/jwtUtils";
+import {createJwt, decodeJwt, JwtPayload} from "../../utils/jwt";
 import * as cookie from "cookie";
 import _ from "lodash";
 

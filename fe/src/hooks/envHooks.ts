@@ -1,0 +1,17 @@
+import {EnvironmentState} from "../types/envTypes";
+import {useContext} from "react";
+import {AxiosInstance} from "axios";
+import {EnvironmentContext} from "../types/envTypes";
+
+export function useEnvironment(): EnvironmentState {
+    const context = useContext(EnvironmentContext);
+    if (!context) {
+        throw new Error("useEnvironment() hook should be used within EnvironmentProvider.")
+    }
+    return context;
+}
+
+export function useApiClient(): AxiosInstance {
+    const {apiClient} = useEnvironment();
+    return apiClient;
+}

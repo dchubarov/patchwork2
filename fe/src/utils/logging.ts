@@ -24,7 +24,7 @@ export class ConsoleLogger implements Logger {
     readonly warn: LogFn;
     readonly error: LogFn;
 
-    constructor(options?: LoggerOptions) {
+    constructor(/*options?: LoggerOptions*/) {
         this.error = console.error.bind(console);
         this.warn = console.warn.bind(console);
         this.log = console.log.bind(console);

@@ -14,15 +14,15 @@ import {
     Textarea,
     Typography
 } from "@mui/joy";
-import {AxiosRequestConfig} from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import {
     ArrowDropDown as DropdownIcon,
     CheckCircleOutline as SuccessIcon,
     PlayArrow as RunIcon,
     Warning as WarningIcon
 } from "@mui/icons-material";
-import {labelColorsByName} from "../../lib/theme";
-import {createApiClient, apiUrl as baseApiUrl} from "../../lib/apiClient";
+import {labelColorsByName} from "../utils/theme";
+import {apiUrl as baseApiUrl} from "../../utils/api";
 
 type RequestState =
     | { status: "empty" }
@@ -90,7 +90,7 @@ const ApiPlayground: React.FC = () => {
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
     const apiPrefix = baseApiUrl();
-    const apiClient = createApiClient();
+    const apiClient = axios.create(); // not using environment api client intentionally
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});

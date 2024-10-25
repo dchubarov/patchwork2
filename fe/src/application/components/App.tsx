@@ -3,8 +3,8 @@ import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider} from "@mui/joy";
 import Layout from "./Layout";
 import Sidebar from "./Sidebar";
-import ActiveViewProvider from "../../providers/ActiveViewProvider";
-import appTheme from "../../lib/theme";
+import ActiveViewProvider from "../providers/ActiveViewProvider";
+import appTheme from "../utils/theme";
 
 const App: React.FC = () => {
     return (

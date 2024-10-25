@@ -1,13 +1,14 @@
-import React, {createContext, PropsWithChildren, ReactNode, useCallback, useContext, useReducer} from "react";
+import React, {PropsWithChildren, ReactNode, useCallback, useReducer} from "react";
 import {
+    ActiveViewContext,
     initialViewState,
     SidebarWidget,
     SidebarWidgetsConfiguration,
     ViewConfiguration,
     ViewState
-} from "../lib/viewTypes";
+} from "../../types/viewTypes";
 import {Location, useLocation} from "react-router-dom";
-import AppFeatures from "../features";
+import AppFeatures from "../../features";
 
 enum ViewStateActionType {
     CONFIGURE_VIEW,
@@ -23,16 +24,6 @@ type ViewStateAction =
     | { type: ViewStateActionType.EJECT_VIEW }
     | { type: ViewStateActionType.OPEN_DRAWER, component: ReactNode, title?: string }
     | { type: ViewStateActionType.CLOSE_DRAWER }
-
-export const ActiveViewContext = createContext<ViewState | null>(null);
-
-export function useActiveView(): ViewState {
-    const context = useContext(ActiveViewContext);
-    if (!context) {
-        throw new Error("useActiveView hook must be used within ActiveViewProvider.");
-    }
-    return context;
-}
 
 const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
     const [state, dispatch] = useReducer(viewStateReducer, initialViewState);

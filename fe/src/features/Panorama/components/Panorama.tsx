@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {Box, Sheet} from "@mui/joy";
-
-import {useActiveView} from "../../../providers/ActiveViewProvider";
+import {useActiveView} from "../../../hooks";
 
 const PanoramaRow: React.FC<{header?: boolean}> = ({header}) => {
     return (

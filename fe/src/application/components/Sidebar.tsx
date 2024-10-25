@@ -1,6 +1,6 @@
 import React from "react";
 import {Box, Sheet} from "@mui/joy";
-import {useActiveView} from "../../providers/ActiveViewProvider";
+import {useActiveView} from "../../hooks";
 import SidebarDivider from "./SidebarDivider";
 import SidebarUserPanel from "./SidebarUserPanel";
 import SidebarHeader from "./SidebarHeader";

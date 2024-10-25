@@ -10,7 +10,7 @@ import {
     MenuItem,
     useTheme
 } from "@mui/joy";
-import {labelColorsByName} from "../lib/theme";
+import {labelColorsByName} from "../application/utils/theme";
 
 const Spot: React.FC<{ labelName?: string | null }> = ({labelName}) => {
     const theme = useTheme();

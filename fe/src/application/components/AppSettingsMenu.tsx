@@ -11,10 +11,9 @@ import {
     SupportedColorScheme,
     useColorScheme
 } from "@mui/joy";
-import {useActiveView} from "../../providers/ActiveViewProvider";
-import {useEnvironment} from "../../providers/EnvironmentProvider";
+import {useEnvironment, useActiveView} from "../../hooks";
 import {useQueryClient} from "@tanstack/react-query";
-import {SidebarPlacement} from "../../lib/viewTypes";
+import {SidebarPlacement} from "../../types/viewTypes";
 import ApiPlayground from "./ApiPlayground";
 import {ReactQueryDevtoolsPanel} from "@tanstack/react-query-devtools";
 import {

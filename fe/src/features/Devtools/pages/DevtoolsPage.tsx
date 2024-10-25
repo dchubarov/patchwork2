@@ -1,8 +1,7 @@
 import React, {useEffect} from "react";
 import PageLayout from "../../../components/PageLayout";
 import ViewContextPlayground from "../components/ViewContextPlayground";
-
-import {useActiveView} from "../../../providers/ActiveViewProvider";
+import {useActiveView} from "../../../hooks";
 
 const DevtoolsPage: React.FC = () => {
     const {ejectView} = useActiveView();

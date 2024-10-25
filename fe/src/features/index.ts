@@ -1,4 +1,4 @@
-import {AppFeature} from "../lib/appFeatureTypes";
+import {AppFeature} from "../types/appFeatureTypes";
 import PanoramaFeature from "./Panorama";
 import DevtoolsFeature from "./Devtools";
 import ChecklistsFeature from "./Checklists";

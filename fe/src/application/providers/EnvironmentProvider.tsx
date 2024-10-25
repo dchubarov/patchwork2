@@ -1,9 +1,9 @@
-import React, {createContext, PropsWithChildren, useContext, useEffect, useReducer} from "react";
+import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {BackendStatus, EnvironmentState} from "../lib/envTypes";
-import {createApiClient, apiUrl} from "../lib/apiClient";
-import {AxiosInstance} from "axios";
-import version from "../version.json";
+import {BackendStatus, EnvironmentContext, EnvironmentState} from "../../types/envTypes";
+import {apiUrl} from "../../utils/api";
+import {createApiClient} from "../utils/apiClient";
+import version from "../../version.json";
 
 enum EnvironmentStateActionType {
     UPDATE_BACKEND_STATUS
@@ -12,21 +12,6 @@ enum EnvironmentStateActionType {
 type EnvironmentStateAction =
     | { type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS, backendStatus: BackendStatus, backendInfo?: string }
     ;
-
-export const EnvironmentContext = createContext<EnvironmentState | null>(null);
-
-export function useEnvironment(): EnvironmentState {
-    const context = useContext(EnvironmentContext);
-    if (!context) {
-        throw new Error("useEnvironment() hook should be used within EnvironmentProvider.")
-    }
-    return context;
-}
-
-export function useApiClient(): AxiosInstance {
-    const {apiClient} = useEnvironment();
-    return apiClient;
-}
 
 const SERVER_MONITORING_INTERVAL_MILLIS = 30_000;
 const apiClient = createApiClient();

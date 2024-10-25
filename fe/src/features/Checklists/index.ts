@@ -1,4 +1,4 @@
-import {AppFeature} from "../../lib/appFeatureTypes";
+import {AppFeature} from "../../types/appFeatureTypes";
 import React from "react";
 
 const LazyChecklistsPage = React.lazy(() => import("./pages/ChecklistsPage"));

@@ -1,3 +1,4 @@
+import {createContext} from "react";
 
 export interface User {
     username: string;
@@ -25,3 +26,5 @@ interface IAuthState {
 export type AuthState = IAuthState & (
     | { isAuthenticated: true, user: User }
     | { isAuthenticated: false, user: null });
+
+export const AuthContext = createContext<AuthState | null>(null);

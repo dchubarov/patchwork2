@@ -1,5 +1,5 @@
 import {RouteObject} from "react-router-dom";
-import {AppFeature} from "../../lib/appFeatureTypes";
+import {AppFeature} from "../../types/appFeatureTypes";
 
 const PanoramaDynamic = async () => {
     const {default: Component} = await import("./components/Panorama");

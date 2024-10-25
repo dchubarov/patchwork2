@@ -1,5 +1,4 @@
 import _ from "lodash";
-import axios from "axios";
 
 export function apiUrl(...paths: string[]) {
     const env = process.env.REACT_APP_API_ROOT;
@@ -13,5 +12,3 @@ export function apiUrl(...paths: string[]) {
 export function apiExtensionUrl(...paths: string[]) {
     return apiUrl("x", ...paths);
 }
-
-export const createApiClient = () => axios.create();

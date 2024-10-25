@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {createContext, ReactNode} from "react";
 
 export type SidebarPlacement = "left" | "right";
 
@@ -54,3 +54,5 @@ export const initialViewState: ViewState = {
     closeDrawer: () => {
     },
 }
+
+export const ActiveViewContext = createContext<ViewState | null>(null);
