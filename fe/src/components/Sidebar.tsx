@@ -322,7 +322,7 @@ const UserPanel: React.FC = () => {
                     {userStringAvatar}
                 </Avatar>
 
-                <Box sx={{flexGrow: 1, minWidth: 0}}>
+                <Box sx={{pl: 0.5, flexGrow: 1, minWidth: 0}}>
                     <Typography level="title-sm" noWrap>{userDisplayName}</Typography>
                     <Typography level="body-xs" noWrap>{user?.email}</Typography>
                 </Box>

@@ -6,6 +6,8 @@ import {decodeJwt} from "../lib/jwt";
 import {apiUrl} from "../lib/apiClient";
 import {AuthState, LoginResponse, UserCredentials} from "../lib/auth";
 import {useApiClient} from "./EnvironmentProvider";
+import {displayNotification} from "../components/Notification";
+import {logger} from "../lib/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
 const INITIAL_REFRESH_DELAY_MILLIS = 15;
@@ -66,7 +68,9 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         }
     }
 
-    const handleLogout = () => {
+    const handleLogout = (error?: Error) => {
+        if (error) logger.error(`Logged out due to error: ${error.message}`);
+
         accessTokenRef.current = null;
         setTokenExpiresMillis(null);
         setContext(prev => ({
@@ -111,8 +115,14 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         mutationKey: ["auth/login"],
         mutationFn: loginRequest(apiClient),
         onMutate: setPendingState,
-        onSuccess: handleSuccessfulLogin,
-        onError: handleLogout,
+        onSuccess: (data) => {
+            handleSuccessfulLogin(data);
+            displayNotification("You have successfully logged in", {type: "success"});
+        },
+        onError: (error) => {
+            handleLogout(error);
+            displayNotification("Authentication failed", {subtitle: error.message, type: "error"});
+        },
         gcTime: 0,
     });
 
@@ -120,7 +130,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         mutationKey: ["auth/logout"],
         mutationFn: logoutRequest(apiClient),
         onMutate: setPendingState,
-        onSettled: handleLogout,
+        onSettled: () => handleLogout(),
         gcTime: 0,
     });
 
