@@ -28,7 +28,9 @@ export default function authRoutes(server: AppServer) {
             const accessToken = await createToken(user.id, ACCESS_TOKEN_TTL_SECONDS, epochSeconds);
 
             if (request.queryParams.noCookie === undefined) {
-                const refreshToken = await createToken(user.id, REFRESH_TOKEN_TTL_SECONDS, epochSeconds);
+                const refreshToken = await createToken(user.id, REFRESH_TOKEN_TTL_SECONDS, epochSeconds,
+                    {jti: window.crypto.randomUUID()});
+
                 const cookieExpirationDate = new Date((epochSeconds + REFRESH_TOKEN_TTL_SECONDS) * 1000);
 
                 // The cookie should be Secure and HttpOnly but that's not possible by using document cookie,
@@ -77,7 +79,7 @@ export default function authRoutes(server: AppServer) {
             user: user.attrs,
             accessToken
         });
-    });
+    }, {timing: 100});
 
     server.get("/auth/logout", async () => {
         // Just delete REFRESH_TOKEN cookie
@@ -88,9 +90,15 @@ export default function authRoutes(server: AppServer) {
     });
 }
 
-async function createToken(userId: string, ttlSeconds: number, epochSeconds?: number) {
+async function createToken(
+    userId: string,
+    ttlSeconds: number,
+    epochSeconds?: number,
+    extraClaims: Partial<JwtPayload> = {},
+) {
     const ts = epochSeconds || Math.trunc(_.now() / 1000);
     const tokenContents: JwtPayload = {
+        ...extraClaims,
         iat: ts,
         exp: ts + ttlSeconds,
         sub: `user:${userId}`,
