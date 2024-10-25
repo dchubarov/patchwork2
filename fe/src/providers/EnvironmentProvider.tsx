@@ -1,9 +1,17 @@
 import React, {createContext, PropsWithChildren, useContext, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {EnvironmentState, EnvironmentStateActionType, environmentStateReducer} from "../lib/env";
+import {BackendStatus, EnvironmentState} from "../lib/envTypes";
 import {createApiClient, apiUrl} from "../lib/apiClient";
-import version from "../version.json";
 import {AxiosInstance} from "axios";
+import version from "../version.json";
+
+enum EnvironmentStateActionType {
+    UPDATE_BACKEND_STATUS
+}
+
+type EnvironmentStateAction =
+    | { type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS, backendStatus: BackendStatus, backendInfo?: string }
+    ;
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
 
@@ -67,3 +75,16 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
 }
 
 export default EnvironmentProvider;
+
+// Private
+
+function environmentStateReducer(state: EnvironmentState, action: EnvironmentStateAction): EnvironmentState {
+    switch (action.type) {
+        case EnvironmentStateActionType.UPDATE_BACKEND_STATUS:
+            return {
+                ...state,
+                backendStatus: action.backendStatus,
+                backendInfo: action.backendInfo
+            };
+    }
+}

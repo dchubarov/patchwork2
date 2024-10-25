@@ -4,12 +4,9 @@ import {RouterProvider} from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import {buildRouter} from "./lib/routing";
 import {QueryClientProvider} from "@tanstack/react-query";
-import queryClient from "./lib/queryClient";
-import App from "./App";
-import ErrorPage from "./ErrorPage";
-import SampleView from "./SampleView";
-import EnvironmentProvider from "./providers/EnvironmentProvider";
-import AuthProvider from "./providers/AuthProvider";
+import {App, DefaultPage, ErrorPage}  from "./application";
+import {EnvironmentProvider, AuthProvider} from "./providers";
+import createQueryClient from "./lib/queryClient";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -17,10 +14,10 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={createQueryClient()}>
             <EnvironmentProvider>
                 <AuthProvider>
-                    <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <SampleView/>)}/>
+                    <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <DefaultPage/>)}/>
                 </AuthProvider>
             </EnvironmentProvider>
         </QueryClientProvider>

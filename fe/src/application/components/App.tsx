@@ -1,10 +1,10 @@
 import React, {Suspense} from "react";
 import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider} from "@mui/joy";
-import Layout from "./components/Layout";
-import Sidebar from "./components/Sidebar";
-import ActiveViewProvider from "./providers/ActiveViewProvider";
-import appTheme from "./lib/theme";
+import Layout from "./Layout";
+import Sidebar from "./Sidebar";
+import ActiveViewProvider from "../../providers/ActiveViewProvider";
+import appTheme from "../../lib/theme";
 
 const App: React.FC = () => {
     return (

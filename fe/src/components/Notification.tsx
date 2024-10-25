@@ -15,7 +15,7 @@ export interface NotificationOptions {
     noCloseButton?: boolean;
 }
 
-export function displayNotification(title: string, opts?: NotificationOptions) {
+export function internalDisplayNotification(title: string, opts?: NotificationOptions) {
     let classes = [`nf-type-${opts?.type || "info"}`];
     if (!opts?.noCloseButton) {
         classes.push("nf-closeable");
@@ -32,12 +32,12 @@ export function displayNotification(title: string, opts?: NotificationOptions) {
     });
 }
 
-interface NotificationContentProps {
+interface MessageContentProps {
     title: string;
     subtitle?: string;
 }
 
-const MessageContent: React.FC<NotificationContentProps> = ({title, subtitle}) => {
+const MessageContent: React.FC<MessageContentProps> = ({title, subtitle}) => {
     return (<>
         <Typography level="title-md" noWrap>
             {title}
@@ -48,7 +48,7 @@ const MessageContent: React.FC<NotificationContentProps> = ({title, subtitle}) =
     </>);
 }
 
-const NotificationBar: React.FC<{ toast: Toast }> = ({toast: t}) => {
+const ToastBar: React.FC<{ toast: Toast }> = ({toast: t}) => {
     const classes = t.className ? t.className.split(" ") : [];
     const iconProps: SvgIconProps = {size: "lg"}
     let color: DefaultColorPalette;
@@ -94,4 +94,9 @@ const NotificationBar: React.FC<{ toast: Toast }> = ({toast: t}) => {
     )
 }
 
-export default NotificationBar;
+const Notification = {
+    MessageContent,
+    ToastBar
+}
+
+export default Notification;

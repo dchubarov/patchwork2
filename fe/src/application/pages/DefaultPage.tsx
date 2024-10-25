@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
 import {Sheet, Typography} from "@mui/joy";
 import InfoIcon from "@mui/icons-material/Info";
-import PageLayout from "./components/PageLayout";
-import {useActiveView} from "./providers/ActiveViewProvider";
+import PageLayout from "../../components/PageLayout";
+import {useActiveView} from "../../providers/ActiveViewProvider";
 
-const SampleView: React.FC = () => {
+const DefaultPage: React.FC = () => {
     const {configureWidgets, ejectView} = useActiveView();
 
     useEffect(() => {
@@ -29,4 +29,4 @@ const SampleView: React.FC = () => {
     );
 }
 
-export default SampleView;
+export default DefaultPage;

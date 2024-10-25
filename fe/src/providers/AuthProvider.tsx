@@ -2,11 +2,11 @@ import _ from "lodash";
 import React, {createContext, PropsWithChildren, useContext, useEffect, useRef, useState} from "react";
 import {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
-import {decodeJwt} from "../lib/jwt";
+import {decodeJwt} from "../lib/jwtUtils";
 import {apiUrl} from "../lib/apiClient";
-import {AuthState, LoginResponse, UserCredentials} from "../lib/auth";
+import {AuthState, LoginResponse, UserCredentials} from "../lib/authTypes";
 import {useApiClient} from "./EnvironmentProvider";
-import {displayNotification} from "../components/Notification";
+import {displayNotification} from "../lib/displayNotification";
 import {logger} from "../lib/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
@@ -26,7 +26,7 @@ const logoutRequest = (client: AxiosInstance) =>
     async () => client
         .get(apiUrl("auth", "logout"));
 
-const AuthContext = createContext<AuthState | null>(null);
+export const AuthContext = createContext<AuthState | null>(null);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -137,6 +137,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     useEffect(() => {
         let timeoutId = null;
         if (tokenExpiresMillis !== null) {
+            // TODO better refresh before expiration considering request latency, clock skew, etc
             const timeout = tokenExpiresMillis - _.now();
             timeoutId = setTimeout(() => {
                 doRefresh();

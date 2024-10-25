@@ -1,6 +1,15 @@
 import _ from "lodash";
 import React from "react";
-import {Dropdown, IconButton, IconButtonProps, ListItemDecorator, Menu, MenuButton, MenuItem, useTheme} from "@mui/joy";
+import {
+    Dropdown,
+    IconButton,
+    IconButtonProps,
+    ListItemDecorator,
+    Menu as JoyMenu,
+    MenuButton,
+    MenuItem,
+    useTheme
+} from "@mui/joy";
 import {labelColorsByName} from "../lib/theme";
 
 const Spot: React.FC<{ labelName?: string | null }> = ({labelName}) => {
@@ -49,12 +58,12 @@ const MenuItems: React.FC<ColorLabelMenuProps> = ({showNames, showNoColor, onCha
     </>);
 }
 
-type SelectorComponentType = React.FC<
+type MenuComponentType = React.FC<
     & ColorLabelMenuProps
     & Pick<IconButtonProps, "disabled" | "size" | "variant" | "color" | "sx">
     & { selectedLabel?: string | null }>
 
-const Selector: SelectorComponentType = (props) => {
+const Menu: MenuComponentType = (props) => {
     const handleChange = (value: string | undefined) => {
         if (value !== props.selectedLabel && props.onChange) {
             props.onChange(value);
@@ -76,7 +85,7 @@ const Selector: SelectorComponentType = (props) => {
                 }}>
                 <Spot labelName={props.selectedLabel}/>
             </MenuButton>
-            <Menu
+            <JoyMenu
                 variant="outlined"
                 placement="bottom-start"
                 size={props.size}
@@ -91,14 +100,14 @@ const Selector: SelectorComponentType = (props) => {
                     flexWrap: "wrap",
                 }}>
                 <MenuItems {...props} onChange={handleChange}/>
-            </Menu>
+            </JoyMenu>
         </Dropdown>
     );
 }
 
 const ColorLabel = {
     Spot,
-    Selector
+    Menu
 }
 
 export default ColorLabel;

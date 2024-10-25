@@ -1,9 +1,9 @@
 import React from "react";
 import {Box, BoxProps, DialogContent, DialogTitle, Drawer as JoyDrawer, GlobalStyles, ModalClose} from "@mui/joy";
 import {Toast, Toaster as HotToaster} from "react-hot-toast";
-import {SidebarPlacement} from "../lib/viewStateTypes";
-import {useActiveView} from "../providers/ActiveViewProvider";
-import NotificationBar from "./Notification";
+import {SidebarPlacement} from "../../lib/viewTypes";
+import {useActiveView} from "../../providers/ActiveViewProvider";
+import Notification from "../../components/Notification";
 
 const Root: React.FC<BoxProps> = ({sx, ...other}) => (
     <Box {...other}
@@ -110,7 +110,7 @@ const Drawer: React.FC = () => {
 const Toaster: React.FC = () => {
     return (
         <HotToaster position="bottom-center" gutter={16}>
-            {(t: Toast) => <NotificationBar toast={t}/>}
+            {(t: Toast) => <Notification.ToastBar toast={t}/>}
         </HotToaster>
     );
 }

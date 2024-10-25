@@ -21,8 +21,8 @@ import {
     PlayArrow as RunIcon,
     Warning as WarningIcon
 } from "@mui/icons-material";
-import {labelColorsByName} from "../lib/theme";
-import {createApiClient, apiUrl as baseApiUrl} from "../lib/apiClient";
+import {labelColorsByName} from "../../lib/theme";
+import {createApiClient, apiUrl as baseApiUrl} from "../../lib/apiClient";
 
 type RequestState =
     | { status: "empty" }

@@ -139,7 +139,7 @@ const ChecklistItem: ChecklistItemComponentType = ({checklistItem, onUpdate, def
                     </Typography>
                 )}
 
-            <ColorLabel.Selector
+            <ColorLabel.Menu
                 showNoColor
                 selectedLabel={editedItem.colorLabel}
                 onChange={handleColorLabelChange}
