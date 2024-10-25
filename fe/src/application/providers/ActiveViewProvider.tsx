@@ -1,14 +1,15 @@
-import React, {PropsWithChildren, ReactNode, useCallback, useReducer} from "react";
-import {Location, useLocation} from "react-router-dom";
+import React, {PropsWithChildren, ReactNode, useCallback, useMemo, useReducer} from "react";
+import {useLocation} from "react-router-dom";
 import {
     ActiveViewContext,
-    initialViewState,
     SidebarWidget,
     SidebarWidgetsConfiguration,
     ViewConfiguration,
     ViewState
 } from "@/types/viewTypes";
-import AppFeatures from "@/features";
+import {useEnvironment} from "@/hooks";
+import {EnvironmentAppFeature} from "@/types/envTypes";
+import _ from "lodash";
 
 enum ViewStateActionType {
     CONFIGURE_VIEW,
@@ -25,13 +26,37 @@ type ViewStateAction =
     | { type: ViewStateActionType.OPEN_DRAWER, component: ReactNode, title?: string }
     | { type: ViewStateActionType.CLOSE_DRAWER }
 
+const initialViewState: ViewState = {
+    key: null,
+    title: null,
+    sidebarPlacement: "left",
+    widgets: [],
+    drawerOpen: false,
+    drawerTitle: undefined,
+    drawerComponent: null,
+    currentFeature: null,
+    configureView: () => {
+    },
+    configureWidgets: () => {
+    },
+    ejectView: () => {
+    },
+    openDrawer: () => {
+    },
+    closeDrawer: () => {
+    },
+}
+
 const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
     const [state, dispatch] = useReducer(viewStateReducer, initialViewState);
+    const {availableFeatures} = useEnvironment();
     const location = useLocation();
 
     const contextValue = {
         ...state,
-        ...getSectionInfoFromLocation(location),
+        currentFeature: useMemo(() => {
+            return getCurrentFeatureFromLocation(availableFeatures, location.pathname);
+        }, [availableFeatures, location.pathname]),
         configureView: useCallback((config: ViewConfiguration) => {
             dispatch({type: ViewStateActionType.CONFIGURE_VIEW, config});
         }, [dispatch]),
@@ -60,16 +85,14 @@ export default ActiveViewProvider;
 
 // private
 
-function getSectionInfoFromLocation(location: Location) {
-    const first = location.pathname.split("/").find((value) => value !== "");
-    const feature = first
-        ? AppFeatures.find((feature) => feature.basePath ? feature.basePath === first : feature.name === first)
-        : null;
+function getCurrentFeatureFromLocation(availableFeatures: EnvironmentAppFeature[], pathname: string): EnvironmentAppFeature | null {
+    const strippedPath = _.trimStart(pathname, "/");
+    if (!strippedPath)
+        return null;
 
-    return {
-        sectionKey: first || null,
-        sectionTitle: feature?.defaultDisplayName || null
-    }
+    return availableFeatures.find(
+        (value) => _.startsWith(strippedPath, value.basePath))
+        || null;
 }
 
 export function viewStateReducer(state: ViewState, action: ViewStateAction): ViewState {

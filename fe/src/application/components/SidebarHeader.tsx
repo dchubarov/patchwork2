@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React from "react";
 import {Box, Typography} from "@mui/joy";
 import AppSettingsMenu from "./AppSettingsMenu";
@@ -13,7 +12,7 @@ interface SidebarHeaderProps {
 }
 
 const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
-    const {sectionTitle, sectionKey} = useActiveView();
+    const {currentFeature} = useActiveView();
 
     return (
         <Box
@@ -31,7 +30,7 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
                 <AppFeaturesMenu/>
 
                 <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
-                    {_.capitalize(sectionTitle || sectionKey || "!NoFeatTitle!")}
+                    {currentFeature?.localizedDisplayName || "Home"}
                 </Typography>
 
                 <AppSettingsMenu/>
