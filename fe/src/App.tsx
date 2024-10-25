@@ -36,6 +36,7 @@ const App: React.FC = () => {
                 </Layout.Root>
 
                 <Layout.Drawer/>
+                <Layout.Toaster/>
             </ActiveViewProvider>
         </CssVarsProvider>
     );
