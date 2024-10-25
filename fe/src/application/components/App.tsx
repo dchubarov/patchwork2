@@ -1,14 +1,15 @@
-import React, {Suspense} from "react";
+import React, {Suspense, useMemo} from "react";
 import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider} from "@mui/joy";
 import Layout from "./Layout";
 import Sidebar from "./Sidebar";
 import ActiveViewProvider from "../providers/ActiveViewProvider";
-import appTheme from "../utils/theme";
+import {customizeTheme} from "@/application/utils/customizeTheme";
 
 const App: React.FC = () => {
+    const theme = useMemo(customizeTheme, []);
     return (
-        <CssVarsProvider theme={appTheme}>
+        <CssVarsProvider theme={theme}>
             <CssBaseline/>
 
             <ActiveViewProvider>

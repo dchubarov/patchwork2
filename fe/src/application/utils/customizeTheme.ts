@@ -1,19 +1,5 @@
-import {extendTheme, Theme} from "@mui/joy";
-
-export interface ColorLabelPaletteRange extends Record<number, string> {
-    100: string;
-    200: string;
-    300: string;
-    400: string;
-    500: string;
-    600: string;
-    700: string;
-    800: string;
-    900: string;
-}
-
-export interface ColorLabelPalette extends Record<string, ColorLabelPaletteRange> {
-}
+import {extendTheme} from "@mui/joy";
+import {ColorLabelPalette} from "@/utils/theme";
 
 declare module "@mui/joy/styles" {
     interface Palette {
@@ -102,7 +88,7 @@ const defaultColorLabels: ColorLabelPalette = {
     },
 }
 
-const appTheme = extendTheme({
+export const customizeTheme = () => extendTheme({
     fontFamily: {
         display: "Roboto",
         body: "Roboto",
@@ -133,11 +119,3 @@ const appTheme = extendTheme({
         }
     }
 });
-
-export default appTheme;
-
-export function labelColorsByName(name?: string | null, theme?: Theme): ColorLabelPaletteRange {
-    const t = theme || appTheme;
-    const p = name ? t.palette.colorLabel[name] : undefined;
-    return p || t.palette.neutral;
-}

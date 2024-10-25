@@ -1,9 +1,9 @@
 import React from "react";
 import {Box, BoxProps, DialogContent, DialogTitle, Drawer as JoyDrawer, GlobalStyles, ModalClose} from "@mui/joy";
 import {Toast, Toaster as HotToaster} from "react-hot-toast";
-import {SidebarPlacement} from "../../types/viewTypes";
-import Notification from "../../components/Notification";
-import {useActiveView} from "../../hooks";
+import {SidebarPlacement} from "@/types/viewTypes";
+import Notification from "@/components/Notification";
+import {useActiveView} from "@/hooks";
 
 const Root: React.FC<BoxProps> = ({sx, ...other}) => (
     <Box {...other}

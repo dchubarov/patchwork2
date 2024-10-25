@@ -1,7 +1,6 @@
-import {EnvironmentState} from "../types/envTypes";
+import {EnvironmentState, EnvironmentContext} from "@/types/envTypes";
 import {useContext} from "react";
 import {AxiosInstance} from "axios";
-import {EnvironmentContext} from "../types/envTypes";
 
 export function useEnvironment(): EnvironmentState {
     const context = useContext(EnvironmentContext);

@@ -1,8 +1,8 @@
 import _ from "lodash";
 import React, {useEffect} from "react";
 import {Link as RouterLink, useParams} from "react-router-dom";
-import PageLayout from "../../../components/PageLayout";
-import {useActiveView, useApiClient} from "../../../hooks";
+import PageLayout from "@/components/PageLayout";
+import {useActiveView, useApiClient} from "@/hooks";
 import Checklist from "../components/Checklist";
 import {Link, List, ListItem, ListItemContent} from "@mui/joy";
 import {useQuery} from "@tanstack/react-query";

@@ -1,4 +1,5 @@
 import React, {PropsWithChildren, ReactNode, useCallback, useReducer} from "react";
+import {Location, useLocation} from "react-router-dom";
 import {
     ActiveViewContext,
     initialViewState,
@@ -6,9 +7,8 @@ import {
     SidebarWidgetsConfiguration,
     ViewConfiguration,
     ViewState
-} from "../../types/viewTypes";
-import {Location, useLocation} from "react-router-dom";
-import AppFeatures from "../../features";
+} from "@/types/viewTypes";
+import AppFeatures from "@/features";
 
 enum ViewStateActionType {
     CONFIGURE_VIEW,

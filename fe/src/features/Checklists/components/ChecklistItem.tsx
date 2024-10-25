@@ -1,13 +1,14 @@
 import React, {ChangeEvent, KeyboardEvent, useRef, useState} from "react";
 import {Box, IconButton, Typography} from "@mui/joy";
+import InlineInput from "@/components/InlineInput";
+import ColorLabel from "@/components/ColorLabel";
 import {ChecklistItemState} from "../types";
-import InlineInput from "../../../components/InlineInput";
+
 import {
     Add as AddIcon,
     CheckBoxOutlineBlank as UncheckedIcon,
     CheckBoxOutlined as CheckedIcon
 } from "@mui/icons-material";
-import ColorLabel from "../../../components/ColorLabel";
 
 type ChecklistItemComponentType = React.FC<{
     checklistItem?: ChecklistItemState,

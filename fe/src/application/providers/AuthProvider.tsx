@@ -2,12 +2,12 @@ import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useRef, useState} from "react";
 import {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
-import {decodeJwt} from "../../utils/jwt";
-import {apiUrl} from "../../utils/api";
-import {AuthContext, AuthState, LoginResponse, UserCredentials} from "../../types/authTypes";
-import {useApiClient} from "../../hooks";
-import {displayNotification} from "../../utils/notification";
-import {logger} from "../../utils/logging";
+import {decodeJwt} from "@/utils/jwt";
+import {apiUrl} from "@/utils/api";
+import {AuthContext, AuthState, LoginResponse, UserCredentials} from "@/types/authTypes";
+import {useApiClient} from "@/hooks";
+import {displayNotification} from "@/utils/notification";
+import {logger} from "@/utils/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
 const INITIAL_REFRESH_DELAY_MILLIS = 15;

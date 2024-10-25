@@ -3,7 +3,7 @@ import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/rea
 import {ChecklistsApi} from "../api";
 import {Stack} from "@mui/joy";
 import ChecklistItem from "./ChecklistItem";
-import {useApiClient} from "../../../hooks";
+import {useApiClient} from "@/hooks";
 
 interface ChecklistProps {
     checklistName?: string;

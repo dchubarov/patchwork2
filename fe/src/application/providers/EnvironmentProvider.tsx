@@ -1,9 +1,9 @@
 import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {BackendStatus, EnvironmentContext, EnvironmentState} from "../../types/envTypes";
-import {apiUrl} from "../../utils/api";
+import {BackendStatus, EnvironmentContext, EnvironmentState} from "@/types/envTypes";
+import {apiUrl} from "@/utils/api";
 import {createApiClient} from "../utils/apiClient";
-import version from "../../version.json";
+import version from "@/version.json";
 
 enum EnvironmentStateActionType {
     UPDATE_BACKEND_STATUS

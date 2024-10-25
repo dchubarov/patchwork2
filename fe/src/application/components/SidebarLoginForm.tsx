@@ -1,4 +1,4 @@
-import {UserCredentials} from "../../types/authTypes";
+import {UserCredentials} from "@/types/authTypes";
 import React, {FormEvent, KeyboardEvent, useState} from "react";
 import {Box, Button, FormControl, Input} from "@mui/joy";
 import {KeyboardArrowDown as ArrowDownIcon, Login as LoginIcon} from "@mui/icons-material";

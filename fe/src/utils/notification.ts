@@ -1,4 +1,4 @@
-import {internalDisplayNotification, NotificationOptions} from "../components/Notification";
+import {internalDisplayNotification, NotificationOptions} from "@/components/Notification";
 
 export const displayNotification = (title: string, opts?: NotificationOptions) =>
     internalDisplayNotification(title, opts);

@@ -1,5 +1,5 @@
 import {RouteObject} from "react-router-dom";
-import {AppFeature} from "../../types/appFeatureTypes";
+import {AppFeature} from "@/types/appFeatureTypes";
 import DevtoolsPage from "./pages/DevtoolsPage";
 
 const DevtoolsFeature: AppFeature = {

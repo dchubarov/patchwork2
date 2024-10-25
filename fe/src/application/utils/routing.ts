@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import {createBrowserRouter} from "react-router-dom";
-import AppFeatures from "../../features";
+import AppFeatures from "@/features";
 
 const baseUrl = process.env.REACT_APP_UI_ROOT;
 

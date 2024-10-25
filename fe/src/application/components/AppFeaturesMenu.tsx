@@ -1,10 +1,10 @@
 import React from "react";
-import {Avatar, Badge, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem} from "@mui/joy";
-import AppLogo from "./AppLogo";
-import {Home as HomeIcon, Lock as LockIcon, QuestionMark as PlaceholderIcon} from "@mui/icons-material";
-import AppFeatures from "../../features";
 import {useNavigate} from "react-router-dom";
-import {useActiveView} from "../../hooks";
+import {Avatar, Badge, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem} from "@mui/joy";
+import {Home as HomeIcon, Lock as LockIcon, QuestionMark as PlaceholderIcon} from "@mui/icons-material";
+import AppLogo from "./AppLogo";
+import AppFeatures from "@/features";
+import {useActiveView} from "@/hooks";
 
 const AppFeaturesMenu: React.FC = () => {
     const {sidebarPlacement} = useActiveView();

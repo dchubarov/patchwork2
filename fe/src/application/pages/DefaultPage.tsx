@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
 import {Sheet, Typography} from "@mui/joy";
 import InfoIcon from "@mui/icons-material/Info";
-import PageLayout from "../../components/PageLayout";
-import {useActiveView} from "../../hooks";
+import PageLayout from "@/components/PageLayout";
+import {useActiveView} from "@/hooks";
 
 const DefaultPage: React.FC = () => {
     const {configureWidgets, ejectView} = useActiveView();

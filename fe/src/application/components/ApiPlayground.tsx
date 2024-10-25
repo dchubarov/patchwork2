@@ -12,7 +12,7 @@ import {
     MenuButton,
     MenuItem,
     Textarea,
-    Typography
+    Typography, useTheme
 } from "@mui/joy";
 import axios, {AxiosRequestConfig} from "axios";
 import {
@@ -21,8 +21,8 @@ import {
     PlayArrow as RunIcon,
     Warning as WarningIcon
 } from "@mui/icons-material";
-import {labelColorsByName} from "../utils/theme";
-import {apiUrl as baseApiUrl} from "../../utils/api";
+import {labelColorsByName} from "@/utils/theme";
+import {apiUrl as baseApiUrl} from "@/utils/api";
 
 type RequestState =
     | { status: "empty" }
@@ -51,7 +51,8 @@ type RequestMethodSelectorType = React.FC<{
 }>;
 
 const RequestMethodSelector: RequestMethodSelectorType = ({method, onChange}) => {
-    const palette = labelColorsByName(RequestMethod[method].color);
+    const theme = useTheme();
+    const palette = labelColorsByName(RequestMethod[method].color || null, theme);
     return (
         <Dropdown>
             <Chip
@@ -74,7 +75,7 @@ const RequestMethodSelector: RequestMethodSelectorType = ({method, onChange}) =>
                     <MenuItem
                         key={value}
                         onClick={() => onChange?.(value)}
-                        sx={{color: labelColorsByName(RequestMethod[value].color)[800]}}>
+                        sx={{color: labelColorsByName(RequestMethod[value].color || null, theme)[800]}}>
                         {value}
                     </MenuItem>
                 ))}

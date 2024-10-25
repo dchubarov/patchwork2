@@ -2,8 +2,8 @@ import React from "react";
 import {Box, Typography} from "@mui/joy";
 import AppSettingsMenu from "./AppSettingsMenu";
 import SidebarDivider from "./SidebarDivider";
-import {SidebarWidget} from "../../types/viewTypes";
-import {useActiveView} from "../../hooks";
+import {SidebarWidget} from "@/types/viewTypes";
+import {useActiveView} from "@/hooks";
 import AppFeaturesMenu from "./AppFeaturesMenu";
 
 interface SidebarHeaderProps {

@@ -10,11 +10,11 @@ import {
     MenuItem,
     useTheme
 } from "@mui/joy";
-import {labelColorsByName} from "../application/utils/theme";
+import {labelColorsByName} from "@/utils/theme";
 
 const Spot: React.FC<{ labelName?: string | null }> = ({labelName}) => {
     const theme = useTheme();
-    const labelColors = labelColorsByName(labelName, theme);
+    const labelColors = labelColorsByName(labelName || null, theme);
 
     return (
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

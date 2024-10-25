@@ -33,9 +33,9 @@
     "web-vitals": "4.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -58,7 +58,9 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@types/lodash": "4.17.12"
+    "@types/lodash": "4.17.12",
+    "react-app-rewired": "^2.2.1",
+    "tsconfig-paths-webpack-plugin": "^4.1.0"
   },
   "resolutions": {
     "@mui/material": "npm:@mui/joy@latest"

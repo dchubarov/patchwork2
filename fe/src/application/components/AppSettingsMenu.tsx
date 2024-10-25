@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {ReactQueryDevtoolsPanel} from "@tanstack/react-query-devtools";
 import {
     Button,
     ButtonGroup,
@@ -11,11 +12,6 @@ import {
     SupportedColorScheme,
     useColorScheme
 } from "@mui/joy";
-import {useEnvironment, useActiveView} from "../../hooks";
-import {useQueryClient} from "@tanstack/react-query";
-import {SidebarPlacement} from "../../types/viewTypes";
-import ApiPlayground from "./ApiPlayground";
-import {ReactQueryDevtoolsPanel} from "@tanstack/react-query-devtools";
 import {
     Api as ApiIcon, CloudOff as OfflineIcon, CloudOutlined as OnlineIcon,
     DarkMode as DarkModeIcon,
@@ -23,6 +19,10 @@ import {
     MoreVert as SettingsIcon,
     ViewSidebarOutlined as SidebarIcon, Webhook as ReactQueryDevtoolsIcon
 } from "@mui/icons-material";
+import {useEnvironment, useActiveView} from "@/hooks";
+import {useQueryClient} from "@tanstack/react-query";
+import {SidebarPlacement} from "@/types/viewTypes";
+import ApiPlayground from "./ApiPlayground";
 
 const AppSettingsMenu: React.FC = () => {
     const {mode: colorScheme, setMode: setColorScheme} = useColorScheme();

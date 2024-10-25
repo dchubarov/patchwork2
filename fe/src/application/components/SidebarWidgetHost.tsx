@@ -1,6 +1,6 @@
 import React from "react";
 import {Accordion, AccordionDetails, AccordionGroup, AccordionSummary, ListItemContent, Typography} from "@mui/joy";
-import {SidebarWidget} from "../../types/viewTypes";
+import {SidebarWidget} from "@/types/viewTypes";
 
 interface SidebarWidgetHostProps {
     widgets: SidebarWidget[];

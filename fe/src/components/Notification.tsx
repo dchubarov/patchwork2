@@ -1,9 +1,13 @@
 import React from "react";
 import {Card, CardContent, IconButton, SvgIconProps, Typography} from "@mui/joy";
-import {resolveValue, Toast, toast} from "react-hot-toast";
-import {Close as CloseIcon} from "@mui/icons-material";
+import {
+    Dangerous as ErrorIcon,
+    WarningAmber as WarningIcon,
+    InfoOutlined as InfoIcon,
+    Close as CloseIcon
+} from "@mui/icons-material";
 import {DefaultColorPalette} from "@mui/joy/styles/types";
-import {Dangerous as ErrorIcon, WarningAmber as WarningIcon, InfoOutlined as InfoIcon} from "@mui/icons-material";
+import {resolveValue, Toast, toast} from "react-hot-toast";
 
 type NotificationType = "success" | "warning" | "error" | "info";
 
