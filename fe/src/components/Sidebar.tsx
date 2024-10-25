@@ -5,7 +5,7 @@ import {
     AccordionGroup,
     AccordionSummary,
     AspectRatio,
-    Avatar,
+    Avatar, Badge,
     Box,
     Button,
     ButtonGroup,
@@ -38,6 +38,7 @@ import {
     KeyboardArrowDown as ArrowDownIcon,
     KeyboardArrowUp as ArrowUpIcon,
     LightMode as LightModeIcon,
+    Lock as LockIcon,
     Login as LoginIcon,
     LogoutSharp as LogoutIcon,
     MoreVert as SettingsIcon,
@@ -146,7 +147,6 @@ const SettingsMenu: React.FC = () => {
             <Menu size="sm">
                 <ListSubheader>Color scheme</ListSubheader>
                 <ListItem>
-                    {/*<ColorSchemeToggle size="sm"/>*/}
                     <ButtonGroup
                         disabled={!mounted}
                         size="sm"
@@ -426,9 +426,18 @@ const Sidebar: React.FC = () => {
                                     <MenuItem key={`appMenuItem-${index}`} orientation="vertical"
                                               onClick={() => navigate(feature.basename)}>
                                         <ListItemDecorator>
-                                            <Avatar>
-                                                <PlaceholderIcon/>
-                                            </Avatar>
+                                            <Badge
+                                                size="sm"
+                                                variant="soft"
+                                                anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+                                                badgeInset="20%"
+                                                badgeContent={<LockIcon/>}
+                                                slotProps={{badge: {sx: {backgroundColor: "transparent"}}}}
+                                                sx={{"--Badge-ringSize": 0, backgroundColor: "transparent"}}>
+                                                <Avatar>
+                                                    <PlaceholderIcon/>
+                                                </Avatar>
+                                            </Badge>
                                         </ListItemDecorator>
                                         {feature.displayName || feature.basename}
                                     </MenuItem>
