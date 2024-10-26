@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useAuth} from "@/hooks";
-import {UserCredentials} from "@/types/authTypes";
+import {UserCredentials} from "@/types/auth";
 import {Avatar, Box, Button, CircularProgress, IconButton, Tooltip, Typography} from "@mui/joy";
 import {KeyboardArrowUp as ArrowUpIcon, LogoutSharp as LogoutIcon} from "@mui/icons-material";
 import SidebarLoginForm from "./SidebarLoginForm";

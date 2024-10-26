@@ -1,8 +1,8 @@
 import {RouteObject} from "react-router-dom";
-import {AppFeature} from "@/types/appFeatureTypes";
+import {ApplicationFacet} from "@/types/facet";
 import DevtoolsPage from "./pages/DevtoolsPage";
 
-const DevtoolsFeature: AppFeature = {
+const DevtoolsFacet: ApplicationFacet = {
     name: "devtools",
     basePath: "dev-tools",
     defaultDisplayName: "Developer",
@@ -15,4 +15,4 @@ const DevtoolsFeature: AppFeature = {
     }*/]),
 }
 
-export default DevtoolsFeature;
+export default DevtoolsFacet;

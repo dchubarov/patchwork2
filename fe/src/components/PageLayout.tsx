@@ -9,8 +9,8 @@ import React, {
     useState
 } from "react";
 import {Box, BoxProps, Tab, TabList, TabPanel, Tabs, Typography} from "@mui/joy";
-import {SidebarPlacement} from "@/types/viewTypes";
-import {IndexedLayoutChildProps} from "@/types/layoutTypes";
+import {SidebarPlacement} from "@/types/view";
+import {IndexedLayoutChildProps} from "@/types/layout";
 import {developmentLogger} from "@/utils/logging";
 import {useActiveView} from "@/hooks";
 

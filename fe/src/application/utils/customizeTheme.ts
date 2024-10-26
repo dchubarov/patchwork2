@@ -1,5 +1,5 @@
 import {extendTheme} from "@mui/joy";
-import {ColorLabelPalette} from "@/utils/theme";
+import {ColorLabelPalette} from "@/types/theme";
 
 declare module "@mui/joy/styles" {
     interface Palette {

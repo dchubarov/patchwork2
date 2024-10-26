@@ -1,7 +1,7 @@
 import React from "react";
 import {Box, BoxProps, DialogContent, DialogTitle, Drawer as JoyDrawer, GlobalStyles, ModalClose} from "@mui/joy";
 import {Toast, Toaster as HotToaster} from "react-hot-toast";
-import {SidebarPlacement} from "@/types/viewTypes";
+import {SidebarPlacement} from "@/types/view";
 import Notification from "@/components/Notification";
 import {useActiveView} from "@/hooks";
 

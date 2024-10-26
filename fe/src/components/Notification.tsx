@@ -19,7 +19,7 @@ export interface NotificationOptions {
     noCloseButton?: boolean;
 }
 
-export function internalDisplayNotification(title: string, opts?: NotificationOptions) {
+export function internalShowNotification(title: string, opts?: NotificationOptions) {
     let classes = [`nf-type-${opts?.type || "info"}`];
     if (!opts?.noCloseButton) {
         classes.push("nf-closeable");

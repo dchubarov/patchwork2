@@ -1,5 +1,5 @@
 import {createContext, ReactNode} from "react";
-import {EnvironmentAppFeature} from "@/types/envTypes";
+import {EnvironmentFacet} from "@/types/env";
 
 export type SidebarPlacement = "left" | "right";
 
@@ -25,7 +25,7 @@ export interface ViewState {
     drawerOpen: boolean;
     drawerTitle?: string;
     drawerComponent: ReactNode | null;
-    currentFeature: EnvironmentAppFeature | null;
+    activeFacet: EnvironmentFacet | null;
     configureView: (config: ViewConfiguration) => void;
     configureWidgets: (config: SidebarWidgetsConfiguration) => void;
     ejectView: () => void;

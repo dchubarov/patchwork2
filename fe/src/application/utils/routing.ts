@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import {createBrowserRouter} from "react-router-dom";
-import AppFeatures from "@/features";
+import AppFacets from "src/facets";
 
 const baseUrl = process.env.REACT_APP_UI_ROOT;
 
@@ -19,9 +19,9 @@ export function buildRouter(
                     element: initialPage || null,
                 },
 
-                ...AppFeatures.map((feature => ({
-                    path: feature.basePath || feature.name,
-                    children: feature.routes()
+                ...AppFacets.map((facet => ({
+                    path: facet.basePath || facet.name,
+                    children: facet.routes()
                 }))),
             ]
         }],

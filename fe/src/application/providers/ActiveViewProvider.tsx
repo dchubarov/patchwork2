@@ -6,9 +6,9 @@ import {
     SidebarWidgetsConfiguration,
     ViewConfiguration,
     ViewState
-} from "@/types/viewTypes";
+} from "@/types/view";
 import {useEnvironment} from "@/hooks";
-import {EnvironmentAppFeature} from "@/types/envTypes";
+import {EnvironmentFacet} from "@/types/env";
 import _ from "lodash";
 
 enum ViewStateActionType {
@@ -34,7 +34,7 @@ const initialViewState: ViewState = {
     drawerOpen: false,
     drawerTitle: undefined,
     drawerComponent: null,
-    currentFeature: null,
+    activeFacet: null,
     configureView: () => {
     },
     configureWidgets: () => {
@@ -49,14 +49,14 @@ const initialViewState: ViewState = {
 
 const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
     const [state, dispatch] = useReducer(viewStateReducer, initialViewState);
-    const {availableFeatures} = useEnvironment();
+    const {availableFacets} = useEnvironment();
     const location = useLocation();
 
     const contextValue = {
         ...state,
-        currentFeature: useMemo(() => {
-            return getCurrentFeatureFromLocation(availableFeatures, location.pathname);
-        }, [availableFeatures, location.pathname]),
+        activeFacet: useMemo(() => {
+            return getActiveFacetFromPath(availableFacets, location.pathname);
+        }, [availableFacets, location.pathname]),
         configureView: useCallback((config: ViewConfiguration) => {
             dispatch({type: ViewStateActionType.CONFIGURE_VIEW, config});
         }, [dispatch]),
@@ -85,12 +85,12 @@ export default ActiveViewProvider;
 
 // private
 
-function getCurrentFeatureFromLocation(availableFeatures: EnvironmentAppFeature[], pathname: string): EnvironmentAppFeature | null {
+function getActiveFacetFromPath(availableFacets: EnvironmentFacet[], pathname: string): EnvironmentFacet | null {
     const strippedPath = _.trimStart(pathname, "/");
     if (!strippedPath)
         return null;
 
-    return availableFeatures.find(
+    return availableFacets.find(
         (value) => _.startsWith(strippedPath, value.basePath))
         || null;
 }

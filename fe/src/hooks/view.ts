@@ -1,4 +1,4 @@
-import {ViewState, ActiveViewContext} from "@/types/viewTypes";
+import {ViewState, ActiveViewContext} from "@/types/view";
 import {useContext} from "react";
 
 export function useActiveView(): ViewState {

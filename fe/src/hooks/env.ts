@@ -1,4 +1,4 @@
-import {EnvironmentState, EnvironmentContext} from "@/types/envTypes";
+import {EnvironmentState, EnvironmentContext} from "@/types/env";
 import {useContext} from "react";
 import {AxiosInstance} from "axios";
 

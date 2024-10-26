@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Button, Checkbox, CircularProgress, Stack, Typography} from "@mui/joy";
-import {IndexedLayoutChildProps} from "@/types/layoutTypes";
+import {IndexedLayoutChildProps} from "@/types/layout";
 import {useActiveView} from "@/hooks";
 
 const DemoLoadingWidget: React.FC = () => (

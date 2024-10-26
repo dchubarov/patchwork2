@@ -1,12 +1,12 @@
 import {RouteObject} from "react-router-dom";
-import {AppFeature} from "@/types/appFeatureTypes";
+import {ApplicationFacet} from "@/types/facet";
 
 const PanoramaDynamic = async () => {
     const {default: Component} = await import("./components/Panorama");
     return Component;
 }
 
-const PanoramaFeature: AppFeature = {
+const PanoramaFacet: ApplicationFacet = {
     name: "panorama",
     routes: (): RouteObject[] => ([{
         index: true,
@@ -17,4 +17,4 @@ const PanoramaFeature: AppFeature = {
     }]),
 }
 
-export default PanoramaFeature;
+export default PanoramaFacet;

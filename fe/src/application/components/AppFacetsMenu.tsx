@@ -5,8 +5,8 @@ import {Home as HomeIcon, Lock as LockIcon, QuestionMark as PlaceholderIcon} fro
 import AppLogo from "./AppLogo";
 import {useActiveView, useEnvironment} from "@/hooks";
 
-const AppFeaturesMenu: React.FC = () => {
-    const {availableFeatures} = useEnvironment();
+const AppFacetsMenu: React.FC = () => {
+    const {availableFacets} = useEnvironment();
     const {sidebarPlacement} = useActiveView();
     const navigate = useNavigate();
 
@@ -40,16 +40,16 @@ const AppFeaturesMenu: React.FC = () => {
                     Home
                 </MenuItem>
 
-                {availableFeatures.map((feature, index) => (
-                    <MenuItem key={`appMenuItem-${index}`} orientation="vertical"
-                              onClick={() => navigate(feature.basePath)}>
+                {availableFacets.map((facet) => (
+                    <MenuItem key={`appMenuItem-${facet.name}`} orientation="vertical"
+                              onClick={() => navigate(facet.basePath)}>
                         <ListItemDecorator>
                             <Badge
                                 size="sm"
                                 variant="soft"
                                 anchorOrigin={{vertical: "bottom", horizontal: "right"}}
                                 badgeInset="20%"
-                                badgeContent={<LockIcon/>}
+                                badgeContent={<LockIcon sx={{"--Icon-fontSize": "14px"}}/>}
                                 slotProps={{badge: {sx: {backgroundColor: "transparent"}}}}
                                 sx={{"--Badge-ringSize": 0, backgroundColor: "transparent"}}>
                                 <Avatar>
@@ -57,7 +57,7 @@ const AppFeaturesMenu: React.FC = () => {
                                 </Avatar>
                             </Badge>
                         </ListItemDecorator>
-                        {feature.localizedDisplayName}
+                        {facet.localizedDisplayName}
                     </MenuItem>
                 ))}
             </Menu>
@@ -65,4 +65,4 @@ const AppFeaturesMenu: React.FC = () => {
     );
 }
 
-export default AppFeaturesMenu;
+export default AppFacetsMenu;

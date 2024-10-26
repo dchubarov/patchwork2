@@ -2,9 +2,9 @@ import React from "react";
 import {Box, Typography} from "@mui/joy";
 import AppSettingsMenu from "./AppSettingsMenu";
 import SidebarDivider from "./SidebarDivider";
-import {SidebarWidget} from "@/types/viewTypes";
+import {SidebarWidget} from "@/types/view";
 import {useActiveView} from "@/hooks";
-import AppFeaturesMenu from "./AppFeaturesMenu";
+import AppFacetsMenu from "./AppFacetsMenu";
 
 interface SidebarHeaderProps {
     widget?: SidebarWidget | null;
@@ -12,7 +12,7 @@ interface SidebarHeaderProps {
 }
 
 const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
-    const {currentFeature} = useActiveView();
+    const {activeFacet} = useActiveView();
 
     return (
         <Box
@@ -27,10 +27,10 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
 
             {/*APP HEADER*/}
             <Box sx={{display: "flex", flexWrap: "nowrap", alignItems: "center", gap: 1, overflow: "hidden"}}>
-                <AppFeaturesMenu/>
+                <AppFacetsMenu/>
 
                 <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
-                    {currentFeature?.localizedDisplayName || "Home"}
+                    {activeFacet?.localizedDisplayName || "Application"}
                 </Typography>
 
                 <AppSettingsMenu/>

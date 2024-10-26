@@ -1,0 +1,17 @@
+import {RouteObject} from "react-router-dom";
+
+export type RouteProvider = () => RouteObject[];
+
+/** Represents an application facet */
+export interface ApplicationFacet {
+    /** Uniquely identifies a facet */
+    name: string;
+    /** Router base path, if omitted, {@link name} will be used */
+    basePath?: string;
+    /** Default display name, if omitted a localized name or {@link name} will be used */
+    defaultDisplayName?: string;
+    /** Category name */
+    category?: string;
+    /** Returns sub-routes for the facet */
+    routes: RouteProvider;
+}

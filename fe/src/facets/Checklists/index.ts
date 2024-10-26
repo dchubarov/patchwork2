@@ -1,9 +1,9 @@
-import {AppFeature} from "@/types/appFeatureTypes";
+import {ApplicationFacet} from "@/types/facet";
 import React from "react";
 
 const LazyChecklistsPage = React.lazy(() => import("./pages/ChecklistsPage"));
 
-const ChecklistsFeature : AppFeature = {
+const ChecklistsFacet : ApplicationFacet = {
     name: "checklists",
     routes: () => ([{
         index: true,
@@ -14,4 +14,4 @@ const ChecklistsFeature : AppFeature = {
     }]),
 }
 
-export default ChecklistsFeature;
+export default ChecklistsFacet;

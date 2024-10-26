@@ -1,11 +1,11 @@
 import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {BackendStatus, EnvironmentAppFeature, EnvironmentContext, EnvironmentState} from "@/types/envTypes";
+import {BackendStatus, EnvironmentFacet, EnvironmentContext, EnvironmentState} from "@/types/env";
 import {apiUrl} from "@/utils/api";
 import {createApiClient} from "../utils/apiClient";
 import version from "@/version.json";
-import AppFeatures from "@/features";
+import AppFacets from "src/facets";
 
 enum EnvironmentStateActionType {
     UPDATE_BACKEND_STATUS,
@@ -51,7 +51,7 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
         apiClient,
         backendStatus: "unknown",
         versionInfo: "Version " + version.number,
-        availableFeatures: createFeatureList(),
+        availableFacets: createFacetList(),
     } as EnvironmentState);
 
     const [environment, dispatch] = useReducer(environmentStateReducer, null, createInitialState);
@@ -77,13 +77,13 @@ function environmentStateReducer(state: EnvironmentState, action: EnvironmentSta
     }
 }
 
-function createFeatureList(): EnvironmentAppFeature[] {
-    return AppFeatures.map(value => ({
+function createFacetList(): EnvironmentFacet[] {
+    return AppFacets.map(value => ({
         name: value.name,
         basePath: value.basePath || value.name,
         category: value.category,
         defaultDisplayName: _.capitalize(value.defaultDisplayName || value.name),
         localizedDisplayName: _.capitalize(value.defaultDisplayName || value.name),
         localizedCategory: value.category ? _.capitalize(value.category) : undefined,
-    } as EnvironmentAppFeature))
+    } as EnvironmentFacet))
 }

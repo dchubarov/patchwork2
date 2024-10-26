@@ -4,9 +4,9 @@ import {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
 import {decodeJwt} from "@/utils/jwt";
 import {apiUrl} from "@/utils/api";
-import {AuthContext, AuthState, LoginResponse, UserCredentials} from "@/types/authTypes";
+import {AuthContext, AuthState, LoginResponse, UserCredentials} from "@/types/auth";
 import {useApiClient} from "@/hooks";
-import {displayNotification} from "@/utils/notification";
+import {showNotification} from "@/utils/notification";
 import {logger} from "@/utils/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
@@ -109,11 +109,11 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         onMutate: setPendingState,
         onSuccess: (data) => {
             handleSuccessfulLogin(data);
-            displayNotification("You have successfully logged in", {type: "success"});
+            showNotification("You have successfully logged in", {type: "success"});
         },
         onError: (error) => {
             handleLogout(error);
-            displayNotification("Authentication failed", {subtitle: error.message, type: "error"});
+            showNotification("Authentication failed", {subtitle: error.message, type: "error"});
         },
         gcTime: 0,
     });

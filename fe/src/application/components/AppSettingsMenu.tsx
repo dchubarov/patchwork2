@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import {useEnvironment, useActiveView} from "@/hooks";
 import {useQueryClient} from "@tanstack/react-query";
-import {SidebarPlacement} from "@/types/viewTypes";
+import {SidebarPlacement} from "@/types/view";
 import ApiPlayground from "./ApiPlayground";
 
 const AppSettingsMenu: React.FC = () => {
