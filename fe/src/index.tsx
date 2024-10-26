@@ -4,7 +4,7 @@ import {RouterProvider} from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import {buildRouter} from "./application/utils/routing";
 import {QueryClientProvider} from "@tanstack/react-query";
-import {App, DefaultPage, ErrorPage}  from "./application";
+import {App, DefaultPage, ErrorPage} from "./application";
 import EnvironmentProvider from "./application/providers/EnvironmentProvider";
 import AuthProvider from "./application/providers/AuthProvider";
 import createQueryClient from "./application/utils/queryClient";
@@ -16,15 +16,13 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-    <React.StrictMode>
-        <QueryClientProvider client={createQueryClient()}>
-            <EnvironmentProvider>
-                <AuthProvider>
-                    <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <DefaultPage/>)}/>
-                </AuthProvider>
-            </EnvironmentProvider>
-        </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={createQueryClient()}>
+        <EnvironmentProvider>
+            <AuthProvider>
+                <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <DefaultPage/>)}/>
+            </AuthProvider>
+        </EnvironmentProvider>
+    </QueryClientProvider>
 );
 
 if (envGlobals.ENABLE_MOCKER) {

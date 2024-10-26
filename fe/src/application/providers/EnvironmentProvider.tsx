@@ -22,6 +22,7 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
     const {status: serverInfoStatus, data: serverInfo} = useQuery({
         queryKey: ["/server-info"],
         queryFn: monitoringApi.serverInfoRequest(apiClient),
+        refetchIntervalInBackground: true,
         refetchInterval: SERVER_MONITORING_INTERVAL_MILLIS,
         staleTime: SERVER_MONITORING_INTERVAL_MILLIS
     });

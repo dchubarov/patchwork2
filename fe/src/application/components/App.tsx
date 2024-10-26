@@ -1,4 +1,4 @@
-import React, {Suspense, useMemo} from "react";
+import React, {StrictMode, Suspense, useMemo} from "react";
 import {Outlet} from "react-router-dom";
 import {CssBaseline, CssVarsProvider} from "@mui/joy";
 import Layout from "./Layout";
@@ -13,31 +13,32 @@ const App: React.FC = () => {
             <CssBaseline/>
 
             <ActiveViewProvider>
-                <Layout.Root>
-                    {/*<Layout.Header>*/}
-                    {/* Placeholder for header component */}
-                    {/*</Layout.Header>*/}
+                <StrictMode>
+                    <Layout.Root>
+                        {/*<Layout.Header>*/}
+                        {/* Placeholder for header component */}
+                        {/*</Layout.Header>*/}
 
-                    <Layout.Main>
-                        <Layout.Sidebar placement="left">
-                            <Sidebar/>
-                        </Layout.Sidebar>
+                        <Layout.Main>
+                            <Layout.Sidebar placement="left">
+                                <Sidebar/>
+                            </Layout.Sidebar>
 
-                        <Layout.View>
-                            {/* TODO provide a clear fallback */}
-                            <Suspense>
-                                <Outlet/>
-                            </Suspense>
-                        </Layout.View>
+                            <Layout.View>
+                                {/* TODO provide a clear fallback */}
+                                <Suspense>
+                                    <Outlet/>
+                                </Suspense>
+                            </Layout.View>
 
-                        <Layout.Sidebar placement="right">
-                            <Sidebar/>
-                        </Layout.Sidebar>
-                    </Layout.Main>
-                </Layout.Root>
-
-                <Layout.Drawer/>
-                <Layout.Toaster/>
+                            <Layout.Sidebar placement="right">
+                                <Sidebar/>
+                            </Layout.Sidebar>
+                        </Layout.Main>
+                    </Layout.Root>
+                    <Layout.Drawer/>
+                    <Layout.Toaster/>
+                </StrictMode>
             </ActiveViewProvider>
         </CssVarsProvider>
     );

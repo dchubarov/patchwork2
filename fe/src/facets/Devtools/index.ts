@@ -6,6 +6,7 @@ const DevtoolsFacet: ApplicationFacet = {
     name: "devtools",
     basePath: "dev-tools",
     defaultDisplayName: "Developer",
+    icon: "DEV",
     routes: (): RouteObject[] => ([{
         index: true,
         Component: DevtoolsPage

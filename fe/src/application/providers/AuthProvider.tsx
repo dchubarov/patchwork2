@@ -10,7 +10,6 @@ import {showNotification} from "@/utils/notification";
 import {logger} from "@/utils/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
-const INITIAL_REFRESH_DELAY_MILLIS = 15;
 
 const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     const apiClient = useApiClient();
@@ -121,9 +120,13 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
         if (tokenExpiresMillis !== null) {
             // TODO better refresh before expiration considering request latency, clock skew, etc
             const timeout = tokenExpiresMillis - _.now();
-            timeoutId = setTimeout(() => {
+            if (timeout <= 0) {
                 doRefresh();
-            }, timeout <= 0 ? INITIAL_REFRESH_DELAY_MILLIS : timeout);
+            } else {
+                timeoutId = setTimeout(() => {
+                    doRefresh();
+                }, timeout);
+            }
         }
 
         if (timeoutId !== null) {

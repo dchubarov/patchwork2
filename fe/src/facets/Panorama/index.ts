@@ -8,7 +8,6 @@ const PanoramaDynamic = async () => {
 
 const PanoramaFacet: ApplicationFacet = {
     name: "panorama",
-    icon: "PA",
     routes: (): RouteObject[] => ([{
         index: true,
         lazy: async () => ({Component: await PanoramaDynamic()}),
