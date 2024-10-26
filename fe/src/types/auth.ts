@@ -1,31 +1,12 @@
 import {createContext} from "react";
-import z from "zod";
-
-export const UserSchema = z.object({
-    username: z.string().trim().min(1),
-    email: z.string().email(),
-    firstname: z.optional(z.string()),
-    lastname: z.optional(z.string()),
-    id: z.coerce.number().min(1)
-});
-
-export type User = z.infer<typeof UserSchema>;
-
-export const LoginResponseSchema = z.object({
-    user: UserSchema,
-    accessToken: z.string()
-}).strict();
-
-export type LoginResponse = z.infer<typeof LoginResponseSchema>;
-
-export interface UserCredentials {
-    login: string;
-    password: string;
-}
+import {User, UserCredentials} from "@/application/api/auth";
 
 interface IAuthState {
+    /** Indicates whether any authentication request is in progress */
     isPending: boolean;
+    /** Function that performs login with passed credentials */
     login(credentials: UserCredentials): void;
+    /** Function that performs logout */
     logout(): void;
 }
 
@@ -34,3 +15,4 @@ export type AuthState = IAuthState & (
     | { isAuthenticated: false, user: null });
 
 export const AuthContext = createContext<AuthState | null>(null);
+export type {UserCredentials, User, LoginResponse} from "@/application/api/auth";

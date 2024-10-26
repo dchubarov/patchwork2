@@ -1,32 +1,27 @@
 import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {BackendStatus, EnvironmentFacet, EnvironmentContext, EnvironmentState} from "@/types/env";
-import {apiUrl} from "@/utils/api";
+import {EnvironmentContext, EnvironmentFacet, EnvironmentState, ServerInfoResponse} from "@/types/env";
 import {createApiClient} from "../utils/apiClient";
-import version from "@/version.json";
+import monitoringApi from "../api/monitoring";
 import AppFacets from "src/facets";
+import version from "@/version.json";
 
 enum EnvironmentStateActionType {
     UPDATE_BACKEND_STATUS,
 }
 
 type EnvironmentStateAction =
-    | { type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS, backendStatus: BackendStatus, backendInfo?: string }
+    | { type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS, serverInfo: ServerInfoResponse | null }
     ;
 
 const SERVER_MONITORING_INTERVAL_MILLIS = 30_000;
 const apiClient = createApiClient();
 
 const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
-    // Backend monitoring
     const {status: serverInfoStatus, data: serverInfo} = useQuery({
         queryKey: ["/server-info"],
-        queryFn: async () => {
-            return apiClient
-                .get(apiUrl("/server-info"))
-                .then((response => response.data))
-        },
+        queryFn: monitoringApi.serverInfoRequest(apiClient),
         refetchInterval: SERVER_MONITORING_INTERVAL_MILLIS,
         staleTime: SERVER_MONITORING_INTERVAL_MILLIS
     });
@@ -35,13 +30,12 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
         if (serverInfoStatus === "success") {
             dispatch({
                 type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS,
-                backendInfo: serverInfo.server,
-                backendStatus: "online"
+                serverInfo
             });
         } else if (serverInfoStatus === "error") {
             dispatch({
                 type: EnvironmentStateActionType.UPDATE_BACKEND_STATUS,
-                backendStatus: "offline"
+                serverInfo: null,
             });
         }
     }, [serverInfoStatus, serverInfo]);
@@ -71,8 +65,8 @@ function environmentStateReducer(state: EnvironmentState, action: EnvironmentSta
         case EnvironmentStateActionType.UPDATE_BACKEND_STATUS:
             return {
                 ...state,
-                backendStatus: action.backendStatus,
-                backendInfo: action.backendInfo
+                backendStatus: action.serverInfo !== null ? "online" : "offline",
+                backendInfo: action.serverInfo?.server,
             };
     }
 }

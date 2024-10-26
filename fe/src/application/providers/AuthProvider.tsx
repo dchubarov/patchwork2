@@ -1,30 +1,16 @@
 import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useRef, useState} from "react";
-import {AxiosError, AxiosInstance} from "axios";
+import {AxiosError} from "axios";
 import {useMutation} from "@tanstack/react-query";
-import {decodeJwt} from "@/utils/jwt";
-import {apiUrl} from "@/utils/api";
-import {AuthContext, AuthState, LoginResponse, LoginResponseSchema, UserCredentials} from "@/types/auth";
+import {AuthContext, AuthState, LoginResponse, UserCredentials} from "@/types/auth";
+import authApi from "@/application/api/auth";
 import {useApiClient} from "@/hooks";
+import {decodeJwt} from "@/utils/jwt";
 import {showNotification} from "@/utils/notification";
 import {logger} from "@/utils/logging";
 
 const MAX_REFRESH_RETRY_COUNT = 3;
 const INITIAL_REFRESH_DELAY_MILLIS = 15;
-
-const refreshRequest = (client: AxiosInstance) =>
-    async () => client
-        .get(apiUrl("auth", "refresh"), {withCredentials: true})
-        .then(response => LoginResponseSchema.parse(response.data));
-
-const loginRequest = (client: AxiosInstance) =>
-    async (credentials: UserCredentials) => client
-        .post(apiUrl("auth", "login"), credentials)
-        .then(response => LoginResponseSchema.parse(response.data));
-
-const logoutRequest = (client: AxiosInstance) =>
-    async () => client
-        .get(apiUrl("auth", "logout"));
 
 const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     const apiClient = useApiClient();
@@ -99,7 +85,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
 
     const {mutate: doRefresh} = useMutation({
         mutationKey: ["auth/refresh"],
-        mutationFn: refreshRequest(apiClient),
+        mutationFn: authApi.refreshRequest(apiClient),
         onMutate: setPendingState,
         onSuccess: handleSuccessfulLogin,
         onError: handleLogout,
@@ -109,7 +95,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
 
     const {mutate: doLogin} = useMutation({
         mutationKey: ["auth/login"],
-        mutationFn: loginRequest(apiClient),
+        mutationFn: authApi.loginRequest(apiClient),
         onMutate: setPendingState,
         onSuccess: (data) => {
             handleSuccessfulLogin(data);
@@ -124,7 +110,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
 
     const {mutate: doLogout} = useMutation({
         mutationKey: ["auth/logout"],
-        mutationFn: logoutRequest(apiClient),
+        mutationFn: authApi.logoutRequest(apiClient),
         onMutate: setPendingState,
         onSettled: () => handleLogout(),
         gcTime: 0,
