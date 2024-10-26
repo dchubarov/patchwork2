@@ -59,7 +59,9 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     }
 
     const handleLogout = (error?: Error) => {
-        if (error) logger.error(`Logged out due to error: ${error.message}`);
+        if (error && accessTokenRef.current !== null) {
+            logger.error(`Logged out due to error: ${error.message}`);
+        }
 
         accessTokenRef.current = null;
         setTokenExpiresMillis(null);

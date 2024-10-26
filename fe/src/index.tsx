@@ -8,6 +8,7 @@ import {App, DefaultPage, ErrorPage}  from "./application";
 import EnvironmentProvider from "./application/providers/EnvironmentProvider";
 import AuthProvider from "./application/providers/AuthProvider";
 import createQueryClient from "./application/utils/queryClient";
+import {logger} from "@/utils/logging";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -26,8 +27,8 @@ root.render(
 );
 
 if (process.env.REACT_APP_API_MOCKING === "true") {
-    /*await*/
-    import("./backend-mock");
+    require("./mocker");
+    logger.log("Installed backend mocker (MirageJS).")
 }
 
 reportWebVitals(/*console.log*/);
