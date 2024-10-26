@@ -10,6 +10,7 @@ import {ChecklistsApi} from "../api";
 
 const AvailableChecklistsWidget: React.FC = () => {
     const apiClient = useApiClient();
+    const {activeFacet} = useActiveView();
     const {isSuccess, data: checklistNames} = useQuery({
         queryKey: ["x/checklists/availableChecklists"],
         queryFn: ChecklistsApi.fetchChecklistNames(apiClient)
@@ -21,7 +22,7 @@ const AvailableChecklistsWidget: React.FC = () => {
                 <ListItem key={checklist}>
                     <ListItemContent>
                         <Link component={RouterLink} typography="body-sm"
-                              to={`checklists/${checklist}`}>{_.capitalize(checklist)}</Link>
+                              to={`${activeFacet?.basePath}/${checklist}`}>{_.capitalize(checklist)}</Link>
                     </ListItemContent>
                 </ListItem>
             ))}

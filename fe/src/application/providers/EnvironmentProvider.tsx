@@ -76,6 +76,7 @@ function createFacetList(): EnvironmentFacet[] {
         name: value.name,
         basePath: value.basePath || value.name,
         category: value.category,
+        icon: value.icon || undefined,
         defaultDisplayName: _.capitalize(value.defaultDisplayName || value.name),
         localizedDisplayName: _.capitalize(value.defaultDisplayName || value.name),
         localizedCategory: value.category ? _.capitalize(value.category) : undefined,

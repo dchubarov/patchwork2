@@ -1,7 +1,7 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
 import {Avatar, Badge, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem} from "@mui/joy";
-import {Home as HomeIcon, Lock as LockIcon, QuestionMark as PlaceholderIcon} from "@mui/icons-material";
+import {Home as HomeIcon, Lock as LockIcon} from "@mui/icons-material";
 import AppLogo from "./AppLogo";
 import {useActiveView, useEnvironment} from "@/hooks";
 
@@ -33,7 +33,7 @@ const AppFacetsMenu: React.FC = () => {
                   }}>
                 <MenuItem orientation="vertical" onClick={() => navigate("/")}>
                     <ListItemDecorator>
-                        <Avatar>
+                        <Avatar sx={{borderRadius: "sm"}}>
                             <HomeIcon/>
                         </Avatar>
                     </ListItemDecorator>
@@ -52,8 +52,10 @@ const AppFacetsMenu: React.FC = () => {
                                 badgeContent={<LockIcon sx={{"--Icon-fontSize": "14px"}}/>}
                                 slotProps={{badge: {sx: {backgroundColor: "transparent"}}}}
                                 sx={{"--Badge-ringSize": 0, backgroundColor: "transparent"}}>
-                                <Avatar>
-                                    <PlaceholderIcon/>
+                                <Avatar sx={{borderRadius: "sm"}}>
+                                    {facet.icon
+                                        ? typeof facet.icon === "string" ? facet.icon : <facet.icon/>
+                                        : facet.localizedDisplayName.substring(0, 1)}
                                 </Avatar>
                             </Badge>
                         </ListItemDecorator>

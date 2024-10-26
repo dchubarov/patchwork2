@@ -1,4 +1,5 @@
 import {RouteObject} from "react-router-dom";
+import {ComponentType} from "react";
 
 export type RouteProvider = () => RouteObject[];
 
@@ -12,6 +13,8 @@ export interface ApplicationFacet {
     defaultDisplayName?: string;
     /** Category name */
     category?: string;
+    /** Icon component for the facet */
+    icon?: ComponentType | string | null;
     /** Returns sub-routes for the facet */
     routes: RouteProvider;
 }
