@@ -1,10 +1,10 @@
 import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useRef, useState} from "react";
-import {AxiosError, AxiosInstance, AxiosResponse} from "axios";
+import {AxiosError, AxiosInstance} from "axios";
 import {useMutation} from "@tanstack/react-query";
 import {decodeJwt} from "@/utils/jwt";
 import {apiUrl} from "@/utils/api";
-import {AuthContext, AuthState, LoginResponse, UserCredentials} from "@/types/auth";
+import {AuthContext, AuthState, LoginResponse, LoginResponseSchema, UserCredentials} from "@/types/auth";
 import {useApiClient} from "@/hooks";
 import {showNotification} from "@/utils/notification";
 import {logger} from "@/utils/logging";
@@ -14,13 +14,13 @@ const INITIAL_REFRESH_DELAY_MILLIS = 15;
 
 const refreshRequest = (client: AxiosInstance) =>
     async () => client
-        .get<LoginResponse>(apiUrl("auth", "refresh"), {withCredentials: true})
-        .then(response => response.data);
+        .get(apiUrl("auth", "refresh"), {withCredentials: true})
+        .then(response => LoginResponseSchema.parse(response.data));
 
 const loginRequest = (client: AxiosInstance) =>
     async (credentials: UserCredentials) => client
-        .post<LoginResponse, AxiosResponse<LoginResponse>, UserCredentials>(apiUrl("auth", "login"), credentials)
-        .then(response => response.data);
+        .post(apiUrl("auth", "login"), credentials)
+        .then(response => LoginResponseSchema.parse(response.data));
 
 const logoutRequest = (client: AxiosInstance) =>
     async () => client
@@ -79,8 +79,12 @@ const AuthProvider: React.FC<PropsWithChildren> = ({children}) => {
     }
 
     const shouldRetryRefreshAttempt = (failureCount: number, error: Error): boolean => {
-        // Error 404 excluded for now since if mock backend isn't ready yet, it will return 404, so we need to retry.
-        if (error instanceof AxiosError && [-1, 400, 401/*, 404*/].includes(error.status || -1)) {
+        if (error instanceof AxiosError) {
+            // Error 404 excluded for now since if mock backend isn't ready yet, it will return 404, so we need to retry.
+            if ([-1, 400, 401/*, 404*/].includes(error.status || -1)) {
+                return false;
+            }
+        } else {
             return false;
         }
         return (failureCount < MAX_REFRESH_RETRY_COUNT);

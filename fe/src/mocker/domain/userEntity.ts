@@ -23,6 +23,7 @@ const UserEntity = {
 
     seeds: (server: AppServer) => {
         server.create(USER_ENTITY_KEY, {
+            id: "1000",
             username: "dime",
             firstname: "Dmitry",
             email: "dime@twowls.org",
