@@ -1,34 +1,9 @@
-import _ from "lodash";
 import React, {useEffect} from "react";
-import {Link as RouterLink, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import PageLayout from "@/components/PageLayout";
-import {useActiveView, useApiClient} from "@/hooks";
+import {useActiveView} from "@/hooks";
 import Checklist from "../components/Checklist";
-import {Link, List, ListItem, ListItemContent} from "@mui/joy";
-import {useQuery} from "@tanstack/react-query";
-import {ChecklistsApi} from "../api";
-
-const AvailableChecklistsWidget: React.FC = () => {
-    const apiClient = useApiClient();
-    const {activeFacet} = useActiveView();
-    const {isSuccess, data: checklistNames} = useQuery({
-        queryKey: ["x/checklists/availableChecklists"],
-        queryFn: ChecklistsApi.fetchChecklistNames(apiClient)
-    });
-
-    return (
-        <List size="sm" sx={{pl: 2}}>
-            {isSuccess && checklistNames.map((checklist) => (
-                <ListItem key={checklist}>
-                    <ListItemContent>
-                        <Link component={RouterLink} typography="body-sm"
-                              to={`${activeFacet?.basePath}/${checklist}`}>{_.capitalize(checklist)}</Link>
-                    </ListItemContent>
-                </ListItem>
-            ))}
-        </List>
-    );
-};
+import AvailableChecklistsWidget from "../components/AvailableChecklistsWidget";
 
 const ChecklistsPage: React.FC = () => {
     const {configureView, configureWidgets, ejectView} = useActiveView();

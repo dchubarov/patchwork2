@@ -1,11 +1,12 @@
 import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {envGlobals, EnvironmentContext, EnvironmentFacet, EnvironmentState, ServerInfoResponse} from "@/types/env";
+import {envGlobals, EnvironmentContext, EnvironmentApplicationFacet, EnvironmentState, ServerInfoResponse} from "@/types/env";
 import {createApiClient} from "../utils/apiClient";
 import monitoringApi from "../api/monitoring";
 import AppFacets from "src/facets";
 import version from "@/version.json";
+import {normalizeBasePath} from "@/utils/path";
 
 enum EnvironmentStateActionType {
     UPDATE_BACKEND_STATUS,
@@ -73,14 +74,14 @@ function environmentStateReducer(state: EnvironmentState, action: EnvironmentSta
     }
 }
 
-function createFacetList(): EnvironmentFacet[] {
+function createFacetList(): EnvironmentApplicationFacet[] {
     return AppFacets.map(value => ({
         name: value.name,
-        basePath: value.basePath || value.name,
+        basePath: normalizeBasePath(value.basePath || value.name),
         category: value.category,
         icon: value.icon || undefined,
         defaultDisplayName: _.capitalize(value.defaultDisplayName || value.name),
         localizedDisplayName: _.capitalize(value.defaultDisplayName || value.name),
         localizedCategory: value.category ? _.capitalize(value.category) : undefined,
-    } as EnvironmentFacet))
+    } as EnvironmentApplicationFacet))
 }

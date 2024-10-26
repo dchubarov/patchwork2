@@ -8,7 +8,7 @@ import {
     ViewState
 } from "@/types/view";
 import {useEnvironment} from "@/hooks";
-import {EnvironmentFacet} from "@/types/env";
+import {EnvironmentApplicationFacet} from "@/types/env";
 import _ from "lodash";
 
 enum ViewStateActionType {
@@ -34,7 +34,7 @@ const initialViewState: ViewState = {
     drawerOpen: false,
     drawerTitle: undefined,
     drawerComponent: null,
-    activeFacet: null,
+    facet: null,
     configureView: () => {
     },
     configureWidgets: () => {
@@ -54,7 +54,7 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({children}) => {
 
     const contextValue = {
         ...state,
-        activeFacet: useMemo(() => {
+        facet: useMemo(() => {
             return getActiveFacetFromPath(availableFacets, location.pathname);
         }, [availableFacets, location.pathname]),
         configureView: useCallback((config: ViewConfiguration) => {
@@ -85,13 +85,9 @@ export default ActiveViewProvider;
 
 // private
 
-function getActiveFacetFromPath(availableFacets: EnvironmentFacet[], pathname: string): EnvironmentFacet | null {
-    const strippedPath = _.trimStart(pathname, "/");
-    if (!strippedPath)
-        return null;
-
+function getActiveFacetFromPath(availableFacets: EnvironmentApplicationFacet[], pathname: string): EnvironmentApplicationFacet | null {
     return availableFacets.find(
-        (value) => _.startsWith(strippedPath, value.basePath))
+        (value) => _.startsWith(pathname, value.basePath))
         || null;
 }
 

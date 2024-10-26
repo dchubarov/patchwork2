@@ -12,7 +12,7 @@ interface SidebarHeaderProps {
 }
 
 const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
-    const {activeFacet} = useActiveView();
+    const {facet} = useActiveView();
 
     return (
         <Box
@@ -30,7 +30,7 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({widget, divider}) => {
                 <AppFacetsMenu/>
 
                 <Typography noWrap level="title-lg" sx={{flexGrow: 1}}>
-                    {activeFacet?.localizedDisplayName || "Application"}
+                    {facet?.localizedDisplayName || "Application"}
                 </Typography>
 
                 <AppSettingsMenu/>

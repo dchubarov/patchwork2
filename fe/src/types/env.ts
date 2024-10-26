@@ -1,8 +1,8 @@
-import _ from "lodash";
 import z from "zod";
 import {AxiosInstance} from "axios";
 import {createContext} from "react";
 import {ApplicationFacet} from "@/types/facet";
+import {normalizeBasePath} from "@/utils/path";
 
 export enum ApplicationEnvironment {
     Development = "development",
@@ -12,9 +12,9 @@ export enum ApplicationEnvironment {
 const envGlobalsSchema = z.object({
     ENV: z.nativeEnum(ApplicationEnvironment).default(ApplicationEnvironment.Production),
     ENABLE_MOCKER: z.coerce.boolean().default(false),
-    API_ROOT: z.string().transform((val => _.trim(val, "/"))).default(""),
-    UI_ROOT: z.string().transform((val) => _.trim(val, "/")).default(""),
-    PUBLIC_URL: z.string().default(""),
+    API_ROOT: z.string().transform(normalizeBasePath).default("/api"),
+    UI_ROOT: z.optional(z.string().transform(normalizeBasePath)),
+    PUBLIC_URL: z.optional(z.string()),
 });
 
 type EnvGlobals = z.infer<typeof envGlobalsSchema>;
@@ -22,7 +22,7 @@ export const envGlobals: EnvGlobals = parseEnvironmentGlobals();
 
 export type BackendStatus = "unknown" | "online" | "offline" /*| "maintenance"*/;
 
-export type EnvironmentFacet = Omit<ApplicationFacet, "routes" | "basePath"> & {
+export type EnvironmentApplicationFacet = Omit<ApplicationFacet, "routes" | "basePath"> & {
     basePath: string;
     localizedDisplayName: string;
     localizedCategory?: string;
@@ -35,7 +35,7 @@ export interface EnvironmentState {
     versionInfo: string;
     backendInfo?: string;
     backendStatus: BackendStatus;
-    availableFacets: EnvironmentFacet[];
+    availableFacets: EnvironmentApplicationFacet[];
 }
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
