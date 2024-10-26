@@ -1,9 +1,10 @@
 import React from "react";
 import {AspectRatio, useColorScheme} from "@mui/joy";
+import {envGlobals} from "@/types/env";
 
 const AppLogo: React.FC = () => {
     const {mode} = useColorScheme();
-    const logoUrl = process.env.PUBLIC_URL + "/logo192" +
+    const logoUrl = envGlobals.PUBLIC_URL + "/logo192" +
         ((mode === "light") ? "" : "-dark") + ".png";
 
     return (

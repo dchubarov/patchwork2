@@ -1,8 +1,8 @@
 import _ from "lodash";
+import {envGlobals} from "@/types/env";
 
 export function apiUrl(...paths: string[]) {
-    const env = process.env.REACT_APP_API_ROOT;
-    let path = "/" + (env === undefined ? "" : _.trim(env, "/"));
+    let path = "/" + envGlobals.API_ROOT;
     paths.forEach((p) => {
         path += "/" + _.trim(p, "/");
     });

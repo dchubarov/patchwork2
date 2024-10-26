@@ -5,23 +5,29 @@ import {
     ButtonGroup,
     Dropdown,
     IconButton,
-    ListItem, ListItemDecorator,
+    ListItem,
+    ListItemDecorator,
     ListSubheader,
     Menu,
-    MenuButton, MenuItem,
+    MenuButton,
+    MenuItem,
     SupportedColorScheme,
     useColorScheme
 } from "@mui/joy";
 import {
-    Api as ApiIcon, CloudOff as OfflineIcon, CloudOutlined as OnlineIcon,
+    Api as ApiIcon,
+    CloudOff as OfflineIcon,
+    CloudOutlined as OnlineIcon,
     DarkMode as DarkModeIcon,
     LightMode as LightModeIcon,
     MoreVert as SettingsIcon,
-    ViewSidebarOutlined as SidebarIcon, Webhook as ReactQueryDevtoolsIcon
+    ViewSidebarOutlined as SidebarIcon,
+    Webhook as ReactQueryDevtoolsIcon
 } from "@mui/icons-material";
-import {useEnvironment, useActiveView} from "@/hooks";
+import {useActiveView, useEnvironment} from "@/hooks";
 import {useQueryClient} from "@tanstack/react-query";
 import {SidebarPlacement} from "@/types/view";
+import {ApplicationEnvironment} from "@/types/env";
 import ApiPlayground from "./ApiPlayground";
 
 const AppSettingsMenu: React.FC = () => {
@@ -119,7 +125,7 @@ const AppSettingsMenu: React.FC = () => {
                     </ButtonGroup>
                 </ListItem>
 
-                {environment === "development" && <>
+                {environment === ApplicationEnvironment.Development && <>
                     <ListSubheader>Developer</ListSubheader>
                     <MenuItem onClick={handleOpenApiPlaygroundItemClick}>
                         <ListItemDecorator><ApiIcon/></ListItemDecorator>

@@ -4,6 +4,7 @@ import {UserCredentials} from "@/types/auth";
 import {Avatar, Box, Button, CircularProgress, IconButton, Tooltip, Typography} from "@mui/joy";
 import {KeyboardArrowUp as ArrowUpIcon, LogoutSharp as LogoutIcon} from "@mui/icons-material";
 import SidebarLoginForm from "./SidebarLoginForm";
+import {envGlobals} from "@/types/env";
 
 const SidebarUserPanel: React.FC = () => {
     const {isAuthenticated, isPending, user, login, logout} = useAuth();
@@ -40,7 +41,7 @@ const SidebarUserPanel: React.FC = () => {
                 <Avatar
                     size="sm"
                     alt={userDisplayName}
-                    src={`${process.env.PUBLIC_URL}/uploads/avatar/user/${user.username}.png`}>
+                    src={`${envGlobals.PUBLIC_URL}/uploads/avatar/user/${user.username}.png`}>
                     {userStringAvatar}
                 </Avatar>
 

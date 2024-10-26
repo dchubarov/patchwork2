@@ -9,6 +9,7 @@ import EnvironmentProvider from "./application/providers/EnvironmentProvider";
 import AuthProvider from "./application/providers/AuthProvider";
 import createQueryClient from "./application/utils/queryClient";
 import {logger} from "@/utils/logging";
+import {envGlobals} from "@/types/env";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -26,7 +27,7 @@ root.render(
     </React.StrictMode>
 );
 
-if (process.env.REACT_APP_API_MOCKING === "true") {
+if (envGlobals.ENABLE_MOCKER) {
     require("./mocker");
     logger.log("Installed backend mocker (MirageJS).")
 }

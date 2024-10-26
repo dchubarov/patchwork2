@@ -1,8 +1,7 @@
 import {ReactNode} from "react";
 import {createBrowserRouter} from "react-router-dom";
 import AppFacets from "src/facets";
-
-const baseUrl = process.env.REACT_APP_UI_ROOT;
+import {envGlobals} from "@/types/env";
 
 export function buildRouter(
     rootElement: ReactNode,
@@ -27,6 +26,6 @@ export function buildRouter(
         }],
         /* opts */
         {
-            basename: baseUrl,
+            basename: envGlobals.UI_ROOT,
         });
 }

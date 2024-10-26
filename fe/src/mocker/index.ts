@@ -2,11 +2,12 @@ import {createServer, RestSerializer} from "miragejs";
 import {apiUrl} from "@/utils/api";
 import configureRoutes from "./routes";
 import domain from "./domain";
+import {envGlobals} from "@/types/env";
 
 const defaultSerializer = RestSerializer;
 
 createServer({
-    environment: process.env.REACT_APP_ENV === "development" ? "development" : "production",
+    environment: envGlobals.ENV,
     models: domain.models,
     factories: domain.factories,
 

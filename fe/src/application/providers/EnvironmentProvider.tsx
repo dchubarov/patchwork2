@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {EnvironmentContext, EnvironmentFacet, EnvironmentState, ServerInfoResponse} from "@/types/env";
+import {envGlobals, EnvironmentContext, EnvironmentFacet, EnvironmentState, ServerInfoResponse} from "@/types/env";
 import {createApiClient} from "../utils/apiClient";
 import monitoringApi from "../api/monitoring";
 import AppFacets from "src/facets";
@@ -41,7 +41,8 @@ const EnvironmentProvider: React.FC<PropsWithChildren> = ({children}) => {
     }, [serverInfoStatus, serverInfo]);
 
     const createInitialState = () => ({
-        environment: process.env.REACT_APP_ENV === "development" ? "development" : "production",
+        environment: envGlobals.ENV,
+        globals: envGlobals,
         apiClient,
         backendStatus: "unknown",
         versionInfo: "Version " + version.number,
