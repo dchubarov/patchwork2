@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@svgr/webpack": "^8.1.0",
     "@types/lodash": "4.17.12",
     "react-app-rewired": "^2.2.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0"
