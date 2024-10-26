@@ -22,7 +22,7 @@ import {
     Warning as WarningIcon
 } from "@mui/icons-material";
 import {labelColorsByName} from "@/utils/theme";
-import {apiUrl as baseApiUrl} from "@/utils/api";
+import {envGlobals} from "@/types/env";
 
 type RequestState =
     | { status: "empty" }
@@ -90,8 +90,8 @@ const ApiPlayground: React.FC = () => {
     const [requestMethod, setRequestMethod] = useState<RequestMethodName>("GET");
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
-    const apiPrefix = baseApiUrl();
-    const apiClient = axios.create(); // not using environment api client intentionally
+    const apiPrefix = envGlobals.API_ROOT;
+    const apiClient = axios.create({baseURL: apiPrefix}); // not using environment api client intentionally
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});
@@ -108,7 +108,7 @@ const ApiPlayground: React.FC = () => {
 
         let requestConfig: AxiosRequestConfig = {
             method: requestMethod,
-            url: baseApiUrl(apiUrl),
+            url: apiUrl,
         }
 
         if (RequestMethod[requestMethod].payload) {

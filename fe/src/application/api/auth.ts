@@ -1,6 +1,5 @@
 import z from "zod";
 import {AxiosInstance} from "axios";
-import {apiUrl} from "@/utils/api";
 
 /** User credentials */
 export interface UserCredentials {
@@ -31,17 +30,17 @@ export type LoginResponse = z.infer<typeof loginResponseSchema>;
 
 const refreshRequest = (client: AxiosInstance) =>
     async (): Promise<LoginResponse> => client
-        .get(apiUrl("auth", "refresh"), {withCredentials: true})
+        .get("auth/refresh", {withCredentials: true})
         .then(response => loginResponseSchema.parse(response.data));
 
 const loginRequest = (client: AxiosInstance) =>
     async (credentials: UserCredentials): Promise<LoginResponse> => client
-        .post(apiUrl("auth", "login"), credentials)
+        .post("auth/login", credentials)
         .then(response => loginResponseSchema.parse(response.data));
 
 const logoutRequest = (client: AxiosInstance) =>
     async () => client
-        .get(apiUrl("auth", "logout"));
+        .get("auth/logout");
 
 const authApi = {
     refreshRequest,

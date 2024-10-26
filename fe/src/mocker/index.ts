@@ -1,5 +1,4 @@
 import {createServer, RestSerializer} from "miragejs";
-import {apiUrl} from "@/utils/api";
 import configureRoutes from "./routes";
 import domain from "./domain";
 import {envGlobals} from "@/types/env";
@@ -21,6 +20,6 @@ createServer({
     },
 
     routes() {
-        configureRoutes(this, apiUrl());
+        configureRoutes(this, envGlobals.API_ROOT);
     },
 });

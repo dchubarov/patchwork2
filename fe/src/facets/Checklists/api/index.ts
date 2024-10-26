@@ -1,9 +1,8 @@
 import {AvailableChecklistsResponse, ChecklistItemResponse, ChecklistItemsResponse, ChecklistItemState} from "../types";
 import {QueryFunctionContext} from "@tanstack/react-query";
-import {apiExtensionUrl} from "@/utils/api";
 import {AxiosInstance} from "axios";
 
-const basename = apiExtensionUrl("checklists", "v1");
+const basename = "x/checklists/v1";
 
 export const ChecklistsApi = {
     fetchChecklistNames: (apiClient: AxiosInstance) =>
