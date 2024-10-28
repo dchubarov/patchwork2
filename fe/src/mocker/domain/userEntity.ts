@@ -33,7 +33,7 @@ const UserEntity = {
 
     serializers: (baseSerializer: SerializerInterface) => ({
         [USER_ENTITY_KEY]: baseSerializer.extend?.({
-            attrs: ["username", "firstname", "lastname", "email"]
+            attrs: ["id", "username", "firstname", "lastname", "email"]
         })
     }),
 }
