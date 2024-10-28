@@ -1,6 +1,16 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import {Avatar, Badge, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem} from "@mui/joy";
+import {
+    AspectRatio,
+    Avatar,
+    Badge,
+    Dropdown,
+    IconButton,
+    ListItemDecorator,
+    Menu,
+    MenuButton,
+    MenuItem
+} from "@mui/joy";
 import {Home as HomeIcon, Lock as LockIcon} from "@mui/icons-material";
 import AppLogo from "./AppLogo";
 import {useActiveView, useEnvironment} from "@/hooks";
@@ -54,7 +64,10 @@ const AppFacetsMenu: React.FC = () => {
                                 sx={{"--Badge-ringSize": 0, backgroundColor: "transparent"}}>
                                 <Avatar sx={{borderRadius: "sm"}}>
                                     {facet.icon
-                                        ? typeof facet.icon === "string" ? facet.icon : <facet.icon/>
+                                        ? typeof facet.icon === "string" ? facet.icon
+                                            : (<AspectRatio variant="plain" ratio="1" sx={{minWidth: 28}}>
+                                                <facet.icon/>
+                                            </AspectRatio>)
                                         : facet.localizedDisplayName.substring(0, 1)}
                                 </Avatar>
                             </Badge>
