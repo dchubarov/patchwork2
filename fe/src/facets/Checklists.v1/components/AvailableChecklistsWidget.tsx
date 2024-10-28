@@ -1,7 +1,7 @@
 import React from "react";
 import {useActiveView, useApiClient} from "@/hooks";
 import {useQuery} from "@tanstack/react-query";
-import {ChecklistsApi} from "@/facets/Checklists/api";
+import {ChecklistsApi} from "@/facets/Checklists.v1/api";
 import {Link, List, ListItem, ListItemContent} from "@mui/joy";
 import {Link as RouterLink} from "react-router-dom";
 import _ from "lodash";

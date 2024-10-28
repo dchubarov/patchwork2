@@ -12,9 +12,10 @@ import {
     MenuButton,
     MenuItem,
     Textarea,
-    Typography, useTheme
+    Typography,
+    useTheme
 } from "@mui/joy";
-import axios, {AxiosRequestConfig} from "axios";
+import {AxiosRequestConfig} from "axios";
 import {
     ArrowDropDown as DropdownIcon,
     CheckCircleOutline as SuccessIcon,
@@ -23,6 +24,7 @@ import {
 } from "@mui/icons-material";
 import {labelColorsByName} from "@/utils/theme";
 import {envGlobals} from "@/types/env";
+import {useApiClient} from "@/hooks";
 
 type RequestState =
     | { status: "empty" }
@@ -91,7 +93,7 @@ const ApiPlayground: React.FC = () => {
     const [requestBody, setRequestBody] = useState("");
     const [apiUrl, setApiUrl] = useState("");
     const apiPrefix = envGlobals.API_ROOT;
-    const apiClient = axios.create({baseURL: apiPrefix}); // not using environment api client intentionally
+    const apiClient = useApiClient();
 
     const handleRequestMethodChange = (method: RequestMethodName) => {
         setRequestResult({status: "empty"});

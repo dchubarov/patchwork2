@@ -1,10 +1,13 @@
 import {Model} from "miragejs";
-import {AppServer} from "./index";
+import {AppRegistry, AppServer} from "./index";
 import {SerializerInterface} from "miragejs/serializer";
+import {Instantiate} from "miragejs/-types";
 
+export const USER_ENTITY_KEY = "user";
 export type UserStatus = "active" | "suspended";
 
-export interface UserData {
+interface UserDb {
+    id: string;
     username: string;
     firstname?: string;
     lastname?: string;
@@ -12,11 +15,11 @@ export interface UserData {
     status: UserStatus;
 }
 
-export const USER_ENTITY_KEY = "user";
+export type UserDbModel = Instantiate<AppRegistry, typeof USER_ENTITY_KEY>;
 
 const UserEntity = {
     models: {
-        [USER_ENTITY_KEY]: Model.extend<Partial<UserData>>({})
+        [USER_ENTITY_KEY]: Model.extend<Partial<UserDb>>({})
     },
 
     factories: {},

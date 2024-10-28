@@ -1,20 +1,27 @@
+import z from "zod";
 
-export interface ChecklistItemState {
-    id?: number;
-    list?: string;
-    note?: string;
-    done?: boolean;
-    colorLabel?: string | null;
-}
+const checklistItemSchema = z.object({
+    id: z.string(),
+    note: z.string(),
+    parentId: z.nullable(z.string()),
+    colorLabel: z.nullable(z.string()),
+    order: z.number(),
+});
 
-export interface ChecklistItemsResponse {
-    checklistItems: ChecklistItemState[];
-}
+const checklistOptionsSchema = z.object({
+    /** Enable custom order of elements, default `true` */
+    enableCustomOrder: z.optional(z.boolean().default(true)),
+});
 
-export interface ChecklistItemResponse {
-    checklistItem: ChecklistItemState;
-}
+export const checklistSchema = z.object({
+    /** Checklist id */
+    id: z.string(),
+    /** Checklist title */
+    title: z.optional(z.string()),
+    /** Checklist options */
+    options: z.optional(checklistOptionsSchema),
+    /** Checklist items */
+    items: z.optional(z.array(checklistItemSchema)),
+});
 
-export interface AvailableChecklistsResponse {
-    availableChecklists: string[];
-}
+type Checklist = z.infer<typeof checklistSchema>;
