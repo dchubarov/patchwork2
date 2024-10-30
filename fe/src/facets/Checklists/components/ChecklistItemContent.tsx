@@ -11,8 +11,20 @@ type ChecklistItemContentComponentType = React.FC<{
 const ChecklistItemContent: ChecklistItemContentComponentType = ({item, group, showId}) => {
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
-            {!group && <Switch variant="soft" size="lg"/>}
-            <Typography noWrap sx={{minWidth: 0, flex: 1}}>{item.note}</Typography>
+            {!group && <Switch
+                defaultChecked={item.done}
+                variant="soft"
+                size="lg"/>}
+
+            <Typography
+                noWrap
+                sx={{
+                    minWidth: 0,
+                    flex: 1
+                }}>
+                {item.note}
+            </Typography>
+
             {showId && <Chip size="sm">{`#${item.id}`}</Chip>}
         </ListItemContent>
     );
