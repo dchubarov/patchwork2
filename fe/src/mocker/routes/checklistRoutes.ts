@@ -28,7 +28,7 @@ export default function checklistRoutes(server: AppServer) {
                     createdAt: e.createdAt,
                     updatedAt: e.updatedAt,
                     authorId: e.authorId,
-                    options: e.options,
+                    configuration: e.configuration,
                 }));
 
             return {checklists: checklists};

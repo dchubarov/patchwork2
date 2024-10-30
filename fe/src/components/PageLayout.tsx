@@ -31,12 +31,16 @@ const PageTitle: React.FC<BoxProps> = ({sx, ...other}) => {
     );
 }
 
-const Content: React.FC<PropsWithChildren> = ({children}) => {
+interface ContentLayoutProps {
+    noTitle?: boolean;
+}
+
+const Content: React.FC<PropsWithChildren<ContentLayoutProps>> = ({children, noTitle}) => {
     const {sidebarPlacement} = useActiveView();
 
     return (
         <Box sx={{...paddingSxProps(sidebarPlacement)}}>
-            <PageTitle/>
+            {!noTitle && <PageTitle/>}
             {children}
         </Box>
     );

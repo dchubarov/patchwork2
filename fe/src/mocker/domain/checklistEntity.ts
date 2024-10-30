@@ -6,7 +6,7 @@ import {HasMany} from "miragejs/-types";
 export const CHECKLIST_ENTITY_KEY = "checklist";
 export const CHECKLIST_ITEM_ENTITY_KEY = "checklistItem";
 
-interface ChecklistOptionsDb {
+interface ChecklistConfigurationDb {
     enableReordering?: boolean;
     maxHierarchyLevels?: number;
 }
@@ -14,8 +14,8 @@ interface ChecklistOptionsDb {
 export type ChecklistDb = {
     title: string;
     authorId: string;
-    options: ChecklistOptionsDb;
     items: HasMany<typeof CHECKLIST_ITEM_ENTITY_KEY>;
+    configuration?: ChecklistConfigurationDb;
 } & EntityCommonAttributes;
 
 type ChecklistItemDb = {
@@ -51,7 +51,7 @@ const ChecklistEntity = {
 
     seeds: (server: AppServer) => {
         server.create(CHECKLIST_ENTITY_KEY, {
-            title: "My checklist", options: {}, authorId: "1000", itemIds: [
+            title: "My checklist", authorId: "1000", itemIds: [
                 server.create(CHECKLIST_ITEM_ENTITY_KEY, {
                     id: "10",
                     checklistId: 1,
@@ -80,10 +80,29 @@ const ChecklistEntity = {
                     done: false,
                     parentId: "20",
                 }).id,
+                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
+                    id: "221",
+                    checklistId: 1,
+                    note: "Bottle",
+                    done: false,
+                    parentId: "22",
+                }).id,
+                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
+                    id: "30",
+                    checklistId: 1,
+                    note: "Take a note",
+                    done: false,
+                }).id,
+                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
+                    id: "40",
+                    checklistId: 1,
+                    note: "Build a house",
+                    done: false,
+                }).id,
             ]
         });
         server.create(CHECKLIST_ENTITY_KEY, {
-            title: "My checklist #2", authorId: "1000", options: {}, itemIds: [
+            title: "My checklist #2", authorId: "1000", itemIds: [
                 server.create(CHECKLIST_ITEM_ENTITY_KEY, {
                     id: "50",
                     checklistId: 2,
@@ -94,7 +113,7 @@ const ChecklistEntity = {
             ]
         });
         server.create(CHECKLIST_ENTITY_KEY, {
-            title: "Unknown user's checklist", authorId: "9999", options: {}, itemIds: []
+            title: "Unknown user's checklist", authorId: "9999", itemIds: []
         });
     },
 

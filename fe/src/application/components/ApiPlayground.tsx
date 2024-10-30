@@ -204,7 +204,8 @@ const ApiPlayground: React.FC = () => {
 
                     <Typography level="body-sm" fontWeight="bold" ml={3} mt={1}>Response:</Typography>
                     <Typography component="pre" level="body-sm" fontFamily="monospace" ml={3}>
-                        {JSON.stringify(requestResult.response.data || requestResult.response, null, 2)}
+                        {requestResult.response.message && `Message: ${requestResult.response.message}`}
+                        {requestResult.response.data && JSON.stringify(requestResult.response.data, null, 2)}
                     </Typography>
                 </Box>
             }

@@ -3,25 +3,44 @@ import z from "zod";
 const checklistItemSchema = z.object({
     id: z.string(),
     note: z.string(),
-    parentId: z.nullable(z.string()),
-    colorLabel: z.nullable(z.string()),
-    order: z.number(),
+    done: z.boolean(),
+    parentId: z.nullable(z.string()).default(null),
+    colorLabel: z.nullable(z.string()).default(null),
+    order: z.optional(z.number()),
 });
 
-const checklistOptionsSchema = z.object({
+const checklistConfigurationSchema = z.object({
     /** Enable custom order of elements, default `true` */
     enableCustomOrder: z.optional(z.boolean().default(true)),
 });
 
 export const checklistSchema = z.object({
     /** Checklist id */
-    id: z.string(),
+    id: z.nullable(z.string()).default(null),
     /** Checklist title */
     title: z.optional(z.string()),
-    /** Checklist options */
-    options: z.optional(checklistOptionsSchema),
+    /** Checklist configuration */
+    configuration: z.optional(checklistConfigurationSchema),
     /** Checklist items */
-    items: z.optional(z.array(checklistItemSchema)),
+    items: z.array(checklistItemSchema).default([]),
 });
 
-type Checklist = z.infer<typeof checklistSchema>;
+export const checklistResponseSchema = z.object({
+    checklist: checklistSchema,
+});
+
+export const checklistTemplateResponse: ChecklistResponseData = {
+    checklist: {
+        id: null,
+        title: "Untitled",
+        items: []
+    }
+}
+
+export type ChecklistItemData = z.infer<typeof checklistItemSchema>;
+export type ChecklistResponseData = z.infer<typeof checklistResponseSchema>;
+
+export interface ChecklistGroupSummaryData {
+    total: number;
+    done: number;
+}
