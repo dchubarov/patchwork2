@@ -1,39 +1,39 @@
+import {BelongsTo, HasMany} from "miragejs/-types";
 import {SerializerInterface} from "miragejs/serializer";
-import {Factory, hasMany, Model, RestSerializer} from "miragejs";
+import {belongsTo, Factory, hasMany, Model, RestSerializer} from "miragejs";
 import {AppServer, EntityCommonAttributes} from "./index";
-import {HasMany} from "miragejs/-types";
+import {USER_ENTITY_KEY} from "./userEntity";
 
 export const CHECKLIST_ENTITY_KEY = "checklist";
 export const CHECKLIST_ITEM_ENTITY_KEY = "checklistItem";
 
-interface ChecklistConfigurationDb {
-    enableReordering?: boolean;
-    maxHierarchyLevels?: number;
-}
-
 export type ChecklistDb = {
-    title: string;
-    authorId: string;
+    ownerId: string;
+    owner: BelongsTo<typeof USER_ENTITY_KEY>;
     items: HasMany<typeof CHECKLIST_ITEM_ENTITY_KEY>;
-    configuration?: ChecklistConfigurationDb;
+    title: string;
 } & EntityCommonAttributes;
 
-type ChecklistItemDb = {
+export type ChecklistItemDb = {
+    authorId: string;
+    author: BelongsTo<typeof USER_ENTITY_KEY>;
+    items: HasMany<typeof CHECKLIST_ITEM_ENTITY_KEY>;
     note: string;
     done: boolean;
-    authorId: string;
     colorLabel: string | null;
-    parentId: string | null;
-    orderKey: number | null;
 } & EntityCommonAttributes;
 
 const ChecklistEntity = {
     models: {
         [CHECKLIST_ENTITY_KEY]: Model.extend<Partial<ChecklistDb>>({
-            items: hasMany(CHECKLIST_ITEM_ENTITY_KEY),
+            owner: belongsTo(USER_ENTITY_KEY, {inverse: null}),
+            items: hasMany(CHECKLIST_ITEM_ENTITY_KEY, {inverse: null}),
         }),
 
-        [CHECKLIST_ITEM_ENTITY_KEY]: Model.extend<Partial<ChecklistItemDb>>({}),
+        [CHECKLIST_ITEM_ENTITY_KEY]: Model.extend<Partial<ChecklistItemDb>>({
+            author: belongsTo(USER_ENTITY_KEY, {inverse: null}),
+            items: hasMany(CHECKLIST_ITEM_ENTITY_KEY, {inverse: null}),
+        }),
     },
 
     factories: {
@@ -41,89 +41,48 @@ const ChecklistEntity = {
             createdAt: () => new Date(),
             updatedAt: () => new Date(),
         }),
+
         [CHECKLIST_ITEM_ENTITY_KEY]: Factory.extend<Partial<ChecklistItemDb>>({
+            done: false,
+            colorLabel: null,
             createdAt: () => new Date(),
             updatedAt: () => new Date(),
-            authorId: "1000",
-            parentId: null,
-        })
-    },
-
-    seeds: (server: AppServer) => {
-        server.create(CHECKLIST_ENTITY_KEY, {
-            title: "My checklist", authorId: "1000", itemIds: [
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "10",
-                    checklistId: 1,
-                    note: "Drop #car for service",
-                    done: false,
-                    colorLabel: null
-                }).id,
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "20",
-                    checklistId: 1,
-                    note: "Buy groceries",
-                    done: false,
-                    colorLabel: "teal",
-                }).id,
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "21",
-                    checklistId: 1,
-                    note: "Turnip x3",
-                    done: true,
-                    parentId: "20",
-                }).id,
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "22",
-                    checklistId: 1,
-                    note: "Coca-cola",
-                    done: false,
-                    parentId: "20",
-                }).id,
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "221",
-                    checklistId: 1,
-                    note: "Bottle",
-                    done: false,
-                    parentId: "22",
-                }).id,
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "30",
-                    checklistId: 1,
-                    note: "Take a note",
-                    done: false,
-                }).id,
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "40",
-                    checklistId: 1,
-                    note: "Build a house",
-                    done: false,
-                }).id,
-            ]
-        });
-        server.create(CHECKLIST_ENTITY_KEY, {
-            title: "My checklist #2", authorId: "1000", itemIds: [
-                server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-                    id: "50",
-                    checklistId: 2,
-                    note: "Learn MirageJS",
-                    done: false,
-                    colorLabel: null
-                }).id,
-            ]
-        });
-        server.create(CHECKLIST_ENTITY_KEY, {
-            title: "Unknown user's checklist", authorId: "9999", itemIds: []
-        });
+        }),
     },
 
     serializers: (_: SerializerInterface) => ({
-        [CHECKLIST_ITEM_ENTITY_KEY]: RestSerializer.extend({}),
         [CHECKLIST_ENTITY_KEY]: RestSerializer.extend({
             include: ["owner", "items"],
-            embed: true,
-        })
-    })
+            embed: (key) => key === "items",
+        }),
+
+        [CHECKLIST_ITEM_ENTITY_KEY]: RestSerializer.extend({
+            include: ["author", "items"],
+            embed: (key) => key === "items",
+        }),
+    }),
+
+    seeds: (server: AppServer) => {
+        server.create(CHECKLIST_ENTITY_KEY, {
+            title: "My checklist", ownerId: "1000", itemIds: [
+                server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Buy groceries", itemIds: [
+                        server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Turnip x3", done: true}).id,
+                        server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Coca-cola", itemIds: [
+                                server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "A bottle"}).id
+                            ]
+                        }).id,
+                    ]
+                }).id,
+                server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Relax a bit", itemIds: [
+                        server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Go to mountains"}).id,
+                    ]
+                }).id,
+                server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Take a note"}).id,
+            ]
+        });
+
+        server.create(CHECKLIST_ENTITY_KEY, {title: "My checklist #2", ownerId: "1000"});
+    },
 }
 
 export default ChecklistEntity;

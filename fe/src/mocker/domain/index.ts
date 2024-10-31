@@ -7,7 +7,6 @@ import ChecklistEntity from "./checklistEntity";
 export interface EntityCommonAttributes {
     createdAt: Date,
     updatedAt: Date,
-    deleted?: boolean,
 }
 
 const models = {

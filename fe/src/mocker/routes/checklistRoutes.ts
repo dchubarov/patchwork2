@@ -1,9 +1,9 @@
+import {Instantiate} from "miragejs/-types";
 import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ENTITY_KEY} from "../domain/checklistEntity";
-import {ForbiddenError, handleWithAuthorization} from "@/mocker/utils/authorization";
-import {UserDbModel} from "@/mocker/domain/userEntity";
+import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
+import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
 import {NotFoundResponse} from "@/mocker/routes/index";
-import {Instantiate} from "miragejs/-types";
 
 export default function checklistRoutes(server: AppServer) {
     const checklistRouteBasename = "/checklists/v2";
@@ -13,25 +13,36 @@ export default function checklistRoutes(server: AppServer) {
         user: UserDbModel,
         _accessLevel: "read" | "write" = "read"
     ) => {
-        if (user.id !== checklist.authorId)
+        if (user.id !== checklist.ownerId)
             throw new ForbiddenError();
     }
 
     // Get available checklists
     server.get(`${checklistRouteBasename}/checklist`, handleWithAuthorization(
         (schema, _request, user) => {
+            const usersIds = new Set<string>();
             const checklists = schema
-                .where(CHECKLIST_ENTITY_KEY, {authorId: user.id})
-                .models.map(e => ({
-                    id: e.id,
-                    title: e.title,
-                    createdAt: e.createdAt,
-                    updatedAt: e.updatedAt,
-                    authorId: e.authorId,
-                    configuration: e.configuration,
-                }));
+                .where(CHECKLIST_ENTITY_KEY, {ownerId: user.id})
+                .models
+                .map(e => {
+                    usersIds.add(e.owner!!.id!!);
+                    return {
+                        id: e.id,
+                        title: e.title,
+                        owner: e.owner?.id,
+                        createdAt: e.createdAt,
+                        updatedAt: e.updatedAt,
+                    }
+                });
 
-            return {checklists: checklists};
+            const users = schema.where(USER_ENTITY_KEY,
+                (instance) => instance.id && usersIds.has(instance.id))
+                .models;
+
+            return {
+                checklists,
+                users
+            };
         }));
 
     // Add a new checklist
@@ -44,6 +55,7 @@ export default function checklistRoutes(server: AppServer) {
             if (!checklist) {
                 return NotFoundResponse;
             }
+
             verifyChecklistAccess(checklist, user, "read");
             return checklist;
         }));
