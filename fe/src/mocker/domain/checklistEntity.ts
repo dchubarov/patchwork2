@@ -71,6 +71,8 @@ const ChecklistEntity = {
                                 server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "A bottle"}).id
                             ]
                         }).id,
+                        server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Apples x15"}).id,
+                        server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Dill"}).id,
                     ]
                 }).id,
                 server.create(CHECKLIST_ITEM_ENTITY_KEY, {note: "Relax a bit", itemIds: [

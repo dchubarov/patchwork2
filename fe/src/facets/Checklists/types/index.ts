@@ -1,17 +1,24 @@
-import z from "zod";
+import z, {ZodType} from "zod";
 
-const checklistItemSchema = z.object({
+/** Checklist item base attributes */
+const baseChecklistItemSchema = z.object({
+    /** Checklist item id */
     id: z.string(),
+    /** Textual note */
     note: z.string(),
-    done: z.boolean(),
-    parentId: z.nullable(z.string()).default(null),
-    colorLabel: z.nullable(z.string()).default(null),
-    order: z.optional(z.number()),
+    /** Done flag */
+    done: z.optional(z.boolean()),
+    /** Color label */
+    colorLabel: z.optional(z.nullable(z.string()).default(null))
 });
 
-const checklistConfigurationSchema = z.object({
-    /** Enable custom order of elements, default `true` */
-    enableCustomOrder: z.optional(z.boolean().default(true)),
+export type ChecklistItemData = z.infer<typeof baseChecklistItemSchema> & {
+    items: ChecklistItemData[];
+};
+
+const checklistItemSchema: ZodType<ChecklistItemData> = baseChecklistItemSchema.extend({
+    /** Nested items */
+    items: z.lazy(() => checklistItemSchema.array()),
 });
 
 export const checklistSchema = z.object({
@@ -19,8 +26,6 @@ export const checklistSchema = z.object({
     id: z.nullable(z.string()).default(null),
     /** Checklist title */
     title: z.optional(z.string()),
-    /** Checklist configuration */
-    configuration: z.optional(checklistConfigurationSchema),
     /** Checklist items */
     items: z.array(checklistItemSchema).default([]),
 });
@@ -37,10 +42,4 @@ export const checklistTemplateResponse: ChecklistResponseData = {
     }
 }
 
-export type ChecklistItemData = z.infer<typeof checklistItemSchema>;
 export type ChecklistResponseData = z.infer<typeof checklistResponseSchema>;
-
-export interface ChecklistGroupSummaryData {
-    total: number;
-    done: number;
-}
