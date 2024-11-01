@@ -1,8 +1,9 @@
 import {BelongsTo, HasMany} from "miragejs/-types";
 import {SerializerInterface} from "miragejs/serializer";
 import {belongsTo, Factory, hasMany, Model, RestSerializer} from "miragejs";
-import {AppServer, EntityCommonAttributes} from "./index";
+import {AppServer} from "./index";
 import {USER_ENTITY_KEY} from "./userEntity";
+import {commonAttributesFactory, EntityCommonAttributes} from "./common";
 
 export const CHECKLIST_ENTITY_KEY = "checklist";
 export const CHECKLIST_ITEM_ENTITY_KEY = "checklistItem";
@@ -38,15 +39,13 @@ const ChecklistEntity = {
 
     factories: {
         [CHECKLIST_ENTITY_KEY]: Factory.extend<Partial<ChecklistDb>>({
-            createdAt: () => new Date(),
-            updatedAt: () => new Date(),
+            ...commonAttributesFactory(),
         }),
 
         [CHECKLIST_ITEM_ENTITY_KEY]: Factory.extend<Partial<ChecklistItemDb>>({
-            done: false,
+            ...commonAttributesFactory(),
             colorLabel: null,
-            createdAt: () => new Date(),
-            updatedAt: () => new Date(),
+            done: false,
         }),
     },
 

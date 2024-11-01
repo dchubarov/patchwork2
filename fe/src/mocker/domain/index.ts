@@ -3,11 +3,7 @@ import {Server} from "miragejs/server";
 import {SerializerInterface} from "miragejs/serializer";
 import UserEntity from "./userEntity";
 import ChecklistEntity from "./checklistEntity";
-
-export interface EntityCommonAttributes {
-    createdAt: Date,
-    updatedAt: Date,
-}
+import Schema from "miragejs/orm/schema";
 
 const models = {
     ...UserEntity.models,
@@ -22,6 +18,7 @@ const factories = {
 export type AppModels = typeof models;
 export type AppFactories = typeof factories;
 export type AppRegistry = Registry<AppModels, AppFactories>;
+export type AppSchema = Schema<AppRegistry>;
 export type AppServer = Server<AppRegistry>;
 
 function configureSerializers(baseSerializer: SerializerInterface) {

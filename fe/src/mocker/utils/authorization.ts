@@ -1,10 +1,9 @@
 import _ from "lodash";
 import {Request} from "miragejs";
 import {AnyResponse} from "miragejs/-types";
-import Schema from "miragejs/orm/schema";
-import {AppRegistry} from "../domain";
+import {AppSchema} from "../domain";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
-import {ForbiddenResponse, UnauthorizedResponse} from "../routes";
+import {ForbiddenResponse, UnauthorizedResponse} from "./response";
 import {decodeJwt} from "@/utils/jwt";
 
 export class UnauthorizedError extends Error {
@@ -22,12 +21,12 @@ export class ForbiddenError extends Error {
 }
 
 type AuthorizedRouteHandler<R extends AnyResponse> = (
-    schema: Schema<AppRegistry>,
+    schema: AppSchema,
     request: Request,
     user: UserDbModel) => R;
 
 export function handleWithAuthorization<R extends AnyResponse = AnyResponse>(authorizedHandler: AuthorizedRouteHandler<R>) {
-    return async (schema: Schema<AppRegistry>, request: Request) => {
+    return async (schema: AppSchema, request: Request) => {
         const user = getAuthenticatedUser(schema, request);
         if (user === null)
             return UnauthorizedResponse;
@@ -48,7 +47,7 @@ export function handleWithAuthorization<R extends AnyResponse = AnyResponse>(aut
 
 // Private
 
-function getAuthenticatedUser(schema: Schema<AppRegistry>, request: Request): UserDbModel | null {
+function getAuthenticatedUser(schema: AppSchema, request: Request): UserDbModel | null {
     let authenticatedUser: UserDbModel | null = null;
     const authorization = request.requestHeaders.Authorization;
     if (authorization && authorization.startsWith("Bearer:")) {

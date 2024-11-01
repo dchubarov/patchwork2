@@ -3,7 +3,7 @@ import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ENTITY_KEY} from "../domain/checklistEntity";
 import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
-import {NotFoundResponse} from "@/mocker/routes/index";
+import {NotFoundResponse} from "../utils/response";
 
 export default function checklistRoutes(server: AppServer) {
     const checklistRouteBasename = "/checklists/v2";

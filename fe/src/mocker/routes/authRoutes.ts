@@ -1,10 +1,10 @@
+import _ from "lodash";
 import {Response} from "miragejs";
 import {AppServer} from "../domain";
 import {USER_ENTITY_KEY} from "../domain/userEntity";
-import {UnauthorizedResponse} from "./index";
 import {createJwt, decodeJwt, JwtPayload} from "@/utils/jwt";
+import {UnauthorizedResponse} from "../utils/response";
 import * as cookie from "cookie";
-import _ from "lodash";
 
 // This is a mock server so secret is not secret at all.
 const SERVER_JWT_SECRET = "A02B5BD6-188E-4C73-B595-D6CE3725072B";

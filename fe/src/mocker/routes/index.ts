@@ -1,14 +1,9 @@
 import {AppServer} from "../domain";
-import {Response} from "miragejs";
 import userRoutes from "./userRoutes";
 import infoRoutes from "./infoRoutes";
 import authRoutes from "./authRoutes";
 import checklistRoutes from "./checklistRoutes";
-
-// export const BadRequestResponse = new Response(400);
-export const NotFoundResponse = new Response(404);
-export const UnauthorizedResponse = new Response(401);
-export const ForbiddenResponse = new Response(403);
+import {NotFoundResponse} from "../utils/response";
 
 export default function configureRoutes(server: AppServer, baseUrl: string) {
     server.namespace = baseUrl + "/x";
