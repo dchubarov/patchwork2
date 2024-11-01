@@ -1,7 +1,7 @@
 import React from "react";
 import {Chip, ListItemContent, Switch, Typography} from "@mui/joy";
-import {ChecklistItemData} from "../types/schema";
 import {Circle as PlaceholderIcon, Done as DoneIcon} from "@mui/icons-material";
+import {ChecklistItemData} from "../types/schema";
 
 type ChecklistItemContentComponentType = React.FC<{
     level: number;
@@ -14,7 +14,7 @@ const ChecklistItemContent: ChecklistItemContentComponentType = ({level, item, g
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
             {group
-                ? <PlaceholderIcon sx={{mx: "2px"}}/>
+                ? <PlaceholderIcon sx={{mx: "2px", color: "var(--joy-palette-neutral-700)"}}/>
                 : <Switch
                     defaultChecked={item.done}
                     slotProps={{track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>}}}

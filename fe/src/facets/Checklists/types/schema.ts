@@ -1,31 +1,26 @@
-import z, {ZodType} from "zod";
+import z from "zod";
 
 /** Checklist item base attributes */
-const baseChecklistItemSchema = z.object({
+const checklistItemSchema = z.object({
     /** Checklist item id */
     id: z.string(),
     /** Textual note */
     note: z.string(),
     /** Done flag */
-    done: z.optional(z.boolean()),
+    done: z.boolean().default(false),
     /** Color label */
-    colorLabel: z.optional(z.nullable(z.string()).default(null))
-});
-
-export type ChecklistItemData = z.infer<typeof baseChecklistItemSchema> & {
-    items: ChecklistItemData[];
-};
-
-const checklistItemSchema: ZodType<ChecklistItemData> = baseChecklistItemSchema.extend({
-    /** Nested items */
-    items: z.lazy(() => checklistItemSchema.array()),
+    colorLabel: z.nullable(z.string()).default(null),
+    /** Parent item id */
+    parent: z.nullable(z.string()).default(null),
+    /** Subitem ids */
+    subitems: z.array(z.string()).default([]),
 });
 
 export const checklistSchema = z.object({
     /** Checklist id */
     id: z.nullable(z.string()).default(null),
     /** Checklist title */
-    title: z.optional(z.string()),
+    title: z.string(),
     /** Checklist items */
     items: z.array(checklistItemSchema).default([]),
 });
@@ -43,4 +38,5 @@ export const checklistTemplateResponse: ChecklistResponseData = {
 }
 
 export type ChecklistData = z.infer<typeof checklistSchema>;
+export type ChecklistItemData = z.infer<typeof checklistItemSchema>;
 export type ChecklistResponseData = z.infer<typeof checklistResponseSchema>;

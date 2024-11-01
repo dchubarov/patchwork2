@@ -1,9 +1,10 @@
-import React, {useState} from "react";
+import React from "react";
 import {IconButton, IconButtonProps, List, ListItem} from "@mui/joy";
 import {KeyboardArrowDown as ExpandedIcon} from "@mui/icons-material";
 import {ChecklistItemData} from "../types/schema";
 import ChecklistGroup from "./ChecklistGroup";
 import ChecklistItemContent from "./ChecklistItemContent";
+import useChecklist from "../hooks/useChecklist";
 
 type ChecklistItemComponentType = React.FC<{
     level: number;
@@ -27,24 +28,25 @@ const ChecklistGroupExpandButton: React.FC<IconButtonProps & { expanded: boolean
 }
 
 const ChecklistItem: ChecklistItemComponentType = ({level, item, showIds}) => {
-    const [expanded, setExpanded] = useState(true);
-    const group = item.items && item.items.length > 0;
+    const {groups, setGroupExpanded} = useChecklist();
+    const group = groups.get(item.id);
+
     const contentElement =
         <ChecklistItemContent
             level={level}
             item={item}
-            group={group}
+            group={!!group}
             showId={showIds}/>;
 
     return (
-        <ListItem nested={group}>
+        <ListItem nested={!!group}>
             {!group ? contentElement : <>
                 <ListItem
                     component="div"
                     startAction={
                         <ChecklistGroupExpandButton
-                            expanded={expanded}
-                            onClick={() => setExpanded(prev => !prev)}
+                            expanded={group.expanded}
+                            onClick={() => setGroupExpanded(item.id, !group.expanded)}
                         />}
                     sx={{
                         '--ListItem-startActionTranslateX':
@@ -53,10 +55,10 @@ const ChecklistItem: ChecklistItemComponentType = ({level, item, showIds}) => {
                     {contentElement}
                 </ListItem>
 
-                {expanded && <List>
+                {group.expanded && <List>
                     <ChecklistGroup
                         level={level + 1}
-                        items={item.items}
+                        rootId={item.id}
                         showIds={showIds}/>
                 </List>}
             </>}

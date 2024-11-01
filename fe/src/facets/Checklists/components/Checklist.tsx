@@ -1,19 +1,16 @@
-import React, {useContext} from "react";
+import React from "react";
 import {List, ListItem, ListItemContent, ListProps, Typography} from "@mui/joy";
 import ChecklistGroup from "./ChecklistGroup";
-import {ChecklistContext} from "../types/context";
+import useChecklist from "../hooks/useChecklist";
 
 type ChecklistComponentType = React.FC<{
     showIds?: boolean;
 } & ListProps>;
 
-const Checklist: ChecklistComponentType = ({showIds, sx, ...other}) => {
-    const ctx = useContext(ChecklistContext);
-    if (ctx === null || ctx.data === null)
-        return null;
-
-    return (
-        <List
+const Checklist: ChecklistComponentType = ({showIds = false, sx, ...other}) => {
+    const {data} = useChecklist();
+    return (<>
+        {data && <List
             {...other}
             sx={[
                 {
@@ -37,16 +34,15 @@ const Checklist: ChecklistComponentType = ({showIds, sx, ...other}) => {
 
             <ListItem>
                 <ListItemContent>
-                    <Typography level="h2">{ctx.data.title}</Typography>
+                    <Typography level="h2">{data.title}</Typography>
                 </ListItemContent>
             </ListItem>
 
-            {ctx.data.items.length > 0 && <ChecklistGroup
+            {data.items.length > 0 && <ChecklistGroup
                 level={1}
-                items={ctx.data.items}
                 showIds={showIds}/>}
-        </List>
-    );
+        </List>}
+    </>);
 }
 
 export default Checklist;
