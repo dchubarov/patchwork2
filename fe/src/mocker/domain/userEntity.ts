@@ -32,6 +32,12 @@ const UserEntity = {
             email: "dime@twowls.org",
             status: "active"
         });
+        server.create(USER_ENTITY_KEY, {
+            id: "1001",
+            username: "monk",
+            email: "dummy@twowls.org",
+            status: "active"
+        });
     },
 
     serializers: (baseSerializer: SerializerInterface) => ({

@@ -13,7 +13,7 @@ export default function checklistRoutes(server: AppServer) {
         user: UserDbModel,
         _accessLevel: "read" | "write" = "read"
     ) => {
-        if (user.id !== checklist.ownerId)
+        if (user.id !== checklist.createdById)
             throw new ForbiddenError();
     }
 
@@ -22,16 +22,18 @@ export default function checklistRoutes(server: AppServer) {
         (schema, _request, user) => {
             const usersIds = new Set<string>();
             const checklists = schema
-                .where(CHECKLIST_ENTITY_KEY, {ownerId: user.id})
+                .where(CHECKLIST_ENTITY_KEY, {createdById: user.id})
                 .models
                 .map(e => {
-                    usersIds.add(e.owner!!.id!!);
+                    e.createdBy?.id && usersIds.add(e.createdBy.id);
+                    e.lastModifiedBy?.id && usersIds.add(e.lastModifiedBy.id);
                     return {
                         id: e.id,
                         title: e.title,
-                        owner: e.owner?.id,
+                        createdBy: e.createdBy?.id,
                         createdAt: e.createdAt,
-                        updatedAt: e.updatedAt,
+                        lastModifiedBy: e.lastModifiedBy?.id,
+                        lastModifiedAt: e.lastModifiedAt,
                     }
                 });
 
