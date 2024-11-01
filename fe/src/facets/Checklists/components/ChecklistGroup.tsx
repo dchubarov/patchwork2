@@ -1,5 +1,5 @@
 import React from "react";
-import {ChecklistItemData} from "../types";
+import {ChecklistItemData} from "../types/schema";
 import ChecklistItem from "./ChecklistItem";
 
 type ChecklistGroupComponentType = React.FC<{

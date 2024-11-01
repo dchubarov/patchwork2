@@ -1,7 +1,7 @@
 import React from "react";
 import {Chip, ListItemContent, Switch, Typography} from "@mui/joy";
-import {ChecklistItemData} from "../types";
-import {Circle as PlaceholderIcon} from "@mui/icons-material";
+import {ChecklistItemData} from "../types/schema";
+import {Circle as PlaceholderIcon, Done as DoneIcon} from "@mui/icons-material";
 
 type ChecklistItemContentComponentType = React.FC<{
     level: number;
@@ -10,13 +10,17 @@ type ChecklistItemContentComponentType = React.FC<{
     showId?: boolean;
 }>;
 
-const ChecklistItemContent: ChecklistItemContentComponentType = ({item, group, showId}) => {
+const ChecklistItemContent: ChecklistItemContentComponentType = ({level, item, group, showId}) => {
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
-            {group ? <PlaceholderIcon sx={{mx: "2px"}}/> : <Switch
-                defaultChecked={item.done}
-                variant="soft"
-                size="lg"/>}
+            {group
+                ? <PlaceholderIcon sx={{mx: "2px"}}/>
+                : <Switch
+                    defaultChecked={item.done}
+                    slotProps={{track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>}}}
+                    variant="soft"
+                    size="lg"
+                />}
 
             <Typography
                 noWrap
@@ -28,7 +32,7 @@ const ChecklistItemContent: ChecklistItemContentComponentType = ({item, group, s
                 {item.note}
             </Typography>
 
-            {showId && <Chip size="sm">{`ID:${item.id}`}</Chip>}
+            {showId && <Chip size="sm">{`ID:${item.id} LV:${level}`}</Chip>}
         </ListItemContent>
     );
 }

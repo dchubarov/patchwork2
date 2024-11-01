@@ -42,4 +42,5 @@ export const checklistTemplateResponse: ChecklistResponseData = {
     }
 }
 
+export type ChecklistData = z.infer<typeof checklistSchema>;
 export type ChecklistResponseData = z.infer<typeof checklistResponseSchema>;

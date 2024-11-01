@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {IconButton, IconButtonProps, List, ListItem} from "@mui/joy";
 import {KeyboardArrowDown as ExpandedIcon} from "@mui/icons-material";
-import {ChecklistItemData} from "../types";
+import {ChecklistItemData} from "../types/schema";
 import ChecklistGroup from "./ChecklistGroup";
 import ChecklistItemContent from "./ChecklistItemContent";
 

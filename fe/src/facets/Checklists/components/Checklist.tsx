@@ -1,56 +1,52 @@
-import React from "react";
-import {useQuery} from "@tanstack/react-query";
-import {useApiClient} from "@/hooks";
-import {List, ListItem, ListItemContent, Typography} from "@mui/joy";
-import * as checklistApi from "../api";
+import React, {useContext} from "react";
+import {List, ListItem, ListItemContent, ListProps, Typography} from "@mui/joy";
 import ChecklistGroup from "./ChecklistGroup";
+import {ChecklistContext} from "../types/context";
 
 type ChecklistComponentType = React.FC<{
-    checklistId: string | null;
     showIds?: boolean;
-}>;
+} & ListProps>;
 
-const Checklist: ChecklistComponentType = ({checklistId, showIds}) => {
-    const apiClient = useApiClient();
+const Checklist: ChecklistComponentType = ({showIds, sx, ...other}) => {
+    const ctx = useContext(ChecklistContext);
+    if (ctx === null || ctx.data === null)
+        return null;
 
-    const {status: fetchChecklistStatus, data: fetchChecklistData} = useQuery({
-        queryKey: ["x/checklists/checklist", {checklistId}],
-        queryFn: checklistApi.fetchChecklistRequest(apiClient, checklistId),
-    });
-
-    const checklistData = fetchChecklistData?.checklist || null;
-
-    return (<>
-        {(fetchChecklistStatus === "success" && checklistData) && <List
-            sx={{
-                '--List-gap': 0,
-                '--List-padding': 0,
-                '--ListItem-minHeight': "40px",
-                '--List-nestedInsetStart': "1.75rem",
-                "--ListItem-paddingLeft": "1.5rem",
-                '--ListItem-startActionWidth': 0,
-                '--ListItem-startActionTranslateX': "-30%",
-                '& [class*="startAction"]': {
-                    color: 'var(--joy-palette-text-tertiary)',
-                    backgroundColor: 'transparent',
+    return (
+        <List
+            {...other}
+            sx={[
+                {
+                    '--List-gap': 0,
+                    '--List-padding': 0,
+                    '--ListItem-minHeight': "40px",
+                    '--List-nestedInsetStart': "1.75rem",
+                    "--ListItem-paddingLeft": "1.5rem",
+                    '--ListItem-startActionWidth': 0,
+                    '--ListItem-startActionTranslateX': "-30%",
+                    '& [class*="startAction"]': {
+                        color: 'var(--joy-palette-text-tertiary)',
+                        backgroundColor: 'transparent',
+                    },
+                    '& [class*="startAction"] :hover': {
+                        backgroundColor: "transparent",
+                    },
                 },
-                '& [class*="startAction"] :hover': {
-                    backgroundColor: "transparent",
-                },
-            }}>
+                ...Array.isArray(sx) ? sx : [sx]
+            ]}>
 
             <ListItem>
                 <ListItemContent>
-                    <Typography level="h2">{checklistData.title}</Typography>
+                    <Typography level="h2">{ctx.data.title}</Typography>
                 </ListItemContent>
             </ListItem>
 
-            {checklistData.items.length > 0 && <ChecklistGroup
+            {ctx.data.items.length > 0 && <ChecklistGroup
                 level={1}
-                items={checklistData.items}
+                items={ctx.data.items}
                 showIds={showIds}/>}
-        </List>}
-    </>);
+        </List>
+    );
 }
 
 export default Checklist;
