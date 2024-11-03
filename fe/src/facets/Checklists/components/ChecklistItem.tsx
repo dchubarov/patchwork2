@@ -6,11 +6,11 @@ import ChecklistGroup from "./ChecklistGroup";
 import ChecklistItemContent from "./ChecklistItemContent";
 import useChecklist from "../hooks/useChecklist";
 
-type ChecklistItemComponentType = React.FC<{
+interface ChecklistItemProps {
     level: number;
     item: ChecklistItemData;
     showIds?: boolean;
-}>;
+}
 
 const ChecklistGroupExpandButton: React.FC<IconButtonProps & { expanded: boolean }> = ({expanded, ...other}) => {
     return (
@@ -27,7 +27,7 @@ const ChecklistGroupExpandButton: React.FC<IconButtonProps & { expanded: boolean
     );
 }
 
-const ChecklistItem: ChecklistItemComponentType = ({level, item, showIds}) => {
+const ChecklistItem: React.FC<ChecklistItemProps> = ({level, item, showIds}) => {
     const {groups, setGroupExpanded} = useChecklist();
     const group = groups.get(item.id);
 

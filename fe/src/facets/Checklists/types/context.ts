@@ -1,11 +1,12 @@
 import {createContext} from "react";
-import {ChecklistData} from "../types/schema";
+import {ChecklistData} from "./schema";
 
 export interface ChecklistGroupState {
     expanded: boolean;
 }
 
 export interface ChecklistState {
+    isLoading?: boolean;
     data: ChecklistData | null;
     groups: Map<string, ChecklistGroupState>;
     setGroupExpanded: (itemId: string, expanded: boolean) => void;

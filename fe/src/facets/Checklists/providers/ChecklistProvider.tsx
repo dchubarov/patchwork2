@@ -2,8 +2,8 @@ import React, {PropsWithChildren, useEffect, useReducer} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {useApiClient} from "@/hooks";
 import {ChecklistContext, ChecklistGroupState, ChecklistState} from "../types/context";
-import * as checklistApi from "../api";
 import {ChecklistData} from "../types/schema";
+import * as checklistApi from "../api";
 
 enum ChecklistStateActionType {
     SET_DATA,
@@ -11,36 +11,44 @@ enum ChecklistStateActionType {
 }
 
 type ChecklistStateAction =
-    | { type: ChecklistStateActionType.SET_DATA, data: ChecklistData | null }
+    | { type: ChecklistStateActionType.SET_DATA, data: ChecklistData | null, isLoading: boolean }
     | { type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId: string, expanded: boolean }
     ;
 
-interface ChecklistProviderProps {
+export interface ChecklistProviderProps {
     checklistId?: string | number | null;
 }
 
 const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = ({checklistId = null, children}) => {
-    const [context, dispatch] = useReducer(checklistStateReducer, null, createInitialState);
-
-    function createInitialState(): ChecklistState {
-        return {
-            data: null,
-            groups: new Map(),
-            setGroupExpanded: (itemId: string, expanded: boolean) =>
-                dispatch({type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId, expanded})
-        }
-    }
-
     const apiClient = useApiClient();
-    const {data: fetchResult} = useQuery({
+
+    const [context, dispatch] = useReducer(checklistStateReducer, null, (): ChecklistState => ({
+        data: null,
+        groups: new Map(),
+        setGroupExpanded: (itemId: string, expanded: boolean) =>
+            dispatch({type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId, expanded})
+    }));
+
+    const {isFetching, status: fetchStatus, data: fetchResult} = useQuery({
         queryKey: ["x/checklists/checklist", {checklistId}],
         queryFn: checklistApi.fetchChecklistRequest(apiClient, checklistId),
-        staleTime: Infinity
+        staleTime: Infinity,
     });
 
     useEffect(() => {
-        dispatch({type: ChecklistStateActionType.SET_DATA, data: fetchResult?.checklist || null});
-    }, [fetchResult]);
+        dispatch({
+            type: ChecklistStateActionType.SET_DATA,
+            data: fetchResult?.checklist || null,
+            isLoading: isFetching
+        });
+    }, [isFetching, fetchResult]);
+
+    // TODO refetch on user logout / user change
+
+    if (fetchStatus === "error") {
+        // TODO need universal way to redirect to resource error page
+        throw new Error("Error loading checklist");
+    }
 
     return (
         <ChecklistContext.Provider value={context}>
@@ -66,6 +74,7 @@ function checklistStateReducer(state: ChecklistState, action: ChecklistStateActi
             }
             return {
                 ...state,
+                isLoading: action.isLoading,
                 data: action.data,
                 groups
             };
