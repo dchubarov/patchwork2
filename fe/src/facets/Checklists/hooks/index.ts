@@ -8,5 +8,3 @@ export const useChecklist = () => {
     }
     return ctx;
 }
-
-export default useChecklist;

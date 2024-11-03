@@ -66,7 +66,7 @@ const ChecklistEntity = {
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "1", checklistId: "dime1", note: "Buy groceries"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "2", checklistId: "dime1", note: "Turnip x3", parentId: "1"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "3", checklistId: "dime1", note: "Coca-cola", parentId: "1"});
-        server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "4", checklistId: "dime1", note: "Bottle", parentId: "3"});
+        server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "4", checklistId: "dime1", note: "Bottle", parentId: "3", done: true});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "5", checklistId: "dime1", note: "Relax a bit"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "6", checklistId: "dime1", note: "Go to mountains", parentId: "5"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "7", checklistId: "dime1", note: "Take a note"});

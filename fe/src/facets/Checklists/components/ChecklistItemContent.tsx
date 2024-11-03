@@ -2,15 +2,16 @@ import React from "react";
 import {Chip, ListItemContent, Switch, Typography} from "@mui/joy";
 import {Circle as PlaceholderIcon, Done as DoneIcon} from "@mui/icons-material";
 import {ChecklistItemData} from "../types/schema";
+import {ChecklistGroupState} from "../types/context";
 
 interface ChecklistItemContentProps {
     level: number;
     item: ChecklistItemData;
-    group?: boolean;
+    group?: ChecklistGroupState | null;
     showId?: boolean;
 }
 
-const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group, showId}) => {
+const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group = null, showId}) => {
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
             {group
@@ -21,6 +22,8 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     variant="soft"
                     size="lg"
                 />}
+
+            {group && <Typography level="body-xs" sx={{color: "text.tertiary"}}>{`[${group.doneCount}/${group.items.length}]`}</Typography>}
 
             <Typography
                 noWrap

@@ -4,7 +4,7 @@ import {KeyboardArrowDown as ExpandedIcon} from "@mui/icons-material";
 import {ChecklistItemData} from "../types/schema";
 import ChecklistGroup from "./ChecklistGroup";
 import ChecklistItemContent from "./ChecklistItemContent";
-import useChecklist from "../hooks/useChecklist";
+import {useChecklist} from "../hooks";
 
 interface ChecklistItemProps {
     level: number;
@@ -35,7 +35,7 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({level, item, showIds}) => 
         <ChecklistItemContent
             level={level}
             item={item}
-            group={!!group}
+            group={group}
             showId={showIds}/>;
 
     return (

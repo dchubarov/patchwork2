@@ -1,6 +1,6 @@
 import React from "react";
 import ChecklistItem from "./ChecklistItem";
-import useChecklist from "../hooks/useChecklist";
+import {useChecklist} from "../hooks";
 
 interface ChecklistGroupProps {
     level: number;
@@ -9,9 +9,8 @@ interface ChecklistGroupProps {
 }
 
 const ChecklistGroup: React.FC<ChecklistGroupProps> = ({level, rootId = null, showIds = false}) => {
-    const {data} = useChecklist();
-    const items = data?.items
-        .filter(item => item.parent === rootId) || [];
+    const {groups} = useChecklist();
+    const items = groups.get(rootId)?.items || [];
 
     return (<>
         {items.map(item => (
