@@ -8,6 +8,9 @@ const ChecklistsFacet: ApplicationFacet = {
     routes: () => ([{
         index: true,
         Component: LazyChecklistsPage,
+    }, {
+        path: ":checklistId",
+        Component: LazyChecklistsPage,
     }]),
 }
 

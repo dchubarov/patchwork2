@@ -16,10 +16,10 @@ type ChecklistStateAction =
     ;
 
 interface ChecklistProviderProps {
-    checklistId: string | number | null;
+    checklistId?: string | number | null;
 }
 
-const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = ({checklistId, children}) => {
+const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = ({checklistId = null, children}) => {
     const [context, dispatch] = useReducer(checklistStateReducer, null, createInitialState);
 
     function createInitialState(): ChecklistState {

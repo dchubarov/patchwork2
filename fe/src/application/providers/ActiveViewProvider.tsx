@@ -7,7 +7,7 @@ import {
     ViewConfiguration,
     ViewState
 } from "@/types/view";
-import {useEnvironment} from "@/hooks";
+import {useEnvironment} from "@/hooks/env";
 import {EnvironmentApplicationFacet} from "@/types/env";
 import _ from "lodash";
 

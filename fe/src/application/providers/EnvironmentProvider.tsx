@@ -5,8 +5,8 @@ import {envGlobals, EnvironmentContext, EnvironmentApplicationFacet, Environment
 import {createApiClient} from "../utils/apiClient";
 import monitoringApi from "../api/monitoring";
 import AppFacets from "src/facets";
-import version from "@/version.json";
 import {normalizeBasePath} from "@/utils/path";
+import version from "../../version.json";
 
 enum EnvironmentStateActionType {
     UPDATE_BACKEND_STATUS,

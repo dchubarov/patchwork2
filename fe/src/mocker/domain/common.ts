@@ -1,5 +1,5 @@
 import {BelongsTo} from "miragejs/-types";
-import {USER_ENTITY_KEY} from "@/mocker/domain/userEntity";
+import {USER_ENTITY_KEY} from "./userEntity";
 import {belongsTo} from "miragejs";
 
 export interface EntityCommonAttributes {

@@ -1,15 +1,15 @@
 import React from "react";
 import PageLayout from "@/components/PageLayout";
-import {useSearchParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import Checklist from "../components/Checklist";
-import ChecklistProvider from "@/facets/Checklists/providers/ChecklistProvider";
+import ChecklistProvider from "../providers/ChecklistProvider";
 
 const ChecklistsPage: React.FC = () => {
-    const [searchParams] = useSearchParams();
+    const {checklistId} = useParams();
 
     return (
         <PageLayout.Content noTitle>
-            <ChecklistProvider checklistId={searchParams.get("id")}>
+            <ChecklistProvider checklistId={checklistId}>
                 <Checklist showIds/>
             </ChecklistProvider>
         </PageLayout.Content>

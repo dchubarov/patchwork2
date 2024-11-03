@@ -4,7 +4,7 @@ import {CssBaseline, CssVarsProvider} from "@mui/joy";
 import Layout from "./Layout";
 import Sidebar from "./Sidebar";
 import ActiveViewProvider from "../providers/ActiveViewProvider";
-import {customizeTheme} from "@/application/utils/customizeTheme";
+import {customizeTheme} from "../utils/customizeTheme";
 
 const App: React.FC = () => {
     const theme = useMemo(customizeTheme, []);

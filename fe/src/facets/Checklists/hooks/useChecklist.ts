@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import {ChecklistContext} from "@/facets/Checklists/types/context";
+import {ChecklistContext} from "../types/context";
 
 export const useChecklist = () => {
     const ctx = useContext(ChecklistContext);

@@ -39,7 +39,7 @@ export interface EnvironmentState {
 }
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
-export type {ServerInfoResponse} from "@/application/api/monitoring";
+export type {ServerInfoResponse} from "../application/api/monitoring";
 
 // Private
 
