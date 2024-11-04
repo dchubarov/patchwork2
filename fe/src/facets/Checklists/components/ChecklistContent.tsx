@@ -20,6 +20,9 @@ const ChecklistContent: React.FC<ChecklistContentProps> = ({showIds = false, sx,
                     "--ListItem-paddingLeft": "1.5rem",
                     '--ListItem-startActionWidth': 0,
                     '--ListItem-startActionTranslateX': "-30%",
+                    // [`& .${listItemClasses.root}:not(.${listItemClasses.nested}) :hover`]: {
+                    //     backgroundColor: 'var(--joy-palette-primary-50)'
+                    // },
                     '& [class*="startAction"]': {
                         color: 'var(--joy-palette-text-tertiary)',
                         backgroundColor: 'transparent',

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {StrictMode} from "react";
 import ReactDOM from "react-dom/client";
 import {RouterProvider} from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
@@ -16,13 +16,15 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-    <QueryClientProvider client={createQueryClient()}>
-        <EnvironmentProvider>
-            <AuthProvider>
-                <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <DefaultPage/>)}/>
-            </AuthProvider>
-        </EnvironmentProvider>
-    </QueryClientProvider>
+    <StrictMode>
+        <QueryClientProvider client={createQueryClient()}>
+            <EnvironmentProvider>
+                <AuthProvider>
+                    <RouterProvider router={buildRouter(<App/>, <ErrorPage/>, <DefaultPage/>)}/>
+                </AuthProvider>
+            </EnvironmentProvider>
+        </QueryClientProvider>
+    </StrictMode>
 );
 
 if (envGlobals.ENABLE_MOCKER) {

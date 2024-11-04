@@ -1,6 +1,6 @@
 import {Instantiate} from "miragejs/-types";
 import {AppRegistry, AppServer} from "../domain";
-import {CHECKLIST_ENTITY_KEY} from "../domain/checklistEntity";
+import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY} from "../domain/checklistEntity";
 import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
 import {NotFoundResponse} from "../utils/response";
@@ -72,74 +72,32 @@ export default function checklistRoutes(server: AppServer) {
     server.post(`${checklistRouteBasename}/checklist/:checklistId/item`);
 
     // Update checklist item
-    server.put(`${checklistRouteBasename}/checklist/:checklistId/item`);
+    server.put(`${checklistRouteBasename}/checklist/:checklistId/item`, handleWithAuthorization(
+        async (schema, request, user) => {
+            const checklistId = request.params.checklistId;
+            const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
+            if (!checklist) {
+                return NotFoundResponse;
+            }
+            verifyChecklistAccess(checklist, user, "write");
+
+            const json = JSON.parse(request.requestBody).checklistItem;
+            const checklistItem = schema.find(CHECKLIST_ITEM_ENTITY_KEY, json?.id);
+            if (!checklistItem || checklistItem.checklistId !== checklistId) {
+                return NotFoundResponse;
+            }
+
+            checklistItem.note = json.note ?? checklistItem.note;
+            checklistItem.done = json.done ?? checklistItem.done;
+            checklistItem.colorLabel = json.colorLabel !== undefined ? json.colorLabel : checklistItem.colorLabel;
+            checklistItem.lastModifiedById = user.id;
+            checklistItem.lastModifiedAt = new Date();
+            checklistItem.save();
+
+            return checklistItem;
+        }
+    ));
 
     // Delete checklist item
     server.del(`${checklistRouteBasename}/checklist/:checklistId/item/:itemId`);
-
-    /*
-    server.get(checklistRouteBasename, async (schema, _) => {
-        const uniqueChecklists = schema.all("checklistItem").models
-            .map((item) => item.list)
-            .filter((item, index, arr) => arr.indexOf(item) === index);
-
-        return {
-            "availableChecklists": uniqueChecklists.indexOf("default") < 0 ? ["default", ...uniqueChecklists] : uniqueChecklists
-        }
-    });
-
-    server.get(checklistRouteList, async (schema, request) => {
-        return schema.where("checklistItem", (item) => item.list === request.params.checklistName)
-            .sort((a, b) => {
-                const t1 = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
-                const t2 = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
-                return t2 - t1;
-            });
-    });
-
-    server.post(checklistRouteList, async (schema, request) => {
-        const json = JSON.parse(request.requestBody);
-        const created = server.create(CHECKLIST_ITEM_ENTITY_KEY, {
-            list: request.params.checklistName,
-            note: json.note || "",
-            done: json.done || false,
-            colorLabel: json.colorLabel,
-        });
-
-        persistChecklistItems(schema);
-        return created;
-    });
-
-    server.put(checklistRouteList, async (schema, request) => {
-        const json = JSON.parse(request.requestBody);
-        schema.db.checklistItems.update(json.id, {
-            list: request.params.checklistName,
-            note: json.note || "",
-            done: json.done || false,
-            colorLabel: json.colorLabel || null,
-            updatedAt: new Date()
-        });
-
-        persistChecklistItems(schema);
-        return schema.find(CHECKLIST_ITEM_ENTITY_KEY, json.id);
-    });
-
-    server.delete(checklistRouteList, async (schema, request) => {
-        const id = request.queryParams.id;
-        if (id === undefined || typeof id !== "string")
-            return BadRequestResponse;
-
-        const toDelete = schema.findBy(CHECKLIST_ITEM_ENTITY_KEY, (item) =>
-            item.list === request.params.checklistName && item.id === id);
-
-        if (!toDelete) {
-            const msg = `Checklist item #${request.params.checklistItemId} not found in list ${request.params.checklistName}`;
-            return new Response(404, undefined, {errors:[msg]});
-        }
-
-        toDelete.destroy();
-        persistChecklistItems(schema);
-        return toDelete;
-    });
-     */
 }
