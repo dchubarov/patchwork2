@@ -2,6 +2,7 @@ import React from "react";
 import {List, ListItem, listItemClasses, ListProps} from "@mui/joy";
 import ChecklistGroup from "./ChecklistGroup";
 import ChecklistHeader from "./ChecklistHeader";
+import ChecklistPlaceholder from "./ChecklistPlaceholder";
 
 export type ChecklistContentProps = {
     showIds?: boolean;
@@ -54,6 +55,10 @@ const ChecklistContent: React.FC<ChecklistContentProps> = ({showIds = false, sx,
 
             <ListItem>
                 <ChecklistHeader/>
+            </ListItem>
+
+            <ListItem>
+                <ChecklistPlaceholder/>
             </ListItem>
 
             <ChecklistGroup
