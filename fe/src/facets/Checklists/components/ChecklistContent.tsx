@@ -1,5 +1,5 @@
 import React from "react";
-import {List, ListItem, ListProps} from "@mui/joy";
+import {List, ListItem, listItemClasses, ListProps} from "@mui/joy";
 import ChecklistGroup from "./ChecklistGroup";
 import ChecklistHeader from "./ChecklistHeader";
 
@@ -29,6 +29,24 @@ const ChecklistContent: React.FC<ChecklistContentProps> = ({showIds = false, sx,
                     },
                     '& [class*="startAction"] :hover': {
                         backgroundColor: "transparent",
+                    },
+
+                    // Animations
+                    [`& .${listItemClasses.nesting}-enter`]: {
+                        maxHeight: 0,
+                    },
+                    [`& .${listItemClasses.nesting}-enter-active`]: {
+                        transition: 'max-height 150ms ease-in',
+                        overflowY: "hidden",
+                        maxHeight: "300px",
+                    },
+                    [`& .${listItemClasses.nesting}-exit`]: {
+                        maxHeight: "300px",
+                    },
+                    [`& .${listItemClasses.nesting}-exit-active`]: {
+                        transition: 'max-height 150ms ease-in-out',
+                        overflowY: "hidden",
+                        maxHeight: 0,
                     },
                 },
                 ...Array.isArray(sx) ? sx : [sx]

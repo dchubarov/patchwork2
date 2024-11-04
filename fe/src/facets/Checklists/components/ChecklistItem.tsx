@@ -1,5 +1,6 @@
-import React from "react";
-import {IconButton, IconButtonProps, List, ListItem} from "@mui/joy";
+import React, {useRef} from "react";
+import {CSSTransition} from "react-transition-group";
+import {IconButton, IconButtonProps, List, ListItem, listItemClasses} from "@mui/joy";
 import {KeyboardArrowDown as ExpandedIcon} from "@mui/icons-material";
 import {ChecklistItemData} from "../types/schema";
 import ChecklistGroup from "./ChecklistGroup";
@@ -30,6 +31,7 @@ const ChecklistGroupExpandButton: React.FC<IconButtonProps & { expanded: boolean
 const ChecklistItem: React.FC<ChecklistItemProps> = ({level, item, showIds}) => {
     const {groups, setGroupExpanded} = useChecklist();
     const group = groups.get(item.id);
+    const nestedListRef = useRef(null);
 
     const contentElement =
         <ChecklistItemContent
@@ -55,12 +57,19 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({level, item, showIds}) => 
                     {contentElement}
                 </ListItem>
 
-                {group.expanded && <List>
-                    <ChecklistGroup
-                        level={level + 1}
-                        rootId={item.id}
-                        showIds={showIds}/>
-                </List>}
+                <CSSTransition
+                    nodeRef={nestedListRef}
+                    classNames={listItemClasses.nesting}
+                    in={group.expanded}
+                    timeout={150}
+                    unmountOnExit>
+                    <List ref={nestedListRef}>
+                        <ChecklistGroup
+                            level={level + 1}
+                            rootId={item.id}
+                            showIds={showIds}/>
+                    </List>
+                </CSSTransition>
             </>}
         </ListItem>
     );

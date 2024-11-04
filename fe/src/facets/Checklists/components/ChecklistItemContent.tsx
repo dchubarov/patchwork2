@@ -21,6 +21,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
             {group
                 ? <PlaceholderIcon sx={{mx: "2px", color: "var(--joy-palette-neutral-700)"}}/>
                 : <Switch
+                    id={`toggle-${item.id}`}
                     checked={item.done}
                     onChange={(e) => addOrUpdateItem({...item, done: e.target.checked})}
                     disabled={isUpdating}
