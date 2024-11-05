@@ -3,6 +3,7 @@ import {ChecklistData, ChecklistItemData} from "./schema";
 
 export interface ChecklistGroupState {
     items: ChecklistItemData[];
+    doableCount: number;
     doneCount: number;
     expanded: boolean;
 }
@@ -88,27 +89,47 @@ function rebuildGroups(
     currentGroups: Map<string | null, ChecklistGroupState>
 ): Map<string | null, ChecklistGroupState> {
     const groups = new Map<string | null, ChecklistGroupState>();
-    if (!data) {
-        return groups;
+    if (!data) return groups;
+
+    const roots = data.items.reduce(
+        (acc, item) => {
+            const items = acc.get(item.parent);
+            return acc.set(item.parent, Array.isArray(items) ? [...items, item] : [item]);
+        }, new Map<string | null, ChecklistItemData[]>());
+
+    const visited = new Set<string | null>();
+
+    function dfs(id: string | null): ChecklistGroupState | undefined {
+        if (visited.has(id)) return;
+        visited.add(id);
+
+        let doableCount = 0, doneCount = 0;
+        const items = roots.get(id);
+        items?.forEach((item) => {
+            if (roots.has(item.id)) {
+                const childGroup = dfs(item.id);
+                if (childGroup) {
+                    doneCount += childGroup.doneCount;
+                    doableCount += childGroup.doableCount;
+                }
+            }
+            else {
+                if (item.done) doneCount++;
+                doableCount++;
+            }
+        });
+
+        const group: ChecklistGroupState = {
+            items: items || [],
+            doableCount: doableCount,
+            doneCount: doneCount,
+            expanded: currentGroups.get(id)?.expanded ?? true,
+        }
+
+        groups.set(id, group);
+        return group;
     }
 
-    data.items.forEach((item) => {
-        const groupId = item.parent || null;
-        const currentGroup = currentGroups.get(groupId);
-        const group: ChecklistGroupState = groups.get(groupId) || {
-            expanded: currentGroup?.expanded ?? true,
-            doneCount: 0,
-            items: [],
-        }
-
-        group.items.push(item);
-
-        if (item.subitems.length === 0) {
-            if (item.done) ++group.doneCount;
-        }
-
-        groups.set(groupId, group);
-    });
-
+    dfs(null);
     return groups;
 }

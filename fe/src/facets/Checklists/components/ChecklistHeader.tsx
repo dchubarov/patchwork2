@@ -6,7 +6,7 @@ import {Circle as PlaceholderIcon} from "@mui/icons-material";
 const ChecklistHeader: React.FC = () => {
     const {data, groups, isLoading} = useChecklist();
     const group = groups.get(null);
-    const counts = group ? `[${group.doneCount}/${group.items.length}] ` : "";
+    const counts = group ? `[${group.doneCount}/${group.doableCount}] ` : "";
 
     return (
         <ListItemContent sx={{

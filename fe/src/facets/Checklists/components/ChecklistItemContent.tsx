@@ -38,7 +38,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 />}
 
             {group && <Typography level="body-xs"
-                                  sx={{color: "text.tertiary"}}>{`[${group.doneCount}/${group.items.length}]`}</Typography>}
+                                  sx={{color: "text.tertiary"}}>{`[${group.doneCount}/${group.doableCount}]`}</Typography>}
 
             <Typography
                 noWrap
