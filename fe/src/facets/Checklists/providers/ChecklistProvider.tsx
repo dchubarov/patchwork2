@@ -27,7 +27,7 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
             data: fetchResult?.checklist || null,
             isLoading: isFetching
         });
-    }, [isFetching, fetchResult]);
+    }, [isFetching, fetchResult, dispatch]);
 
     const {mutate: doUpdateItem} = useMutation({
         mutationKey: ["checklists/item/update", {checklistId}],

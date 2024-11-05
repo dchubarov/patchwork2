@@ -15,6 +15,7 @@ interface ChecklistItemContentProps {
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group = null, showId}) => {
     const {addOrUpdateItem, isUpdatingItem, updatingItemId} = useChecklist();
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
+    const chipContent = `ID:${item.id} LV:${level} ${!!group ? `PG:${group.doneCount}/${group.doableCount}` : ''}`;
 
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
@@ -37,20 +38,17 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     size="lg"
                 />}
 
-            {group && <Typography level="body-xs"
-                                  sx={{color: "text.tertiary"}}>{`[${group.doneCount}/${group.doableCount}]`}</Typography>}
-
             <Typography
                 noWrap
                 level={group ? "title-md" : "body-md"}
                 sx={{
                     minWidth: 0,
-                    // flex: 1
+                    //flex: 1
                 }}>
                 {item.note}
             </Typography>
 
-            {showId && <Chip size="sm">{`ID:${item.id} LV:${level}`}</Chip>}
+            {showId && <Chip size="sm">{chipContent}</Chip>}
         </ListItemContent>
     );
 }

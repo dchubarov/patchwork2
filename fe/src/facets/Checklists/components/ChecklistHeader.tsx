@@ -1,12 +1,13 @@
 import React from "react";
-import {ListItemContent, Skeleton, Typography} from "@mui/joy";
+import {AspectRatio, ListItemContent, Skeleton, Tooltip, Typography} from "@mui/joy";
+import PieProgress from "@/components/PieProgress";
 import {useChecklist} from "../hooks";
-import {Circle as PlaceholderIcon} from "@mui/icons-material";
 
 const ChecklistHeader: React.FC = () => {
     const {data, groups, isLoading} = useChecklist();
     const group = groups.get(null);
-    const counts = group ? `[${group.doneCount}/${group.doableCount}] ` : "";
+    const progress = !!group ? group.doneCount / group.doableCount * 100 : 0;
+    const counts = group ? `${group.doneCount} / ${group.doableCount}` : "";
 
     return (
         <ListItemContent sx={{
@@ -15,12 +16,21 @@ const ChecklistHeader: React.FC = () => {
             alignItems: "center",
             ml: "-0.35rem",
         }}>
-            <PlaceholderIcon fontSize="xl4" sx={{color: "var(--joy-palette-neutral-700)"}}/>
+            <Tooltip title={counts} arrow>
+                <AspectRatio
+                    ratio={1}
+                    variant="soft"
+                    sx={(theme) => ({
+                        width: theme.vars.fontSize.xl4,
+                        borderRadius: '50%',
+                    })}>
+                    <PieProgress value={progress} zeroIndicator/>
+                </AspectRatio>
+            </Tooltip>
 
-            <Typography level="h2" startDecorator={<Typography level="title-md"
-                                                               sx={{color: "text.tertiary"}}>{counts}</Typography>}>
+            <Typography level="h2">
                 <Skeleton loading={isLoading && !data}>
-                    {data ? data.title : 'Loading'}
+                    {data ? data.title : 'Checklist is loading'}
                 </Skeleton>
             </Typography>
         </ListItemContent>
