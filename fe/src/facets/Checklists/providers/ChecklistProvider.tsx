@@ -1,9 +1,7 @@
-import React, {PropsWithChildren, useCallback, useEffect, useReducer} from "react";
+import React, {PropsWithChildren, useCallback, useEffect} from "react";
 import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useApiClient} from "@/hooks";
-import {
-    ChecklistContext, ChecklistState, ChecklistStateActionType, checklistStateReducer, initialChecklistState
-} from "../types/context";
+import {ChecklistContext, ChecklistState, ChecklistStateActionType, useChecklistReducer} from "../types/context";
 import {ChecklistItemData} from "../types/schema";
 import * as checklistApi from "../api";
 
@@ -12,7 +10,7 @@ export interface ChecklistProviderProps {
 }
 
 const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = ({checklistId = null, children}) => {
-    const [state, dispatch] = useReducer(checklistStateReducer, initialChecklistState);
+    const [state, dispatch] = useChecklistReducer();
     const queryClient = useQueryClient();
     const apiClient = useApiClient();
 
@@ -31,8 +29,8 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
         });
     }, [isFetching, fetchResult]);
 
-    const {mutate: doAddOrUpdateItem} = useMutation({
-        mutationKey: ["checklists/updateItem", {checklistId}],
+    const {mutate: doUpdateItem} = useMutation({
+        mutationKey: ["checklists/item/update", {checklistId}],
         mutationFn: checklistApi.addOrUpdateItem(apiClient, checklistId),
         onMutate: (data) => {
             dispatch({type: ChecklistStateActionType.SET_UPDATING_ITEM, itemId: data.id});
@@ -66,7 +64,7 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
         setGroupExpanded: useCallback((itemId: string, expanded: boolean) =>
             dispatch({type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId, expanded}), [dispatch]),
         addOrUpdateItem: useCallback((updated: ChecklistItemData) =>
-            doAddOrUpdateItem(updated), [doAddOrUpdateItem]),
+            doUpdateItem(updated), [doUpdateItem]),
     }
 
     return (

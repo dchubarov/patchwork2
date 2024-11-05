@@ -1,4 +1,4 @@
-import {createContext} from "react";
+import {createContext, useReducer} from "react";
 import {ChecklistData, ChecklistItemData} from "./schema";
 
 export interface ChecklistGroupState {
@@ -17,15 +17,6 @@ export interface ChecklistState {
     addOrUpdateItem: (item: ChecklistItemData) => void;
 }
 
-export const initialChecklistState: ChecklistState = {
-    isLoading: false,
-    isUpdatingItem: false,
-    data: null,
-    groups: new Map(),
-    setGroupExpanded: () => {},
-    addOrUpdateItem: () => {},
-}
-
 export const ChecklistContext = createContext<ChecklistState | null>(null);
 
 export enum ChecklistStateActionType {
@@ -42,7 +33,21 @@ export type ChecklistStateAction =
     | { type: ChecklistStateActionType.CLEAR_UPDATING_ITEM }
     ;
 
-export function checklistStateReducer(state: ChecklistState, action: ChecklistStateAction): ChecklistState {
+export const useChecklistReducer = () =>
+    useReducer(checklistStateReducer, {
+        isLoading: false,
+        isUpdatingItem: false,
+        data: null,
+        groups: new Map(),
+        setGroupExpanded: () => {
+        },
+        addOrUpdateItem: () => {
+        },
+    } as ChecklistState);
+
+// Private: reducer logic
+
+function checklistStateReducer(state: ChecklistState, action: ChecklistStateAction): ChecklistState {
     switch (action.type) {
         case ChecklistStateActionType.SET_DATA:
             return {
