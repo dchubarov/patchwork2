@@ -1,9 +1,10 @@
 import React from "react";
-import {Chip, CircularProgress, ListItemContent, Switch, Typography} from "@mui/joy";
-import {Circle as PlaceholderIcon, Done as DoneIcon} from "@mui/icons-material";
+import {AspectRatio, Chip, CircularProgress, ListItemContent, Switch, Tooltip, Typography} from "@mui/joy";
+import {Done as DoneIcon} from "@mui/icons-material";
 import {ChecklistItemData} from "../types/schema";
 import {ChecklistGroupState} from "../types/context";
 import {useChecklist} from "../hooks";
+import PieProgress from "@/components/PieProgress";
 
 interface ChecklistItemContentProps {
     level: number;
@@ -20,7 +21,17 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
             {group
-                ? <PlaceholderIcon sx={{mx: "2px", color: "var(--joy-palette-neutral-700)"}}/>
+                ? <Tooltip title={`${group.doneCount} / ${group.doableCount}`} arrow>
+                    <AspectRatio
+                        ratio={1}
+                        variant="soft"
+                        sx={{
+                            "--AspectRatio-radius": "50%",
+                            width: "24px",
+                        }}>
+                        <PieProgress value={group.doneCount / group.doableCount * 100} zeroIndicator/>
+                    </AspectRatio>
+                </Tooltip>
                 : <Switch
                     id={`toggle-${item.id}`}
                     checked={item.done}
