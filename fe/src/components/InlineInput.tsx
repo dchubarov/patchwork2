@@ -5,6 +5,9 @@ type InlineInputComponentType = {
     inputRef?: React.Ref<HTMLInputElement>
 } & InputProps;
 
+/**
+ * @deprecated use {@link EditableContent}
+ */
 const InlineInput: React.FC<InlineInputComponentType> = ({inputRef, sx, ...other}) => (
     <Input
         {...other}

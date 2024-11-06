@@ -1,10 +1,11 @@
 import React from "react";
 import {AspectRatio, Chip, CircularProgress, ListItemContent, Switch, Tooltip, Typography} from "@mui/joy";
 import {Done as DoneIcon} from "@mui/icons-material";
+import EditableContent from "@/components/EditableContent";
+import PieProgress from "@/components/PieProgress";
 import {ChecklistItemData} from "../types/schema";
 import {ChecklistGroupState} from "../types/context";
 import {useChecklist} from "../hooks";
-import PieProgress from "@/components/PieProgress";
 
 interface ChecklistItemContentProps {
     level: number;
@@ -17,6 +18,11 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
     const {addOrUpdateItem, isUpdatingItem, updatingItemId} = useChecklist();
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
     const chipContent = `ID:${item.id} LV:${level} ${!!group ? `PG:${group.doneCount}/${group.doableCount}` : ''}`;
+
+    const handleNoteEdited = (editedValue: string) => {
+        if (editedValue && editedValue !== item.note)
+            addOrUpdateItem({...item, note: editedValue});
+    }
 
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
@@ -49,15 +55,13 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     size="lg"
                 />}
 
-            <Typography
-                noWrap
-                level={group ? "title-md" : "body-md"}
-                sx={{
-                    minWidth: 0,
-                    //flex: 1
-                }}>
-                {item.note}
-            </Typography>
+            <EditableContent
+                value={item.note}
+                editOn="doubleClick"
+                onEdited={handleNoteEdited}
+                sx={{minWidth: 0, flex: 1}}>
+                <Typography level={group ? "title-md" : "body-md"} noWrap/>
+            </EditableContent>
 
             {showId && <Chip size="sm">{chipContent}</Chip>}
         </ListItemContent>
