@@ -1,6 +1,6 @@
 import {Instantiate} from "miragejs/-types";
 import {AppRegistry, AppServer} from "../domain";
-import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY} from "../domain/checklistEntity";
+import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY, ChecklistProgress} from "../domain/checklistEntity";
 import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
 import {NotFoundResponse} from "../utils/response";
@@ -24,16 +24,26 @@ export default function checklistRoutes(server: AppServer) {
             const checklists = schema
                 .where(CHECKLIST_ENTITY_KEY, {createdById: user.id})
                 .models
-                .map(e => {
-                    e.createdBy?.id && usersIds.add(e.createdBy.id);
-                    e.lastModifiedBy?.id && usersIds.add(e.lastModifiedBy.id);
+                .map(checklist => {
+                    checklist.createdBy?.id && usersIds.add(checklist.createdBy.id);
+                    checklist.lastModifiedBy?.id && usersIds.add(checklist.lastModifiedBy.id);
+
+                    const progress: ChecklistProgress = {doableCount: 0, doneCount: 0};
+                    checklist.items?.models.forEach((item) => {
+                        if (!item.subitems || item.subitems.length < 1) {
+                            progress.doableCount++;
+                            if (item.done) progress.doneCount++;
+                        }
+                    });
+
                     return {
-                        id: e.id,
-                        title: e.title,
-                        createdBy: e.createdBy?.id,
-                        createdAt: e.createdAt,
-                        lastModifiedBy: e.lastModifiedBy?.id,
-                        lastModifiedAt: e.lastModifiedAt,
+                        id: checklist.id,
+                        title: checklist.title,
+                        progress,
+                        createdBy: checklist.createdBy?.id,
+                        createdAt: checklist.createdAt,
+                        lastModifiedBy: checklist.lastModifiedBy?.id,
+                        lastModifiedAt: checklist.lastModifiedAt,
                     }
                 });
 
@@ -59,6 +69,15 @@ export default function checklistRoutes(server: AppServer) {
             }
 
             verifyChecklistAccess(checklist, user, "read");
+
+            checklist.progress = {doableCount: 0, doneCount: 0};
+            checklist?.items?.models.forEach((item) => {
+                if (!item.subitems || item.subitems.length < 1) {
+                    checklist.progress!!.doableCount++;
+                    if (item.done) checklist.progress!!.doneCount++;
+                }
+            });
+
             return checklist;
         }));
 

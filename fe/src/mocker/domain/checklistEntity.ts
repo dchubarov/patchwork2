@@ -7,9 +7,15 @@ import {commonAttributesFactory, commonAttributesModel, EntityCommonAttributes} 
 export const CHECKLIST_ENTITY_KEY = "checklist";
 export const CHECKLIST_ITEM_ENTITY_KEY = "checklistItem";
 
+export interface ChecklistProgress {
+    doableCount: number;
+    doneCount: number;
+}
+
 export type ChecklistDb = {
     items: HasMany<typeof CHECKLIST_ITEM_ENTITY_KEY>;
     title: string;
+    progress?: ChecklistProgress;
 } & EntityCommonAttributes;
 
 export type ChecklistItemDb = {
@@ -40,6 +46,7 @@ const ChecklistEntity = {
     factories: {
         [CHECKLIST_ENTITY_KEY]: Factory.extend<Partial<ChecklistDb>>({
             ...commonAttributesFactory(),
+            progress: {doableCount: 0, doneCount: 0},
         }),
 
         [CHECKLIST_ITEM_ENTITY_KEY]: Factory.extend<Partial<ChecklistItemDb>>({

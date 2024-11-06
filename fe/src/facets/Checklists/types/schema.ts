@@ -12,8 +12,6 @@ const checklistItemSchema = z.object({
     colorLabel: z.nullable(z.string()).default(null),
     /** Parent item id */
     parent: z.nullable(z.string()).default(null),
-    /** Subitem ids */
-    subitems: z.array(z.string()).default([]),
 });
 
 export const checklistSchema = z.object({
@@ -21,6 +19,13 @@ export const checklistSchema = z.object({
     id: z.nullable(z.string()).default(null),
     /** Checklist title */
     title: z.string(),
+    /** Checklist progress, contains done/doable count at fetch time */
+    progress: z.optional(z.object({
+        /** Total doable items (non-groups) */
+        doableCount: z.number().default(0),
+        /** Number of items done */
+        doneCount: z.number().default(0),
+    })),
     /** Checklist items */
     items: z.array(checklistItemSchema).default([]),
 });
