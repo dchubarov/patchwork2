@@ -3,7 +3,8 @@ import React, {
     isValidElement,
     KeyboardEvent,
     PropsWithChildren,
-    ReactElement, useCallback,
+    ReactElement,
+    useEffect,
     useRef,
     useState
 } from "react";
@@ -11,15 +12,17 @@ import {BoxProps, Input, InputProps, Typography, TypographyProps, useTheme} from
 
 type EditableContentProps = PropsWithChildren<{
     autoEdit?: boolean;
+    disableEdit?: boolean;
     editOn?: 'click' | 'doubleClick';
     value?: string;
     displayPlaceholder?: string;
     inputPlaceholder?: string;
-    onEdited?: (editedValue: string) => void;
+    onEdited?: (editedValue: string) => boolean | void;
 }> & BoxProps;
 
 const EditableContent: React.FC<EditableContentProps> = ({
                                                              autoEdit,
+                                                             disableEdit,
                                                              editOn = 'click',
                                                              value,
                                                              children,
@@ -29,12 +32,43 @@ const EditableContent: React.FC<EditableContentProps> = ({
                                                          }) => {
 
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const [editMode, setEditMode] = useState(autoEdit ?? false);
-    const [editValue, setEditValue] = useState(value ? value : "");
+    const originalValueRef = useRef<string>();
+    const [editMode, setEditMode] = useState<boolean>(false);
+    const [currentValue, setCurrentValue] = useState('');
     const theme = useTheme();
+
+    useEffect(() => {
+        if (autoEdit && !disableEdit) setEditMode(true);
+    }, [autoEdit, disableEdit]);
+
+    useEffect(() => {
+        originalValueRef.current = value;
+        setCurrentValue(value ?? '');
+    }, [value]);
+
+    const beginEditing = (e?: React.MouseEvent<HTMLDivElement>) => {
+        if (!disableEdit) setEditMode(true);
+        e?.preventDefault();
+    }
+
+    const valueEdited = (cancelled?: boolean) => {
+        if (!cancelled && inputRef.current?.value !== (originalValueRef.current ?? '')) {
+            if (onEdited?.(inputRef.current?.value || '') === false) cancelled = true;
+        }
+        if (cancelled) setCurrentValue(originalValueRef.current ?? '');
+        setEditMode(false);
+    }
+
+    const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if ((e.code === "Enter" || e.code === "Escape") && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
+            valueEdited(e.code === "Escape");
+            e.preventDefault();
+        }
+    }
 
     let displayElement: ReactElement | null = null;
     let inputProps: InputProps = {
+        id: `${props.id}-input`,
         sx: [
             {
                 "--Input-focusedThickness": 0,
@@ -58,8 +92,8 @@ const EditableContent: React.FC<EditableContentProps> = ({
                     // For placeholder display
                     (!value && {fontStyle: "italic", color: theme.palette.text.tertiary}),
                 ],
-                onDoubleClick: editOn === 'doubleClick' ? handleBeginEdit : undefined,
-                onClick: editOn === 'click' ? handleBeginEdit : undefined,
+                onDoubleClick: editOn === 'doubleClick' ? beginEditing : undefined,
+                onClick: editOn === 'click' ? beginEditing : undefined,
             };
 
             if (Array.isArray(inputProps.sx)) inputProps.sx.push({
@@ -80,26 +114,7 @@ const EditableContent: React.FC<EditableContentProps> = ({
             if (displayProps.color) inputProps.color = displayProps.color;
             if (displayProps.variant) inputProps.variant = displayProps.variant;
 
-            displayElement = cloneElement(children, displayProps, inputRef.current?.value ?? value ?? props.displayPlaceholder);
-        }
-    }
-
-    function handleBeginEdit(_: React.MouseEvent) {
-        setEditMode(true);
-    }
-
-    const valueEdited = useCallback((cancelled?: boolean) => {
-        if (!cancelled && inputRef.current?.value !== (value ?? '')) {
-            onEdited?.(inputRef.current?.value || '');
-        }
-        //setEditValue(value ?? '');
-        setEditMode(false);
-    }, [value, onEdited]);
-
-    const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if ((e.code === "Enter" || e.code === "Escape") && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
-            valueEdited(e.code === "Escape");
-            e.preventDefault();
+            displayElement = cloneElement(children, displayProps, currentValue || props.displayPlaceholder);
         }
     }
 
@@ -116,8 +131,8 @@ const EditableContent: React.FC<EditableContentProps> = ({
                 autoComplete="off"
                 slotProps={{input: {ref: inputRef}}}
                 placeholder={props.inputPlaceholder ?? props.displayPlaceholder}
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
+                value={currentValue}
+                onChange={(e) => setCurrentValue(e.target.value)}
                 onKeyDown={handleInputKeyDown}
                 onBlur={() => valueEdited()}
             />

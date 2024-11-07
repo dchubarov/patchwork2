@@ -1,7 +1,8 @@
 import React from "react";
-import {AspectRatio, ListItemContent, Skeleton, Tooltip, Typography} from "@mui/joy";
+import {AspectRatio, ListItemContent, Tooltip, Typography} from "@mui/joy";
 import PieProgress from "@/components/PieProgress";
 import {useChecklist} from "../hooks";
+import EditableContent from "@/components/EditableContent";
 
 const ChecklistHeader: React.FC = () => {
     const {data, groups, isLoading} = useChecklist();
@@ -28,11 +29,13 @@ const ChecklistHeader: React.FC = () => {
                 </AspectRatio>
             </Tooltip>
 
-            <Typography level="h2">
-                <Skeleton loading={isLoading && !data}>
-                    {data ? data.title : 'Checklist is loading'}
-                </Skeleton>
-            </Typography>
+            <EditableContent
+                id='checklist-title'
+                editOn='doubleClick'
+                disableEdit={isLoading || !data}
+                value={data?.title}>
+                <Typography level="h2" sx={{letterSpacing: "normal"}}/>
+            </EditableContent>
         </ListItemContent>
     );
 }

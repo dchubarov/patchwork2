@@ -56,8 +56,10 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 />}
 
             <EditableContent
+                id={item.id}
                 value={item.note}
                 editOn="doubleClick"
+                disableEdit={isUpdating}
                 onEdited={handleNoteEdited}
                 sx={{minWidth: 0, flex: 1}}>
                 <Typography level={group ? "title-md" : "body-md"} noWrap/>
