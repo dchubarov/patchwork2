@@ -20,8 +20,10 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
     const chipContent = `ID:${item.id} LV:${level} ${!!group ? `PG:${group.doneCount}/${group.doableCount}` : ''}`;
 
     const handleNoteEdited = (editedValue: string) => {
-        if (editedValue && editedValue !== item.note)
+        if (editedValue !== '' && editedValue !== item.note)
             addOrUpdateItem({...item, note: editedValue});
+        else
+            return false;
     }
 
     return (
@@ -58,6 +60,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
             <EditableContent
                 id={item.id}
                 value={item.note}
+                inputPlaceholder={item.note}
                 editOn="doubleClick"
                 disableEdit={isUpdating}
                 onEdited={handleNoteEdited}

@@ -2,11 +2,20 @@ import React from "react";
 import {ListItemContent, Typography} from "@mui/joy";
 import {AddCircle as AddIcon} from "@mui/icons-material";
 import EditableContent from "@/components/EditableContent";
+import {useChecklist} from "../hooks";
 
 const ChecklistPlaceholder: React.FC = () => {
-
+    const {addOrUpdateItem} = useChecklist();
     const handleValueEdited = (editedValue: string) => {
-        console.log(`Edited: ${editedValue}`);
+        if (editedValue.trim() !== '') {
+            addOrUpdateItem({
+                id: ''/*new*/,
+                note: editedValue.trim(),
+                parent: null,
+                done: false,
+                colorLabel: null
+            });
+        }
         return false; // restore original value
     }
 

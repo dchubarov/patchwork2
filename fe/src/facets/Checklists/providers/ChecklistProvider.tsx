@@ -37,13 +37,22 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
         },
         onSuccess: (data) => {
             queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
-                return prev ? {
+                if (!prev) return prev;
+                let found = false;
+                let items = prev.checklist.items.map((item) => {
+                    if (item.id === data.checklistItem.id) {
+                        found = true;
+                        return data.checklistItem;
+                    }
+                    return item;
+                });
+                if (!found) items = [...items, data.checklistItem];
+                return {
                     checklist: {
                         ...prev.checklist,
-                        items: prev.checklist.items.map((item) =>
-                            item.id === data.checklistItem.id ? data.checklistItem : item)
+                        items
                     }
-                } : prev;
+                };
             });
         },
         onSettled: () => {

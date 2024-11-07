@@ -34,7 +34,6 @@ export function handleWithAuthorization<R extends AnyResponse = AnyResponse>(aut
         try {
             return await authorizedHandler(schema, request, user);
         } catch (err) {
-            console.log(err);
             if (err instanceof UnauthorizedError)
                 return UnauthorizedResponse;
             else if (err instanceof ForbiddenError)

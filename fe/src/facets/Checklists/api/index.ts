@@ -16,6 +16,6 @@ export const addOrUpdateItem = (client: AxiosInstance, checklistId: string | num
     async (updated: ChecklistItemData): Promise<ChecklistItemResponseData> =>
         client.request({
             url: `x/checklists/v2/checklist/${checklistId}/item`,
-            method: updated.id === null ? "POST" : "PUT",
+            method: updated.id === '' ? "POST" : "PUT",
             data: {checklistItem: updated}
         }).then(response => checklistItemResponseSchema.parse(response.data));

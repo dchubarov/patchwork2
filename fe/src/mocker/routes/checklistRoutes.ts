@@ -3,7 +3,7 @@ import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY, ChecklistProgress} from "../domain/checklistEntity";
 import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
-import {NotFoundResponse} from "../utils/response";
+import {BadRequestResponse, NotFoundResponse} from "../utils/response";
 
 export default function checklistRoutes(server: AppServer) {
     const checklistRouteBasename = "/checklists/v2";
@@ -88,23 +88,38 @@ export default function checklistRoutes(server: AppServer) {
     server.del(`${checklistRouteBasename}/checklist/:checklistId`);
 
     // Add new checklist item
-    server.post(`${checklistRouteBasename}/checklist/:checklistId/item`);
+    server.post(`${checklistRouteBasename}/checklist/:checklistId/item`, handleWithAuthorization(
+        async (schema, request, user) => {
+            const checklistId = request.params.checklistId;
+            const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
+            if (!checklist) return NotFoundResponse;
+
+            verifyChecklistAccess(checklist, user, "write");
+
+            const json = JSON.parse(request.requestBody).checklistItem;
+            if (!json || !json.note || json.id !== '') return BadRequestResponse;
+
+            return schema.create(CHECKLIST_ITEM_ENTITY_KEY, {
+                checklistId,
+                note: json.note,
+                colorLabel: json.colorLabel ?? null,
+                done: json.done ?? false,
+            });
+        }
+    ));
 
     // Update checklist item
     server.put(`${checklistRouteBasename}/checklist/:checklistId/item`, handleWithAuthorization(
         async (schema, request, user) => {
             const checklistId = request.params.checklistId;
             const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
-            if (!checklist) {
-                return NotFoundResponse;
-            }
+            if (!checklist) return NotFoundResponse;
+
             verifyChecklistAccess(checklist, user, "write");
 
             const json = JSON.parse(request.requestBody).checklistItem;
             const checklistItem = schema.find(CHECKLIST_ITEM_ENTITY_KEY, json?.id);
-            if (!checklistItem || checklistItem.checklistId !== checklistId) {
-                return NotFoundResponse;
-            }
+            if (!checklistItem || checklistItem.checklistId !== checklistId) return NotFoundResponse;
 
             checklistItem.note = json.note ?? checklistItem.note;
             checklistItem.done = json.done ?? checklistItem.done;
