@@ -25,7 +25,7 @@ const ChecklistHeader: React.FC = () => {
                         width: theme.vars.fontSize.xl4,
                         borderRadius: '50%',
                     })}>
-                    <PieProgress value={progress} zeroIndicator/>
+                    <PieProgress value={progress} margin={3} zeroIndicator/>
                 </AspectRatio>
             </Tooltip>
 

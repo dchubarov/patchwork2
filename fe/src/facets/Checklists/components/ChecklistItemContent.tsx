@@ -37,7 +37,13 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                             "--AspectRatio-radius": "50%",
                             width: "24px",
                         }}>
-                        <PieProgress value={group.doneCount / group.doableCount * 100} zeroIndicator/>
+
+                        {isUpdating
+                            ? <CircularProgress variant="plain" color="neutral" thickness={3} sx={{
+                                '--CircularProgress-size': "18px",
+                                padding: "3px"
+                            }}/>
+                            : <PieProgress value={group.doneCount / group.doableCount * 100} margin={3} thickness={9} zeroIndicator/>}
                     </AspectRatio>
                 </Tooltip>
                 : <Switch
@@ -48,7 +54,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     slotProps={{
                         track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>},
                         thumb: {
-                            children: isUpdating && <CircularProgress variant="plain" thickness={3} sx={{
+                            children: isUpdating && <CircularProgress variant="plain"  color="neutral" thickness={3} sx={{
                                 '--CircularProgress-size': "calc(var(--Switch-thumbSize))",
                             }}/>
                         },
