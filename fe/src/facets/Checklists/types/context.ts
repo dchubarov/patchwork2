@@ -112,15 +112,15 @@ function rebuildGroups(
                     doneCount += childGroup.doneCount;
                     doableCount += childGroup.doableCount;
                 }
-            }
-            else {
+            } else {
                 if (item.done) doneCount++;
                 doableCount++;
             }
         });
 
         const group: ChecklistGroupState = {
-            items: items || [],
+            items: items?.sort((a, b) =>
+                a.sequenceCode.localeCompare(b.sequenceCode)) ?? [],
             doableCount: doableCount,
             doneCount: doneCount,
             expanded: currentGroups.get(id)?.expanded ?? true,

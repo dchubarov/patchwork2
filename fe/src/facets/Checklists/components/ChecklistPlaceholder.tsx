@@ -13,7 +13,8 @@ const ChecklistPlaceholder: React.FC = () => {
                 note: editedValue.trim(),
                 parent: null,
                 done: false,
-                colorLabel: null
+                colorLabel: null,
+                sequenceCode: '0',
             });
         }
         return false; // restore original value

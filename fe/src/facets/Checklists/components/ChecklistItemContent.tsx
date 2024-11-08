@@ -29,7 +29,7 @@ interface ChecklistItemContentProps {
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group = null, showId}) => {
     const {addOrUpdateItem, isUpdatingItem, updatingItemId} = useChecklist();
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
-    const chipContent = `ID:${item.id} LV:${level} ${!!group ? `PG:${group.doneCount}/${group.doableCount}` : ''}`;
+    const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
 
     const handleNoteEdited = (editedValue: string) => {
         if (editedValue !== '' && editedValue !== item.note)
