@@ -7,6 +7,18 @@ import {ChecklistItemData} from "../types/schema";
 import {ChecklistGroupState} from "../types/context";
 import {useChecklist} from "../hooks";
 
+/*const DragHandle: React.FC = () => (
+    <DragIcon fontSize="lg" sx={{
+        mx: '-0.65rem',
+        transform: 'rotate(-90deg)',
+        color: 'transparent',//'var(--joy-palette-neutral-300)',
+        [':hover']: {
+            color: 'var(--joy-palette-neutral-300)',
+            cursor: 'grab',
+        }
+    }}/>
+);*/
+
 interface ChecklistItemContentProps {
     level: number;
     item: ChecklistItemData;
@@ -43,7 +55,8 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                                 '--CircularProgress-size': "18px",
                                 padding: "3px"
                             }}/>
-                            : <PieProgress value={group.doneCount / group.doableCount * 100} margin={3} thickness={9} zeroIndicator/>}
+                            : <PieProgress value={group.doneCount / group.doableCount * 100} margin={3} thickness={9}
+                                           zeroIndicator/>}
                     </AspectRatio>
                 </Tooltip>
                 : <Switch
@@ -54,9 +67,10 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     slotProps={{
                         track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>},
                         thumb: {
-                            children: isUpdating && <CircularProgress variant="plain"  color="neutral" thickness={3} sx={{
-                                '--CircularProgress-size': "calc(var(--Switch-thumbSize))",
-                            }}/>
+                            children: isUpdating &&
+                                <CircularProgress variant="plain" color="neutral" thickness={3} sx={{
+                                    '--CircularProgress-size': "calc(var(--Switch-thumbSize))",
+                                }}/>
                         },
                     }}
                     variant="soft"
@@ -64,7 +78,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 />}
 
             <EditableContent
-                id={item.id}
+                id={`${item.id}-note`}
                 value={item.note}
                 inputPlaceholder={item.note}
                 editOn="doubleClick"

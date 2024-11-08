@@ -86,14 +86,15 @@ const EditableContent: React.FC<EditableContentProps> = ({
         if (children.type === Typography) {
             const displayProps: TypographyProps = {
                 ...children.props,
+                id: props.id,
+                onClick: editOn === 'click' ? beginEditing : undefined,
+                onDoubleClick: editOn === 'doubleClick' ? beginEditing : undefined,
                 sx: [
                     ...Array.isArray(children.props.sx) ? children.props.sx : [children.props.sx],
                     ...Array.isArray(sx) ? sx : [sx],
                     // For placeholder display
                     (!value && {fontStyle: "italic", color: theme.palette.text.tertiary}),
                 ],
-                onDoubleClick: editOn === 'doubleClick' ? beginEditing : undefined,
-                onClick: editOn === 'click' ? beginEditing : undefined,
             };
 
             if (Array.isArray(inputProps.sx)) inputProps.sx.push({
