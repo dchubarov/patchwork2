@@ -14,7 +14,7 @@ const ChecklistPlaceholder: React.FC = () => {
                 parent: null,
                 done: false,
                 colorLabel: null,
-                sequenceCode: '0',
+                sequenceCode: 0,
             });
         }
         return false; // restore original value

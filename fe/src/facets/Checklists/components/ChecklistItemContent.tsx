@@ -38,6 +38,12 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
             return false;
     }
 
+    const handleParentEdited = (editedValue: string) => {
+        if (editedValue !== item.parent) {
+            addOrUpdateItem({...item, parent: editedValue !== '' ? editedValue : null})
+        }
+    }
+
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
             {group
@@ -87,6 +93,18 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 sx={{minWidth: 0, flex: 1}}>
                 <Typography level={group ? "title-md" : "body-md"} noWrap/>
             </EditableContent>
+
+            {/* DEVELOPER BACKDOOR: allows to change parent/order */}
+            <EditableContent
+                id={`${item.id}-parent`}
+                value={item.parent || ''}
+                inputPlaceholder="Parent id"
+                editOn="doubleClick"
+                disableEdit={isUpdating}
+                onEdited={handleParentEdited}>
+                <Typography startDecorator="{P=" endDecorator="}">{item.parent}</Typography>
+            </EditableContent>
+            {/*END*/}
 
             {showId && <Chip size="sm">{chipContent}</Chip>}
         </ListItemContent>

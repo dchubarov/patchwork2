@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {Instantiate} from "miragejs/-types";
 import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY, ChecklistProgress} from "../domain/checklistEntity";
@@ -107,7 +106,7 @@ export default function checklistRoutes(server: AppServer) {
                 done: json.done ?? false,
             });
 
-            item.attrs.sequenceCode = _.padStart(item.id, 4, '0');
+            item.attrs.sequenceCode = parseInt(item.id!!);
             item.save();
 
             return item;
@@ -126,6 +125,10 @@ export default function checklistRoutes(server: AppServer) {
             const json = JSON.parse(request.requestBody).checklistItem;
             const checklistItem = schema.find(CHECKLIST_ITEM_ENTITY_KEY, json?.id);
             if (!checklistItem || checklistItem.checklistId !== checklistId) return NotFoundResponse;
+
+            if (json.parent !== undefined) {
+                (checklistItem as any).parentId = json.parent;
+            }
 
             checklistItem.note = json.note ?? checklistItem.note;
             checklistItem.done = json.done ?? checklistItem.done;

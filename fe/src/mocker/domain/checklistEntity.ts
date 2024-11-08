@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {BelongsTo, HasMany} from "miragejs/-types";
 import {SerializerInterface} from "miragejs/serializer";
 import {belongsTo, Factory, hasMany, Model, RestSerializer} from "miragejs";
@@ -27,7 +26,7 @@ export type ChecklistItemDb = {
     note: string;
     done: boolean;
     colorLabel: string | null;
-    sequenceCode: string;
+    sequenceCode: number;
 } & EntityCommonAttributes;
 
 const ChecklistEntity = {
@@ -53,7 +52,7 @@ const ChecklistEntity = {
 
         [CHECKLIST_ITEM_ENTITY_KEY]: Factory.extend<Partial<ChecklistItemDb>>({
             ...commonAttributesFactory(),
-            sequenceCode: (num) => _.padStart((num + 1).toString(), 4, '0'),
+            sequenceCode: (num) => num + 1,
             colorLabel: null,
             done: false,
         }),

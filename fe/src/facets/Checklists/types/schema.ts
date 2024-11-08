@@ -13,7 +13,7 @@ const checklistItemSchema = z.object({
     /** Parent item id */
     parent: z.nullable(z.string()).default(null),
     /** Defines a relative position among other elements in group */
-    sequenceCode: z.string(),
+    sequenceCode: z.number(),
 });
 
 export const checklistSchema = z.object({

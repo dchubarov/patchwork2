@@ -120,7 +120,7 @@ function rebuildGroups(
 
         const group: ChecklistGroupState = {
             items: items?.sort((a, b) =>
-                a.sequenceCode.localeCompare(b.sequenceCode)) ?? [],
+                a.sequenceCode - b.sequenceCode) ?? [],
             doableCount: doableCount,
             doneCount: doneCount,
             expanded: currentGroups.get(id)?.expanded ?? true,
