@@ -29,8 +29,7 @@ export function internalShowNotification(title: string, opts?: NotificationOptio
         classes.push("nf-no-icon")
     }
 
-    const message = <MessageContent title={title} subtitle={opts?.subtitle}/>;
-    toast(message, {
+    toast(<MessageContent title={title} subtitle={opts?.subtitle}/>, {
         className: classes.join(" "),
         duration: opts?.autoHideDelay,
     });
@@ -46,9 +45,7 @@ const MessageContent: React.FC<MessageContentProps> = ({title, subtitle}) => {
         <Typography level="title-md" noWrap>
             {title}
         </Typography>
-        {subtitle && <Typography level="body-sm" noWrap>
-            Server returned error 401
-        </Typography>}
+        {subtitle && <Typography level="body-sm" noWrap>{subtitle}</Typography>}
     </>);
 }
 
