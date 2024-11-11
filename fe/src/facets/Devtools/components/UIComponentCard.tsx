@@ -47,14 +47,15 @@ const UIComponentCard: React.FC<UIComponentCardProps> = ({
 
                 <Divider inset="context"/>
 
-                <Stack direction="row" spacing={2} sx={{justifyContent: "flex-start", alignItems: "center", mt: 1.5}}>
-                    <Box sx={{flex: 1}}>
-                        {displayPanel?.(state, dispatch)}
-                    </Box>
-                    <Stack direction="column" spacing={2} sx={{flex: 2}}>
-                        {controlPanel?.(state, dispatch)}
-                    </Stack>
-                </Stack>
+                {(displayPanel || controlPanel) &&
+                    <Stack direction="row" spacing={2} sx={{justifyContent: "flex-start", alignItems: "center", mt: 1.5}}>
+                        {displayPanel && <Box sx={{minWidth: 0, flex: 2}}>
+                            {displayPanel(state, dispatch)}
+                        </Box>}
+                        {controlPanel && <Stack direction="column" spacing={2} sx={{minWidth: 0, flex: 3}}>
+                            {controlPanel(state, dispatch)}
+                        </Stack>}
+                    </Stack>}
             </CardContent>}
         </Card>
     );

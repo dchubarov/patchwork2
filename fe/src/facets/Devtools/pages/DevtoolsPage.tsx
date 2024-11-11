@@ -13,13 +13,14 @@ const DevtoolsPage: React.FC = () => {
 
     return (
         <PageLayout.Indexed>
+            <UIComponentPlayground
+                tabKey="ui-libarary"
+                tabCaption="Component Library"/>
+
             <ViewContextPlayground
                 tabKey="view-context-playground"
-                tabCaption="View context playground"/>
+                tabCaption="View Context"/>
 
-            <UIComponentPlayground
-                tabKey="ui-component-apiPlayground"
-                tabCaption="UI Components"/>
         </PageLayout.Indexed>
     );
 }

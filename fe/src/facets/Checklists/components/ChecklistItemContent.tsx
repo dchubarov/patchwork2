@@ -1,8 +1,8 @@
 import React from "react";
-import {AspectRatio, Chip, CircularProgress, ListItemContent, Switch, Tooltip, Typography} from "@mui/joy";
+import {AspectRatio, Chip, CircularProgress, ListItemContent, Switch, Tooltip} from "@mui/joy";
 import {Done as DoneIcon} from "@mui/icons-material";
-import EditableContent from "@/components/EditableContent";
 import PieProgress from "@/components/PieProgress";
+import Editable from "@/components/Editable";
 import {ChecklistItemData} from "../types/schema";
 import {ChecklistGroupState} from "../types/context";
 import {useChecklist} from "../hooks";
@@ -31,16 +31,16 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
     const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
 
-    const handleNoteEdited = (editedValue: string) => {
-        if (editedValue !== '' && editedValue !== item.note)
+    const handleNoteEdited = (editedValue?: string) => {
+        if (editedValue && editedValue !== item.note)
             addOrUpdateItem({...item, note: editedValue});
         else
             return false;
     }
 
-    const handleParentEdited = (editedValue: string) => {
-        if (editedValue !== item.parent) {
-            addOrUpdateItem({...item, parent: editedValue !== '' ? editedValue : null})
+    const handleParentEdited = (editedValue?: string) => {
+        if ((editedValue || null) !== item.parent) {
+            addOrUpdateItem({...item, parent: editedValue || null})
         }
     }
 
@@ -83,27 +83,28 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     size="lg"
                 />}
 
-            <EditableContent
-                id={`${item.id}-note`}
+            <Editable.Typography
+                name={`item-${item.id}-note`}
+                level={group ? "title-md" : "body-md"}
                 value={item.note}
                 inputPlaceholder={item.note}
-                editOn="doubleClick"
-                disableEdit={isUpdating}
+                disabled={isUpdating}
                 onEdited={handleNoteEdited}
-                sx={{minWidth: 0, flex: 1}}>
-                <Typography level={group ? "title-md" : "body-md"} noWrap/>
-            </EditableContent>
+                sx={{minWidth: 0, flex: 1}}
+            />
 
             {/* DEVELOPER BACKDOOR: allows to change parent/order */}
-            <EditableContent
-                id={`${item.id}-parent`}
-                value={item.parent || ''}
+            <Editable.Typography
+                color="warning"
+                variant="soft"
+                name={`item-${item.id}-parent`}
+                value={item.parent}
                 inputPlaceholder="Parent id"
-                editOn="doubleClick"
-                disableEdit={isUpdating}
-                onEdited={handleParentEdited}>
-                <Typography startDecorator="{P=" endDecorator="}"/>
-            </EditableContent>
+                disabled={isUpdating}
+                onEdited={handleParentEdited}
+                startDecorator={`{P=`}
+                endDecorator="}"
+            />
             {/*END*/}
 
             {showId && <Chip size="sm">{chipContent}</Chip>}
