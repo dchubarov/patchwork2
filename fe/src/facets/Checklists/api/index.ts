@@ -5,11 +5,12 @@ import {
     checklistResponseSchema,
     checklistTemplateResponse
 } from "../types/schema";
+import {QueryFunctionContext} from "@tanstack/react-query";
 
 export const fetchChecklist = (client: AxiosInstance, checklistId: string | number | null) =>
-    async (): Promise<ChecklistResponseData> => (checklistId === null ?
+    async ({signal}: QueryFunctionContext): Promise<ChecklistResponseData> => (checklistId === null ?
         Promise.resolve(checklistTemplateResponse) :
-        client.get(`x/checklists/v2/checklist/${checklistId}`)
+        client.get(`x/checklists/v2/checklist/${checklistId}`, {signal})
             .then(response => checklistResponseSchema.parse(response.data)));
 
 export const addOrUpdateItem = (client: AxiosInstance, checklistId: string | number | null) =>

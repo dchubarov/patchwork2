@@ -1,5 +1,6 @@
 import React, {PropsWithChildren, useCallback, useEffect} from "react";
 import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {showNotification} from "@/utils/notification";
 import {useApiClient} from "@/hooks";
 import {ChecklistContext, ChecklistState, ChecklistStateActionType, useChecklistReducer} from "../types/context";
 import {ChecklistItemData} from "../types/schema";
@@ -54,6 +55,11 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
                     }
                 };
             });
+        },
+        onError: (error, variables: ChecklistItemData) => {
+            showNotification(`Failed to update checklist item #${variables.id}`,
+                {type: "error", subtitle: error.message});
+            queryClient.invalidateQueries({queryKey: fetchOpts.queryKey, exact: true}).then();
         },
         onSettled: () => {
             dispatch({type: ChecklistStateActionType.CLEAR_UPDATING_ITEM});

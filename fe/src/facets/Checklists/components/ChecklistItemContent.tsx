@@ -102,7 +102,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 editOn="doubleClick"
                 disableEdit={isUpdating}
                 onEdited={handleParentEdited}>
-                <Typography startDecorator="{P=" endDecorator="}">{item.parent}</Typography>
+                <Typography startDecorator="{P=" endDecorator="}"/>
             </EditableContent>
             {/*END*/}
 

@@ -3,7 +3,7 @@ import {AppRegistry, AppServer} from "../domain";
 import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY, ChecklistProgress} from "../domain/checklistEntity";
 import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
-import {BadRequestResponse, NotFoundResponse} from "../utils/response";
+import {BadRequestResponse, NotFoundResponse, ServerErrorResponse} from "../utils/response";
 
 export default function checklistRoutes(server: AppServer) {
     const checklistRouteBasename = "/checklists/v2";
@@ -126,18 +126,22 @@ export default function checklistRoutes(server: AppServer) {
             const checklistItem = schema.find(CHECKLIST_ITEM_ENTITY_KEY, json?.id);
             if (!checklistItem || checklistItem.checklistId !== checklistId) return NotFoundResponse;
 
-            if (json.parent !== undefined) {
-                (checklistItem as any).parentId = json.parent;
+            try {
+                if (json.parent !== undefined) {
+                    (checklistItem as any).parentId = json.parent;
+                }
+
+                checklistItem.note = json.note ?? checklistItem.note;
+                checklistItem.done = json.done ?? checklistItem.done;
+                checklistItem.colorLabel = json.colorLabel !== undefined ? json.colorLabel : checklistItem.colorLabel;
+                checklistItem.lastModifiedById = user.id;
+                checklistItem.lastModifiedAt = new Date();
+                checklistItem.save();
+
+                return checklistItem;
+            } catch (e) {
+                return ServerErrorResponse;
             }
-
-            checklistItem.note = json.note ?? checklistItem.note;
-            checklistItem.done = json.done ?? checklistItem.done;
-            checklistItem.colorLabel = json.colorLabel !== undefined ? json.colorLabel : checklistItem.colorLabel;
-            checklistItem.lastModifiedById = user.id;
-            checklistItem.lastModifiedAt = new Date();
-            checklistItem.save();
-
-            return checklistItem;
         }
     ));
 
