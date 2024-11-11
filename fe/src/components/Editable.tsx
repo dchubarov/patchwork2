@@ -67,15 +67,16 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
             color={other.color}
             sx={[
                 (theme) => ({
-                    "--Textarea-focusedThickness": 0,
                     "--Textarea-radius": 0,
-                    "--Textarea-paddingBlock": 0,
-                    "--Textarea-paddingInline": 0,
                     "--Textarea-minHeight": 0,
+                    "--Textarea-focusedThickness": 0,
+                    "--Textarea-paddingBlock": '0.1em',
+                    "--Textarea-paddingInline": '0.25em',
+                    marginInline: '-0.25em',
+                    border: 'none',
+                    boxShadow: 'none',
                     typography: other.level && other.level !== "inherit" ? theme.typography[other.level] : undefined,
                     color: other.color ? theme.palette[other.color].mainChannel : undefined,
-                    boxShadow: 'none',
-                    border: 'none',
                     ...((!other.variant || other.variant === 'plain') && {
                         background: 'transparent',
                         '&:focus-within': {
