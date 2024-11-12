@@ -191,6 +191,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 inputPlaceholder={item.note}
                 disabled={isUpdating}
                 onEdited={handleNoteEdited}
+                noWrap
                 sx={{
                     //color: colors.progress,
                     minWidth: 0,

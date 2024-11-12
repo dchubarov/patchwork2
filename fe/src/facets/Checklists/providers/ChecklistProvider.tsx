@@ -1,17 +1,35 @@
-import React, {PropsWithChildren, useCallback, useEffect} from "react";
+import React, {PropsWithChildren, useCallback, useEffect, useReducer} from "react";
 import {queryOptions, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {showNotification} from "@/utils/notification";
 import {useApiClient} from "@/hooks";
-import {ChecklistContext, ChecklistState, ChecklistStateActionType, useChecklistReducer} from "../types/context";
-import {ChecklistItemData} from "../types/schema";
+import {
+    ChecklistContext,
+    ChecklistGroupState,
+    ChecklistState,
+} from "../types/context";
+import {ChecklistData, ChecklistItemData} from "../types/schema";
 import * as checklistApi from "../api";
+
+enum ChecklistStateActionType {
+    SET_DATA,
+    SET_GROUP_EXPANDED,
+    SET_UPDATING_ITEM,
+    SET_TARGET_ITEM,
+}
+
+type ChecklistStateAction =
+    | { type: ChecklistStateActionType.SET_DATA, data: ChecklistData | null, isLoading: boolean }
+    | { type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId: string, expanded: boolean }
+    | { type: ChecklistStateActionType.SET_UPDATING_ITEM, itemId: string | null }
+    | { type: ChecklistStateActionType.SET_TARGET_ITEM, itemId?: string | null }
+    ;
 
 export interface ChecklistProviderProps {
     checklistId?: string | number | null;
 }
 
 const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = ({checklistId = null, children}) => {
-    const [state, dispatch] = useChecklistReducer();
+    const [state, dispatch] = useReducer(checklistReducer, initialState);
     const queryClient = useQueryClient();
     const apiClient = useApiClient();
 
@@ -73,7 +91,7 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
             });
         },
         onSettled: () => {
-            dispatch({type: ChecklistStateActionType.CLEAR_UPDATING_ITEM});
+            dispatch({type: ChecklistStateActionType.SET_UPDATING_ITEM, itemId: null});
         }
     });
 
@@ -100,7 +118,7 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
                 {type: "error", subtitle: error.message});
         },
         onSettled: () => {
-            dispatch({type: ChecklistStateActionType.CLEAR_UPDATING_ITEM});
+            dispatch({type: ChecklistStateActionType.SET_UPDATING_ITEM, itemId: null});
         }
     });
 
@@ -132,3 +150,106 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
 }
 
 export default ChecklistProvider;
+
+// Private
+
+const initialState: ChecklistState = {
+    isLoading: false,
+    isUpdatingItem: false,
+    targetItemId: null,
+    data: null,
+    groups: new Map(),
+    setGroupExpanded: () => {
+    },
+    setTargetItem: () => {
+    },
+    updateItem: () => {
+    },
+    deleteItem: () => {
+    },
+}
+
+function checklistReducer(state: ChecklistState, action: ChecklistStateAction): ChecklistState {
+    switch (action.type) {
+        case ChecklistStateActionType.SET_DATA:
+            return {
+                ...state,
+                data: action.data,
+                isLoading: action.isLoading,
+                groups: rebuildGroups(action.data, state.groups),
+            };
+
+        case ChecklistStateActionType.SET_GROUP_EXPANDED:
+            const group = state.groups.get(action.itemId);
+            if (!group || group.expanded === action.expanded) break;
+            return {
+                ...state,
+                groups: new Map(state.groups).set(action.itemId, {...group, expanded: action.expanded}),
+            }
+
+        case ChecklistStateActionType.SET_UPDATING_ITEM:
+            return {
+                ...state,
+                isUpdatingItem: true,
+                updatingItemId: action.itemId ?? null,
+            }
+
+        case ChecklistStateActionType.SET_TARGET_ITEM:
+            return {
+                ...state,
+                targetItemId: action.itemId ?? null,
+            }
+    }
+
+    return state;
+}
+
+function rebuildGroups(
+    data: ChecklistData | null,
+    currentGroups: Map<string | null, ChecklistGroupState>
+): Map<string | null, ChecklistGroupState> {
+    const groups = new Map<string | null, ChecklistGroupState>();
+    if (!data) return groups;
+
+    const roots = data.items.reduce(
+        (acc, item) => {
+            const items = acc.get(item.parent);
+            return acc.set(item.parent, Array.isArray(items) ? [...items, item] : [item]);
+        }, new Map<string | null, ChecklistItemData[]>());
+
+    const visited = new Set<string | null>();
+
+    function dfs(id: string | null): ChecklistGroupState | undefined {
+        if (visited.has(id)) return;
+        visited.add(id);
+
+        let doableCount = 0, doneCount = 0;
+        const items = roots.get(id);
+        items?.forEach((item) => {
+            if (roots.has(item.id)) {
+                const childGroup = dfs(item.id);
+                if (childGroup) {
+                    doneCount += childGroup.doneCount;
+                    doableCount += childGroup.doableCount;
+                }
+            } else {
+                if (item.done) doneCount++;
+                doableCount++;
+            }
+        });
+
+        const group: ChecklistGroupState = {
+            items: items?.sort((a, b) =>
+                a.sequenceCode - b.sequenceCode) ?? [],
+            doableCount: doableCount,
+            doneCount: doneCount,
+            expanded: currentGroups.get(id)?.expanded ?? true,
+        }
+
+        groups.set(id, group);
+        return group;
+    }
+
+    dfs(null);
+    return groups;
+}

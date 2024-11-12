@@ -1,24 +1,10 @@
 import _ from "lodash";
-import {Request} from "miragejs";
+import {Request, Response} from "miragejs";
 import {AnyResponse} from "miragejs/-types";
 import {AppSchema} from "../domain";
 import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
-import {ForbiddenResponse, UnauthorizedResponse} from "./response";
+import {UnauthorizedResponse} from "./response";
 import {decodeJwt} from "@/utils/jwt";
-
-export class UnauthorizedError extends Error {
-    constructor(message?: string) {
-        super(message);
-        Object.setPrototypeOf(this, UnauthorizedError.prototype);
-    }
-}
-
-export class ForbiddenError extends Error {
-    constructor(message?: string) {
-        super(message);
-        Object.setPrototypeOf(this, ForbiddenError.prototype);
-    }
-}
 
 type AuthorizedRouteHandler<R extends AnyResponse> = (
     schema: AppSchema,
@@ -34,10 +20,8 @@ export function handleWithAuthorization<R extends AnyResponse = AnyResponse>(aut
         try {
             return await authorizedHandler(schema, request, user);
         } catch (err) {
-            if (err instanceof UnauthorizedError)
-                return UnauthorizedResponse;
-            else if (err instanceof ForbiddenError)
-                return ForbiddenResponse;
+            if (err instanceof Response)
+                return err;
             else
                 throw err;
         }

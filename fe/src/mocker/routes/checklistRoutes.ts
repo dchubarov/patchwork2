@@ -1,21 +1,12 @@
 import {Instantiate} from "miragejs/-types";
-import {AppRegistry, AppServer} from "../domain";
-import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY, ChecklistProgress} from "../domain/checklistEntity";
-import {ForbiddenError, handleWithAuthorization} from "../utils/authorization";
-import {USER_ENTITY_KEY, UserDbModel} from "../domain/userEntity";
-import {BadRequestResponse, NotFoundResponse, ServerErrorResponse} from "../utils/response";
+import {AppRegistry, AppSchema, AppServer} from "../domain";
+import {CHECKLIST_ENTITY_KEY, CHECKLIST_ITEM_ENTITY_KEY} from "../domain/checklistEntity";
+import {handleWithAuthorization} from "../utils/authorization";
+import {USER_ENTITY_KEY} from "../domain/userEntity";
+import {BadRequestResponse, ForbiddenResponse, NotFoundResponse, ServerErrorResponse} from "../utils/response";
 
 export default function checklistRoutes(server: AppServer) {
     const checklistRouteBasename = "/checklists/v2";
-
-    const verifyChecklistAccess = (
-        checklist: Instantiate<AppRegistry, typeof CHECKLIST_ENTITY_KEY>,
-        user: UserDbModel,
-        _accessLevel: "read" | "write" = "read"
-    ) => {
-        if (user.id !== checklist.createdById)
-            throw new ForbiddenError();
-    }
 
     // Get available checklists
     server.get(`${checklistRouteBasename}/checklist`, handleWithAuthorization(
@@ -27,19 +18,11 @@ export default function checklistRoutes(server: AppServer) {
                 .map(checklist => {
                     checklist.createdBy?.id && usersIds.add(checklist.createdBy.id);
                     checklist.lastModifiedBy?.id && usersIds.add(checklist.lastModifiedBy.id);
-
-                    const progress: ChecklistProgress = {doableCount: 0, doneCount: 0};
-                    checklist.items?.models.forEach((item) => {
-                        if (!item.subitems || item.subitems.length < 1) {
-                            progress.doableCount++;
-                            if (item.done) progress.doneCount++;
-                        }
-                    });
-
+                    recalculateChecklistProgress(checklist);
                     return {
                         id: checklist.id,
                         title: checklist.title,
-                        progress,
+                        progress: checklist.progress,
                         createdBy: checklist.createdBy?.id,
                         createdAt: checklist.createdAt,
                         lastModifiedBy: checklist.lastModifiedBy?.id,
@@ -63,21 +46,8 @@ export default function checklistRoutes(server: AppServer) {
     // Get checklist contents
     server.get(`${checklistRouteBasename}/checklist/:checklistId`, handleWithAuthorization(
         (schema, request, user) => {
-            const checklist = schema.find(CHECKLIST_ENTITY_KEY, request.params.checklistId);
-            if (!checklist) {
-                return NotFoundResponse;
-            }
-
-            verifyChecklistAccess(checklist, user, "read");
-
-            checklist.progress = {doableCount: 0, doneCount: 0};
-            checklist?.items?.models.forEach((item) => {
-                if (!item.subitems || item.subitems.length < 1) {
-                    checklist.progress!!.doableCount++;
-                    if (item.done) checklist.progress!!.doneCount++;
-                }
-            });
-
+            const checklist = ensureChecklist(schema, request.params.checklistId, user.id, 'read');
+            recalculateChecklistProgress(checklist);
             return checklist;
         }));
 
@@ -91,10 +61,7 @@ export default function checklistRoutes(server: AppServer) {
     server.post(`${checklistRouteBasename}/checklist/:checklistId/item`, handleWithAuthorization(
         async (schema, request, user) => {
             const checklistId = request.params.checklistId;
-            const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
-            if (!checklist) return NotFoundResponse;
-
-            verifyChecklistAccess(checklist, user, "write");
+            ensureChecklist(schema, checklistId, user.id, 'write');
 
             const json = JSON.parse(request.requestBody).checklistItem;
             if (!json || !json.note || json.id !== '') return BadRequestResponse;
@@ -118,14 +85,11 @@ export default function checklistRoutes(server: AppServer) {
     server.put(`${checklistRouteBasename}/checklist/:checklistId/item`, handleWithAuthorization(
         async (schema, request, user) => {
             const checklistId = request.params.checklistId;
-            const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
-            if (!checklist) return NotFoundResponse;
-
-            verifyChecklistAccess(checklist, user, "write");
+            ensureChecklist(schema, checklistId, user.id, 'write');
 
             const json = JSON.parse(request.requestBody).checklistItem;
-            const checklistItem = schema.find(CHECKLIST_ITEM_ENTITY_KEY, json?.id);
-            if (!checklistItem || checklistItem.checklistId !== checklistId) return NotFoundResponse;
+            const checklistItem =
+                ensureChecklistItem(schema, json?.id, checklistId);
 
             try {
                 if (json.parent !== undefined) {
@@ -150,16 +114,9 @@ export default function checklistRoutes(server: AppServer) {
     server.del(`${checklistRouteBasename}/checklist/:checklistId/item/:itemId`, handleWithAuthorization(
         async (schema, request, user) => {
             const checklistId = request.params.checklistId;
-            const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
-            if (!checklist) return NotFoundResponse;
-
-            verifyChecklistAccess(checklist, user, "write");
-
-            const checklistItem = schema
-                .find(CHECKLIST_ITEM_ENTITY_KEY, request.params.itemId);
-            if (!checklistItem || checklistItem.checklist?.id !== checklistId) {
-                return NotFoundResponse;
-            }
+            ensureChecklist(schema, checklistId, user.id, 'write');
+            const checklistItem =
+                ensureChecklistItem(schema, request.params.itemId, checklistId);
 
             function deleteCascade(item: Instantiate<AppRegistry, typeof CHECKLIST_ITEM_ENTITY_KEY>) {
                 item.subitems?.models.forEach((e) => deleteCascade(e));
@@ -169,4 +126,40 @@ export default function checklistRoutes(server: AppServer) {
             deleteCascade(checklistItem);
         }
     ));
+}
+
+// Private
+
+function ensureChecklist(schema: AppSchema, checklistId: string, userId?: string | null, _access?: 'read' | 'write') {
+    const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
+    if (!checklist) throw NotFoundResponse;
+
+    if (userId !== checklist.createdById)
+        throw ForbiddenResponse;
+
+    return checklist;
+}
+
+function ensureChecklistItem(schema: AppSchema, itemId?: string, checklistId?: string) {
+    if (!itemId)
+        throw BadRequestResponse;
+
+    const checklistItem = schema.find(CHECKLIST_ITEM_ENTITY_KEY, itemId);
+    if (!checklistItem)
+        throw NotFoundResponse;
+
+    if (checklistId && checklistItem.checklist?.id !== checklistId)
+        throw NotFoundResponse;
+
+    return checklistItem;
+}
+
+function recalculateChecklistProgress(checklist: Instantiate<AppRegistry, typeof CHECKLIST_ENTITY_KEY>) {
+    checklist.progress = {doableCount: 0, doneCount: 0};
+    checklist?.items?.models.forEach((item) => {
+        if (!item.subitems || item.subitems.length < 1) {
+            checklist.progress!!.doableCount++;
+            if (item.done) checklist.progress!!.doneCount++;
+        }
+    });
 }
