@@ -18,6 +18,7 @@ export interface ChecklistState {
     setGroupExpanded: (itemId: string, expanded: boolean) => void;
     setTargetItem: (itemId: string | null) => void;
     updateItem: (item: ChecklistItemData) => void;
+    deleteItem: (itemId: string) => void;
 }
 
 export const ChecklistContext = createContext<ChecklistState | null>(null);
@@ -50,6 +51,8 @@ export const useChecklistReducer = () =>
         setTargetItem: () => {
         },
         updateItem: () => {
+        },
+        deleteItem: () => {
         },
     } as ChecklistState);
 

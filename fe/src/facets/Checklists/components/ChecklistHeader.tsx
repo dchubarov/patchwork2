@@ -7,7 +7,7 @@ import {useChecklist} from "../hooks";
 const ChecklistHeader: React.FC = () => {
     const {data, groups, isLoading} = useChecklist();
     const group = groups.get(null);
-    const progress = !!group ? group.doneCount / group.doableCount * 100 : 0;
+    const progress = !!group && group.doableCount > 0 ? group.doneCount / group.doableCount * 100 : 0;
     const counts = group ? `${group.doneCount} / ${group.doableCount}` : "";
 
     return (

@@ -147,5 +147,26 @@ export default function checklistRoutes(server: AppServer) {
     ));
 
     // Delete checklist item
-    server.del(`${checklistRouteBasename}/checklist/:checklistId/item/:itemId`);
+    server.del(`${checklistRouteBasename}/checklist/:checklistId/item/:itemId`, handleWithAuthorization(
+        async (schema, request, user) => {
+            const checklistId = request.params.checklistId;
+            const checklist = schema.find(CHECKLIST_ENTITY_KEY, checklistId);
+            if (!checklist) return NotFoundResponse;
+
+            verifyChecklistAccess(checklist, user, "write");
+
+            const checklistItem = schema
+                .find(CHECKLIST_ITEM_ENTITY_KEY, request.params.itemId);
+            if (!checklistItem || checklistItem.checklist?.id !== checklistId) {
+                return NotFoundResponse;
+            }
+
+            function deleteCascade(item: Instantiate<AppRegistry, typeof CHECKLIST_ITEM_ENTITY_KEY>) {
+                item.subitems?.models.forEach((e) => deleteCascade(e));
+                item.destroy();
+            }
+
+            deleteCascade(checklistItem);
+        }
+    ));
 }

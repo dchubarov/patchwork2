@@ -20,3 +20,7 @@ export const addOrUpdateItem = (client: AxiosInstance, checklistId: string | num
             method: updated.id === '' ? "POST" : "PUT",
             data: {checklistItem: updated}
         }).then(response => checklistItemResponseSchema.parse(response.data));
+
+export const deleteItem = (client: AxiosInstance, checklistId: string | number | null) =>
+    async (checklistItemId: string) =>
+        client.delete(`x/checklists/v2/checklist/${checklistId}/item/${checklistItemId}`);

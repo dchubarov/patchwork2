@@ -56,10 +56,48 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
                 };
             });
         },
-        onError: (error, variables: ChecklistItemData) => {
-            showNotification(`Failed to update checklist item #${variables.id}`,
+        onError: (error, data: ChecklistItemData) => {
+            showNotification(`Failed to update checklist item #${data.id}`,
                 {type: "error", subtitle: error.message});
-            queryClient.invalidateQueries({queryKey: fetchOpts.queryKey, exact: true}).then();
+
+            // refresh item so re-render happens
+            queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
+                if (!prev) return prev;
+                return {
+                    checklist: {
+                        ...prev.checklist,
+                        items: prev.checklist.items.map((item) =>
+                            item.id === data.id ? {...item} : item),
+                    }
+                }
+            });
+        },
+        onSettled: () => {
+            dispatch({type: ChecklistStateActionType.CLEAR_UPDATING_ITEM});
+        }
+    });
+
+    const {mutate: doDeleteItem} = useMutation({
+        mutationKey: ["checklists/item/delete", {checklistId}],
+        mutationFn: checklistApi.deleteItem(apiClient, checklistId),
+        onMutate: (deleteItemId) => {
+            dispatch({type: ChecklistStateActionType.SET_UPDATING_ITEM, itemId: deleteItemId});
+        },
+        onSuccess: (_, deletedItemId) => {
+            queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
+                if (!prev) return prev;
+                return {
+                    checklist: {
+                        ...prev.checklist,
+                        items: prev.checklist.items.filter((item) =>
+                            item.id !== deletedItemId),
+                    }
+                }
+            });
+        },
+        onError: (error, deleteItemId) => {
+            showNotification(`Failed to delete checklist item #${deleteItemId}`,
+                {type: "error", subtitle: error.message});
         },
         onSettled: () => {
             dispatch({type: ChecklistStateActionType.CLEAR_UPDATING_ITEM});
@@ -82,6 +120,8 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
             dispatch({type: ChecklistStateActionType.SET_TARGET_ITEM, itemId}), [dispatch]),
         updateItem: useCallback((updated) =>
             doUpdateItem(updated), [doUpdateItem]),
+        deleteItem: useCallback((itemId) =>
+            doDeleteItem(itemId), [doDeleteItem])
     }
 
     return (

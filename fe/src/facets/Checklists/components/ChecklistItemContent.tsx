@@ -135,7 +135,7 @@ const ItemToggle: React.FC<{
 }
 
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group = null, showId}) => {
-    const {updateItem, isUpdatingItem, updatingItemId, targetItemId, setTargetItem} = useChecklist();
+    const {updateItem, deleteItem, isUpdatingItem, updatingItemId, targetItemId, setTargetItem} = useChecklist();
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
     const labelColors = useLabelColors(item.colorLabel);
     const {colorScheme} = useColorScheme();
@@ -170,6 +170,10 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
     const handleChangeParent = () => {
         if (item.parent !== (targetItemId ?? null))
             updateItem({...item, parent: targetItemId ?? null});
+    }
+
+    const handleDeleteItem = (deleteItemId: string) => {
+        deleteItem(deleteItemId);
     }
 
     const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
@@ -220,7 +224,9 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                         {targetItemId ? `Make child of #${targetItemId}` : 'Move to top level'}
                     </MenuItem>
                     <ListDivider/>
-                    <MenuItem color="danger">
+                    <MenuItem
+                        color="danger"
+                        onClick={() => handleDeleteItem(item.id)}>
                         <ListItemDecorator><DeleteIcon/></ListItemDecorator>
                         Delete
                     </MenuItem>
