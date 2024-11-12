@@ -4,20 +4,27 @@ import {
     Chip,
     CircularProgress,
     Dropdown,
-    IconButton, List, ListDivider, ListItem,
-    ListItemContent, ListItemDecorator, ListSubheader,
+    IconButton,
+    List,
+    ListDivider,
+    ListItem,
+    ListItemContent,
+    ListItemDecorator,
+    ListSubheader,
     Menu,
     MenuButton,
     MenuItem,
     Radio,
     Switch,
-    Tooltip
+    switchClasses,
+    Tooltip,
+    useColorScheme
 } from "@mui/joy";
 import {
+    Clear as DeleteIcon,
     Done as DoneIcon,
     MoreVert as MenuIcon,
-    RadioButtonChecked as TargetIcon,
-    DeleteOutline as DeleteIcon
+    RadioButtonChecked as TargetIcon
 } from "@mui/icons-material";
 import PieProgress from "@/components/PieProgress";
 import Editable from "@/components/Editable";
@@ -25,6 +32,7 @@ import {ChecklistItemData} from "../types/schema";
 import {ChecklistGroupState} from "../types/context";
 import {useChecklist} from "../hooks";
 import ColorLabel from "@/components/ColorLabel";
+import {useLabelColors} from "@/hooks";
 
 /*const DragHandle: React.FC = () => (
     <DragIcon fontSize="lg" sx={{
@@ -38,6 +46,14 @@ import ColorLabel from "@/components/ColorLabel";
     }}/>
 );*/
 
+interface ChecklistItemColors {
+    plain: string;
+    hover: string;
+    active: string;
+    inactive: string;
+    progress: string;
+}
+
 interface ChecklistItemContentProps {
     level: number;
     item: ChecklistItemData;
@@ -45,10 +61,99 @@ interface ChecklistItemContentProps {
     showId?: boolean;
 }
 
+const GroupProgress: React.FC<{
+    isUpdating?: boolean,
+    group: ChecklistGroupState,
+    colors: ChecklistItemColors
+}> = ({isUpdating, group, colors}) => {
+    return (
+        <Tooltip title={`${group.doneCount} / ${group.doableCount}`} arrow>
+            <AspectRatio
+                ratio={1}
+                variant="soft"
+                slotProps={{content: {sx: {backgroundColor: colors.plain, color: colors.active}}}}
+                sx={{
+                    '--AspectRatio-radius': '50%',
+                    width: '24px',
+                }}>
+
+                {isUpdating
+                    ? <CircularProgress variant="plain" color="neutral" thickness={3} sx={{
+                        '--CircularProgress-trackColor': colors.plain,
+                        '--CircularProgress-progressColor': colors.progress,
+                        '--CircularProgress-size': "18px",
+                        padding: "3px"
+                    }}/>
+                    : <PieProgress value={group.doneCount / group.doableCount * 100} margin={3} thickness={9}
+                                   zeroIndicator/>}
+            </AspectRatio>
+        </Tooltip>
+    );
+}
+
+const ItemToggle: React.FC<{
+    isUpdating?: boolean,
+    item: ChecklistItemData,
+    colors: ChecklistItemColors
+}> = ({isUpdating, item, colors}) => {
+    const {updateItem} = useChecklist();
+
+    return (
+        <Switch
+            id={`toggle-${item.id}`}
+            checked={item.done}
+            onChange={(e) => updateItem({...item, done: e.target.checked})}
+            disabled={isUpdating}
+            variant="soft"
+            size="lg"
+            slotProps={{
+                track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>},
+                thumb: {
+                    children: isUpdating &&
+                        <CircularProgress variant="plain" color="neutral" thickness={3} sx={{
+                            '--CircularProgress-size': "calc(var(--Switch-thumbSize))",
+                            '--CircularProgress-progressColor': colors.progress,
+                        }}/>
+                },
+            }}
+            sx={{
+                '--Switch-trackBackground': colors.plain,
+                '--Switch-thumbBackground': colors.inactive,
+                '--Switch-thumbColor': colors.active,
+                [`& .${switchClasses.checked}`]: {
+                    '--Switch-trackColor': colors.active,
+                    '--Switch-trackBackground': colors.plain,
+                    '--Switch-thumbBackground': colors.active,
+                },
+                [`&:hover`]: {
+                    '--Switch-trackBackground': colors.hover,
+                    '--Switch-thumbBackground': colors.active,
+                },
+            }}
+        />
+    );
+}
+
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group = null, showId}) => {
     const {updateItem, isUpdatingItem, updatingItemId, targetItemId, setTargetItem} = useChecklist();
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
-    const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
+    const labelColors = useLabelColors(item.colorLabel);
+    const {colorScheme} = useColorScheme();
+    const colors: ChecklistItemColors = colorScheme === 'light'
+        ? {
+            plain: labelColors[100],
+            hover: labelColors[200],
+            inactive: labelColors[400],
+            active: labelColors[600],
+            progress: labelColors[800]
+        }
+        : {
+            plain: labelColors[700],
+            hover: labelColors[600],
+            inactive: labelColors[800],
+            active: labelColors[900],
+            progress: labelColors[400]
+        };
 
     const handleNoteEdited = (editedValue?: string) => {
         if (editedValue && editedValue !== item.note)
@@ -57,44 +162,23 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
             return false;
     }
 
+    const handleColorLabelChange = (label?: string) => {
+        if (item.colorLabel !== (label ?? null))
+            updateItem({...item, colorLabel: label ?? null});
+    }
+
+    const handleChangeParent = () => {
+        if (item.parent !== (targetItemId ?? null))
+            updateItem({...item, parent: targetItemId ?? null});
+    }
+
+    const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
+
     return (
         <ListItemContent sx={{display: "flex", gap: 1, alignItems: "center"}}>
             {group
-                ? <Tooltip title={`${group.doneCount} / ${group.doableCount}`} arrow>
-                    <AspectRatio
-                        ratio={1}
-                        variant="soft"
-                        sx={{
-                            "--AspectRatio-radius": "50%",
-                            width: "24px",
-                        }}>
-
-                        {isUpdating
-                            ? <CircularProgress variant="plain" color="neutral" thickness={3} sx={{
-                                '--CircularProgress-size': "18px",
-                                padding: "3px"
-                            }}/>
-                            : <PieProgress value={group.doneCount / group.doableCount * 100} margin={3} thickness={9}
-                                           zeroIndicator/>}
-                    </AspectRatio>
-                </Tooltip>
-                : <Switch
-                    id={`toggle-${item.id}`}
-                    checked={item.done}
-                    onChange={(e) => updateItem({...item, done: e.target.checked})}
-                    disabled={isUpdating}
-                    slotProps={{
-                        track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>},
-                        thumb: {
-                            children: isUpdating &&
-                                <CircularProgress variant="plain" color="neutral" thickness={3} sx={{
-                                    '--CircularProgress-size': "calc(var(--Switch-thumbSize))",
-                                }}/>
-                        },
-                    }}
-                    variant="soft"
-                    size="lg"
-                />}
+                ? <GroupProgress isUpdating={isUpdating} group={group} colors={colors}/>
+                : <ItemToggle isUpdating={isUpdating} item={item} colors={colors}/>}
 
             <Editable.Typography
                 name={`item-${item.id}-note`}
@@ -103,10 +187,18 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 inputPlaceholder={item.note}
                 disabled={isUpdating}
                 onEdited={handleNoteEdited}
-                sx={{minWidth: 0, flex: 1}}
+                sx={{
+                    //color: colors.progress,
+                    minWidth: 0,
+                    flex: 1
+                }}
             />
 
-            {showId && <Chip size="sm">{chipContent}</Chip>}
+            {showId && <Chip
+                size="sm"
+                sx={{backgroundColor: colors.plain, color: colors.progress}}>
+                {chipContent}
+            </Chip>}
 
             <Dropdown>
                 <MenuButton
@@ -123,7 +215,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                     </MenuItem>
                     <MenuItem
                         disabled={targetItemId === item.id || targetItemId === item.parent}
-                        onClick={() => updateItem({...item, parent: targetItemId || null})}>
+                        onClick={handleChangeParent}>
                         <ListItemDecorator/>
                         {targetItemId ? `Make child of #${targetItemId}` : 'Move to top level'}
                     </MenuItem>
@@ -133,12 +225,16 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                         Delete
                     </MenuItem>
                     <ListDivider/>
-                    <ListItem nested>
+                    <ListItem
+                        nested
+                        sx={{
+                            marginX: '0.5rem',
+                            '--ListItem-startActionWidth': 0,
+                            '--ListItem-radius': 'var(--joy-radius-xs)'
+                        }}>
                         <ListSubheader>Color Label</ListSubheader>
                         <List orientation="horizontal" size="sm">
-                            <ColorLabel.MenuItems onChange={(colorLabel) =>
-                                updateItem({...item, colorLabel: colorLabel ?? null})}
-                            />
+                            <ColorLabel.MenuItems showNoColor onChange={handleColorLabelChange}/>
                         </List>
                     </ListItem>
                 </Menu>

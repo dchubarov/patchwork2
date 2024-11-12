@@ -72,7 +72,7 @@ const ChecklistEntity = {
 
     seeds: (server: AppServer) => {
         server.create(CHECKLIST_ENTITY_KEY, {id: "dime1", title: "My checklist"});
-        server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "1", checklistId: "dime1", note: "Buy groceries"});
+        server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "1", checklistId: "dime1", note: "Buy groceries", colorLabel: "sky"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "2", checklistId: "dime1", note: "Turnip x3", parentId: "1"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "3", checklistId: "dime1", note: "Coca-cola", parentId: "1"});
         server.create(CHECKLIST_ITEM_ENTITY_KEY, {id: "4", checklistId: "dime1", note: "Bottle", parentId: "3", done: true});

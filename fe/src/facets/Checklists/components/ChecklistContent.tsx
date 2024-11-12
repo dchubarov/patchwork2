@@ -18,7 +18,7 @@ const ChecklistContent: React.FC<ChecklistContentProps> = ({showIds = false, sx,
                     '--List-padding': 0,
                     '--ListItem-minHeight': "40px",
                     '--List-nestedInsetStart': "1.75rem",
-                    "--ListItem-paddingLeft": "1.5rem",
+                    '--ListItem-paddingLeft': "1.5rem",
                     '--ListItem-startActionWidth': 0,
                     '--ListItem-startActionTranslateX': "-30%",
                     // [`& .${listItemClasses.root}:not(.${listItemClasses.nested}) :hover`]: {
