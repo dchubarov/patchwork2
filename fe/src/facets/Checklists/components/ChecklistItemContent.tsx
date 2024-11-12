@@ -1,11 +1,30 @@
 import React from "react";
-import {AspectRatio, Chip, CircularProgress, ListItemContent, Switch, Tooltip} from "@mui/joy";
-import {Done as DoneIcon} from "@mui/icons-material";
+import {
+    AspectRatio,
+    Chip,
+    CircularProgress,
+    Dropdown,
+    IconButton, List, ListDivider, ListItem,
+    ListItemContent, ListItemDecorator, ListSubheader,
+    Menu,
+    MenuButton,
+    MenuItem,
+    Radio,
+    Switch,
+    Tooltip
+} from "@mui/joy";
+import {
+    Done as DoneIcon,
+    MoreVert as MenuIcon,
+    RadioButtonChecked as TargetIcon,
+    DeleteOutline as DeleteIcon
+} from "@mui/icons-material";
 import PieProgress from "@/components/PieProgress";
 import Editable from "@/components/Editable";
 import {ChecklistItemData} from "../types/schema";
 import {ChecklistGroupState} from "../types/context";
 import {useChecklist} from "../hooks";
+import ColorLabel from "@/components/ColorLabel";
 
 /*const DragHandle: React.FC = () => (
     <DragIcon fontSize="lg" sx={{
@@ -27,21 +46,15 @@ interface ChecklistItemContentProps {
 }
 
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item, group = null, showId}) => {
-    const {addOrUpdateItem, isUpdatingItem, updatingItemId} = useChecklist();
+    const {updateItem, isUpdatingItem, updatingItemId, targetItemId, setTargetItem} = useChecklist();
     const isUpdating = isUpdatingItem && updatingItemId === item.id;
     const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
 
     const handleNoteEdited = (editedValue?: string) => {
         if (editedValue && editedValue !== item.note)
-            addOrUpdateItem({...item, note: editedValue});
+            updateItem({...item, note: editedValue});
         else
             return false;
-    }
-
-    const handleParentEdited = (editedValue?: string) => {
-        if ((editedValue || null) !== item.parent) {
-            addOrUpdateItem({...item, parent: editedValue || null})
-        }
     }
 
     return (
@@ -68,7 +81,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 : <Switch
                     id={`toggle-${item.id}`}
                     checked={item.done}
-                    onChange={(e) => addOrUpdateItem({...item, done: e.target.checked})}
+                    onChange={(e) => updateItem({...item, done: e.target.checked})}
                     disabled={isUpdating}
                     slotProps={{
                         track: {children: <DoneIcon fontSize="sm" sx={{ml: "0.25rem"}}/>},
@@ -93,21 +106,52 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({level, item,
                 sx={{minWidth: 0, flex: 1}}
             />
 
-            {/* DEVELOPER BACKDOOR: allows to change parent/order */}
-            <Editable.Typography
-                color="warning"
-                variant="soft"
-                name={`item-${item.id}-parent`}
-                value={item.parent}
-                inputPlaceholder="Parent id"
-                disabled={isUpdating}
-                onEdited={handleParentEdited}
-                startDecorator={`{P=`}
-                endDecorator="}"
-            />
-            {/*END*/}
-
             {showId && <Chip size="sm">{chipContent}</Chip>}
+
+            <Dropdown>
+                <MenuButton
+                    slots={{root: IconButton}}
+                    slotProps={{root: {size: 'sm'}}}>
+                    <MenuIcon/>
+                </MenuButton>
+                <Menu size="sm">
+                    <MenuItem
+                        disabled={targetItemId === item.id}
+                        onClick={() => setTargetItem(item.id)}>
+                        <ListItemDecorator><TargetIcon/></ListItemDecorator>
+                        Set as target
+                    </MenuItem>
+                    <MenuItem
+                        disabled={targetItemId === item.id || targetItemId === item.parent}
+                        onClick={() => updateItem({...item, parent: targetItemId || null})}>
+                        <ListItemDecorator/>
+                        {targetItemId ? `Make child of #${targetItemId}` : 'Move to top level'}
+                    </MenuItem>
+                    <ListDivider/>
+                    <MenuItem color="danger">
+                        <ListItemDecorator><DeleteIcon/></ListItemDecorator>
+                        Delete
+                    </MenuItem>
+                    <ListDivider/>
+                    <ListItem nested>
+                        <ListSubheader>Color Label</ListSubheader>
+                        <List orientation="horizontal" size="sm">
+                            <ColorLabel.MenuItems onChange={(colorLabel) =>
+                                updateItem({...item, colorLabel: colorLabel ?? null})}
+                            />
+                        </List>
+                    </ListItem>
+                </Menu>
+            </Dropdown>
+
+            <Radio
+                size="sm"
+                color="neutral"
+                variant="soft"
+                checked={item.id === targetItemId}
+                onChange={() => setTargetItem(item.id)}
+            />
+
         </ListItemContent>
     );
 }

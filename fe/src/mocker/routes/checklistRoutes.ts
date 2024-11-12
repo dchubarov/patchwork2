@@ -104,6 +104,7 @@ export default function checklistRoutes(server: AppServer) {
                 note: json.note,
                 colorLabel: json.colorLabel ?? null,
                 done: json.done ?? false,
+                parentId: json.parent ?? null,
             });
 
             item.attrs.sequenceCode = parseInt(item.id!!);

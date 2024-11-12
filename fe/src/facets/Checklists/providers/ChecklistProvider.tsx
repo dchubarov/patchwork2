@@ -76,9 +76,11 @@ const ChecklistProvider: React.FC<PropsWithChildren<ChecklistProviderProps>> = (
     const context: ChecklistState = {
         ...state,
         isLoading: isFetching,
-        setGroupExpanded: useCallback((itemId: string, expanded: boolean) =>
+        setGroupExpanded: useCallback((itemId, expanded) =>
             dispatch({type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId, expanded}), [dispatch]),
-        addOrUpdateItem: useCallback((updated: ChecklistItemData) =>
+        setTargetItem: useCallback((itemId) =>
+            dispatch({type: ChecklistStateActionType.SET_TARGET_ITEM, itemId}), [dispatch]),
+        updateItem: useCallback((updated) =>
             doUpdateItem(updated), [doUpdateItem]),
     }
 

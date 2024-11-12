@@ -100,7 +100,7 @@ const editableTypography: UIComponentCardProps<EditableTypographyProps & { rejec
                 label="Heading"
                 name="editable-typography-heading"
                 checked={state.level === "h1" || state.level === "h2" || state.level === "h3" || state.level === "h4"}
-                onChange={() => dispatch((prev) => ({...prev, level: "h3"}))}
+                onChange={() => dispatch((prev) => ({...prev, level: "h2"}))}
             />
         </Box>
     </>),

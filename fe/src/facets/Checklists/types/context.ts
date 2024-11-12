@@ -12,10 +12,12 @@ export interface ChecklistState {
     isLoading?: boolean;
     isUpdatingItem?: boolean;
     updatingItemId?: string;
+    targetItemId?: string | null;
     data: ChecklistData | null;
     groups: Map<string | null, ChecklistGroupState>;
     setGroupExpanded: (itemId: string, expanded: boolean) => void;
-    addOrUpdateItem: (item: ChecklistItemData) => void;
+    setTargetItem: (itemId: string | null) => void;
+    updateItem: (item: ChecklistItemData) => void;
 }
 
 export const ChecklistContext = createContext<ChecklistState | null>(null);
@@ -25,6 +27,7 @@ export enum ChecklistStateActionType {
     SET_GROUP_EXPANDED,
     SET_UPDATING_ITEM,
     CLEAR_UPDATING_ITEM,
+    SET_TARGET_ITEM,
 }
 
 export type ChecklistStateAction =
@@ -32,17 +35,21 @@ export type ChecklistStateAction =
     | { type: ChecklistStateActionType.SET_GROUP_EXPANDED, itemId: string, expanded: boolean }
     | { type: ChecklistStateActionType.SET_UPDATING_ITEM, itemId: string }
     | { type: ChecklistStateActionType.CLEAR_UPDATING_ITEM }
+    | { type: ChecklistStateActionType.SET_TARGET_ITEM, itemId?: string | null }
     ;
 
 export const useChecklistReducer = () =>
     useReducer(checklistStateReducer, {
         isLoading: false,
         isUpdatingItem: false,
+        targetItemId: null,
         data: null,
         groups: new Map(),
         setGroupExpanded: () => {
         },
-        addOrUpdateItem: () => {
+        setTargetItem: () => {
+        },
+        updateItem: () => {
         },
     } as ChecklistState);
 
@@ -78,6 +85,12 @@ function checklistStateReducer(state: ChecklistState, action: ChecklistStateActi
                 ...state,
                 isUpdatingItem: false,
                 updatingItemId: undefined,
+            }
+
+        case ChecklistStateActionType.SET_TARGET_ITEM:
+            return {
+                ...state,
+                targetItemId: action.itemId ?? null,
             }
     }
 

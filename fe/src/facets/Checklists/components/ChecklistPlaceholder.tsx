@@ -1,17 +1,17 @@
 import React from "react";
-import {ListItemContent} from "@mui/joy";
+import {ListItemContent, Radio} from "@mui/joy";
 import {AddCircle as AddIcon} from "@mui/icons-material";
 import Editable from "@/components/Editable";
 import {useChecklist} from "../hooks";
 
 const ChecklistPlaceholder: React.FC = () => {
-    const {addOrUpdateItem} = useChecklist();
+    const {updateItem, targetItemId, setTargetItem} = useChecklist();
     const handleValueEdited = (editedValue?: string) => {
         if (editedValue && editedValue.trim()) {
-            addOrUpdateItem({
+            updateItem({
                 id: ''/*new*/,
                 note: editedValue.trim(),
-                parent: null,
+                parent: targetItemId ?? null,
                 done: false,
                 colorLabel: null,
                 sequenceCode: 0,
@@ -30,6 +30,14 @@ const ChecklistPlaceholder: React.FC = () => {
                 placeholder="Click here to add a new item"
                 inputPlaceholder="Type what to do"
                 sx={{minWidth: 0, flex: 1}}/>
+
+            <Radio
+                size="sm"
+                color="neutral"
+                variant="soft"
+                checked={!targetItemId}
+                onClick={() => setTargetItem(null)}
+            />
         </ListItemContent>
     );
 }

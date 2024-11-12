@@ -107,7 +107,8 @@ const Menu: MenuComponentType = (props) => {
 
 const ColorLabel = {
     Spot,
-    Menu
+    Menu,
+    MenuItems,
 }
 
 export default ColorLabel;

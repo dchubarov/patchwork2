@@ -12,6 +12,7 @@ const ChecklistHeader: React.FC = () => {
 
     return (
         <ListItemContent sx={{
+            minHeight: "46px",
             display: "flex",
             gap: 1,
             alignItems: "center",
@@ -31,7 +32,7 @@ const ChecklistHeader: React.FC = () => {
 
             <Editable.Typography
                 level="h2"
-                id='checklist-title'
+                id="checklist-title"
                 disabled={isLoading || !data}
                 value={data?.title}
             />
