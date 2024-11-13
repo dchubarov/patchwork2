@@ -54,8 +54,17 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({
     />
   );
 
+  const selfSxProps = {
+    '& .item-secondary-control': {
+      visibility: 'hidden',
+    },
+    '&:hover .item-secondary-control': {
+      visibility: 'visible',
+    },
+  };
+
   return (
-    <ListItem nested={!!group}>
+    <ListItem nested={!!group} sx={!!group ? undefined : selfSxProps}>
       {!group ? (
         contentElement
       ) : (
@@ -70,6 +79,7 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({
             }
             sx={{
               '--ListItem-startActionTranslateX': `calc((${level - 1} * var(--List-nestedInsetStart, 1.25rem)) - 30%)`,
+              ...selfSxProps,
             }}>
             {contentElement}
           </ListItem>

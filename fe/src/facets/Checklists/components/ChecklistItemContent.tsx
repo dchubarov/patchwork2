@@ -23,8 +23,9 @@ import {
 import {
   Clear as DeleteIcon,
   Done as DoneIcon,
-  MoreVert as MenuIcon,
+  UnfoldMore as MenuIcon,
   RadioButtonChecked as TargetIcon,
+  //DragIndicator as DragIcon,
 } from '@mui/icons-material';
 import PieProgress from '@/components/PieProgress';
 import Editable from '@/components/Editable';
@@ -33,18 +34,6 @@ import { ChecklistGroupState } from '../types/context';
 import { useChecklist } from '../hooks';
 import ColorLabel from '@/components/ColorLabel';
 import { useLabelColors } from '@/hooks';
-
-/*const DragHandle: React.FC = () => (
-    <DragIcon fontSize="lg" sx={{
-        mx: '-0.65rem',
-        transform: 'rotate(-90deg)',
-        color: 'transparent',//'var(--joy-palette-neutral-300)',
-        [':hover']: {
-            color: 'var(--joy-palette-neutral-300)',
-            cursor: 'grab',
-        }
-    }}/>
-);*/
 
 interface ChecklistItemColors {
   plain: string;
@@ -60,6 +49,20 @@ interface ChecklistItemContentProps {
   group?: ChecklistGroupState | null;
   showId?: boolean;
 }
+
+/*
+const DragHandle: React.FC = () => (
+  <DragIcon
+    className="item-secondary-control"
+    fontSize="xl"
+    sx={{
+      mx: '-0.65rem',
+      cursor: 'grab',
+      //transform: 'rotate(-90deg)',
+    }}
+  />
+);
+*/
 
 const GroupProgress: React.FC<{
   isUpdating?: boolean;
@@ -211,12 +214,19 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
   const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
 
   return (
-    <ListItemContent sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+    <ListItemContent
+      sx={{
+        gap: 1,
+        display: 'flex',
+        alignItems: 'center',
+      }}>
       {group ? (
         <GroupProgress isUpdating={isUpdating} group={group} colors={colors} />
       ) : (
         <ItemToggle isUpdating={isUpdating} item={item} colors={colors} />
       )}
+
+      {/*<DragHandle />*/}
 
       <Editable.Typography
         name={`item-${item.id}-note`}
@@ -243,8 +253,20 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
 
       <Dropdown>
         <MenuButton
+          className="item-secondary-control"
           slots={{ root: IconButton }}
-          slotProps={{ root: { size: 'sm' } }}>
+          slotProps={{
+            root: {
+              size: 'sm',
+              sx: {
+                background: 'transparent',
+                color: 'var(--joy-palette-text-tertiary)',
+                '&:hover': {
+                  background: 'transparent',
+                },
+              },
+            },
+          }}>
           <MenuIcon />
         </MenuButton>
         <Menu size="sm">
@@ -291,6 +313,11 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
       </Dropdown>
 
       <Radio
+        className={
+          item.id === targetItemId
+            ? 'item-secondary-control-active'
+            : 'item-secondary-control'
+        }
         size="sm"
         color="neutral"
         variant="soft"
