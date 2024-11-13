@@ -6,17 +6,18 @@ export interface ChecklistGroupState {
   doableCount: number;
   doneCount: number;
   expanded: boolean;
+  targetWithin: boolean;
 }
 
 export interface ChecklistState {
   isLoading?: boolean;
   isUpdatingItem?: boolean;
   updatingItemId?: string | null;
-  targetItemId?: string | null;
+  targetItem: ChecklistItemData | null;
   data: ChecklistData | null;
   groups: Map<string | null, ChecklistGroupState>;
   setGroupExpanded: (itemId: string, expanded: boolean) => void;
-  setTargetItem: (itemId: string | null) => void;
+  setTargetItem: (item: ChecklistItemData | null) => void;
   updateItem: (item: ChecklistItemData) => void;
   deleteItem: (itemId: string) => void;
 }

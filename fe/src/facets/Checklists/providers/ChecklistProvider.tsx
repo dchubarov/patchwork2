@@ -39,7 +39,10 @@ type ChecklistStateAction =
       expanded: boolean;
     }
   | { type: ChecklistStateActionType.SET_UPDATING_ITEM; itemId: string | null }
-  | { type: ChecklistStateActionType.SET_TARGET_ITEM; itemId?: string | null };
+  | {
+      type: ChecklistStateActionType.SET_TARGET_ITEM;
+      item: ChecklistItemData | null;
+    };
 
 export interface ChecklistProviderProps {
   checklistId?: string | number | null;
@@ -183,8 +186,8 @@ const ChecklistProvider: React.FC<
       [dispatch]
     ),
     setTargetItem: useCallback(
-      (itemId) =>
-        dispatch({ type: ChecklistStateActionType.SET_TARGET_ITEM, itemId }),
+      (item) =>
+        dispatch({ type: ChecklistStateActionType.SET_TARGET_ITEM, item }),
       [dispatch]
     ),
     updateItem: useCallback((updated) => doUpdateItem(updated), [doUpdateItem]),
@@ -205,7 +208,7 @@ export default ChecklistProvider;
 const initialState: ChecklistState = {
   isLoading: false,
   isUpdatingItem: false,
-  targetItemId: null,
+  targetItem: null,
   data: null,
   groups: new Map(),
   setGroupExpanded: () => {},
@@ -220,11 +223,13 @@ function checklistReducer(
 ): ChecklistState {
   switch (action.type) {
     case ChecklistStateActionType.SET_DATA:
+      const groups = rebuildGroups(action.data, state);
       return {
         ...state,
         data: action.data,
         isLoading: action.isLoading,
-        groups: rebuildGroups(action.data, state.groups),
+        targetItem: groups.get(null)?.targetWithin ? state.targetItem : null,
+        groups,
       };
 
     case ChecklistStateActionType.SET_GROUP_EXPANDED:
@@ -248,7 +253,11 @@ function checklistReducer(
     case ChecklistStateActionType.SET_TARGET_ITEM:
       return {
         ...state,
-        targetItemId: action.itemId ?? null,
+        groups: rebuildGroups(state.data, {
+          ...state,
+          targetItem: action.item,
+        }),
+        targetItem: action.item,
       };
   }
 
@@ -257,7 +266,7 @@ function checklistReducer(
 
 function rebuildGroups(
   data: ChecklistData | null,
-  currentGroups: Map<string | null, ChecklistGroupState>
+  state: ChecklistState
 ): Map<string | null, ChecklistGroupState> {
   const groups = new Map<string | null, ChecklistGroupState>();
   if (!data) return groups;
@@ -277,16 +286,20 @@ function rebuildGroups(
     visited.add(id);
 
     let doableCount = 0,
-      doneCount = 0;
+      doneCount = 0,
+      targetWithin = id === state.targetItem?.id;
+
     const items = roots.get(id);
     items?.forEach((item) => {
       if (roots.has(item.id)) {
         const childGroup = dfs(item.id);
         if (childGroup) {
+          if (childGroup.targetWithin) targetWithin = true;
           doneCount += childGroup.doneCount;
           doableCount += childGroup.doableCount;
         }
       } else {
+        if (item.id === state.targetItem?.id) targetWithin = true;
         if (item.done) doneCount++;
         doableCount++;
       }
@@ -294,9 +307,10 @@ function rebuildGroups(
 
     const group: ChecklistGroupState = {
       items: items?.sort((a, b) => a.sequenceCode - b.sequenceCode) ?? [],
-      doableCount: doableCount,
-      doneCount: doneCount,
-      expanded: currentGroups.get(id)?.expanded ?? true,
+      expanded: state.groups.get(id)?.expanded ?? true,
+      targetWithin,
+      doableCount,
+      doneCount,
     };
 
     groups.set(id, group);

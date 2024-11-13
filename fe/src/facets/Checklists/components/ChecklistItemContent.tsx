@@ -1,6 +1,8 @@
+import _ from 'lodash';
 import React from 'react';
 import {
   AspectRatio,
+  Box,
   Chip,
   CircularProgress,
   Dropdown,
@@ -24,8 +26,6 @@ import {
   Clear as DeleteIcon,
   Done as DoneIcon,
   UnfoldMore as MenuIcon,
-  RadioButtonChecked as TargetIcon,
-  //DragIndicator as DragIcon,
 } from '@mui/icons-material';
 import PieProgress from '@/components/PieProgress';
 import Editable from '@/components/Editable';
@@ -168,7 +168,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
     deleteItem,
     isUpdatingItem,
     updatingItemId,
-    targetItemId,
+    targetItem,
     setTargetItem,
   } = useChecklist();
   const isUpdating = isUpdatingItem && updatingItemId === item.id;
@@ -203,8 +203,8 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
   };
 
   const handleChangeParent = () => {
-    if (item.parent !== (targetItemId ?? null))
-      updateItem({ ...item, parent: targetItemId ?? null });
+    if (item.parent !== (targetItem?.id ?? null))
+      updateItem({ ...item, parent: targetItem?.id ?? null });
   };
 
   const handleDeleteItem = (deleteItemId: string) => {
@@ -271,19 +271,13 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
         </MenuButton>
         <Menu size="sm">
           <MenuItem
-            disabled={targetItemId === item.id}
-            onClick={() => setTargetItem(item.id)}>
-            <ListItemDecorator>
-              <TargetIcon />
-            </ListItemDecorator>
-            Set as target
-          </MenuItem>
-          <MenuItem
-            disabled={targetItemId === item.id || targetItemId === item.parent}
+            disabled={
+              targetItem?.id === item.id || targetItem?.id === item.parent
+            }
             onClick={handleChangeParent}>
             <ListItemDecorator />
-            {targetItemId
-              ? `Make child of #${targetItemId}`
+            {targetItem?.id
+              ? `Make child of "${_.truncate(targetItem.note, { length: 20 })}" (#${targetItem.id})`
               : 'Move to top level'}
           </MenuItem>
           <ListDivider />
@@ -314,15 +308,29 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
 
       <Radio
         className={
-          item.id === targetItemId
+          item.id === targetItem?.id || group?.targetWithin
             ? 'item-secondary-control-active'
             : 'item-secondary-control'
         }
         size="sm"
         color="neutral"
         variant="soft"
-        checked={item.id === targetItemId}
-        onChange={() => setTargetItem(item.id)}
+        uncheckedIcon={
+          group?.targetWithin && item.id !== targetItem?.id ? (
+            <Box
+              component="span"
+              sx={(theme) => ({
+                width: 'calc(var(--Radio-size) / 2)',
+                height: 'calc(var(--Radio-size) / 2)',
+                backgroundColor: theme.palette.divider,
+                borderRadius: 'inherit',
+              })}
+            />
+          ) : undefined
+        }
+        checked={item.id === targetItem?.id}
+        onChange={() => setTargetItem(item)}
+        slotProps={{ icon: { sx: { color: colors.active } } }}
       />
     </ListItemContent>
   );

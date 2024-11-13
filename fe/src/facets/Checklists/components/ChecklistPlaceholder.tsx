@@ -5,13 +5,13 @@ import Editable from '@/components/Editable';
 import { useChecklist } from '../hooks';
 
 const ChecklistPlaceholder: React.FC = () => {
-  const { updateItem, targetItemId, setTargetItem } = useChecklist();
+  const { updateItem, targetItem, setTargetItem } = useChecklist();
   const handleValueEdited = (editedValue?: string) => {
     if (editedValue && editedValue.trim()) {
       updateItem({
         id: '' /*new*/,
         note: editedValue.trim(),
-        parent: targetItemId ?? null,
+        parent: targetItem?.id ?? null,
         done: false,
         colorLabel: null,
         sequenceCode: 0,
@@ -36,7 +36,7 @@ const ChecklistPlaceholder: React.FC = () => {
         size="sm"
         color="neutral"
         variant="soft"
-        checked={!targetItemId}
+        checked={!targetItem?.id}
         onClick={() => setTargetItem(null)}
       />
     </ListItemContent>
