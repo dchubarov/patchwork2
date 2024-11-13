@@ -1,216 +1,255 @@
-import _ from "lodash";
-import React, {useRef, useState} from "react";
+import _ from 'lodash';
+import React, { useRef, useState } from 'react';
 import {
-    Box,
-    Chip,
-    Dropdown,
-    FormControl,
-    FormLabel,
-    IconButton,
-    Input,
-    Menu,
-    MenuButton,
-    MenuItem,
-    Textarea,
-    Typography,
-    useTheme
-} from "@mui/joy";
-import {AxiosRequestConfig} from "axios";
+  Box,
+  Chip,
+  Dropdown,
+  FormControl,
+  FormLabel,
+  IconButton,
+  Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  Textarea,
+  Typography,
+  useTheme,
+} from '@mui/joy';
+import { AxiosRequestConfig } from 'axios';
 import {
-    ArrowDropDown as DropdownIcon,
-    CheckCircleOutline as SuccessIcon,
-    PlayArrow as RunIcon,
-    Warning as WarningIcon
-} from "@mui/icons-material";
-import {labelColorsByName} from "@/utils/theme";
-import {envGlobals} from "@/types/env";
-import {useApiClient} from "@/hooks";
+  ArrowDropDown as DropdownIcon,
+  CheckCircleOutline as SuccessIcon,
+  PlayArrow as RunIcon,
+  Warning as WarningIcon,
+} from '@mui/icons-material';
+import { labelColorsByName } from '@/utils/theme';
+import { envGlobals } from '@/types/env';
+import { useApiClient } from '@/hooks';
 
 type RequestState =
-    | { status: "empty" }
-    | { status: "loading" }
-    | { status: "success", response: any, elapsedTime?: number }
-    | { status: "failure", response: any, elapsedTime?: number };
+  | { status: 'empty' }
+  | { status: 'loading' }
+  | { status: 'success'; response: any; elapsedTime?: number }
+  | { status: 'failure'; response: any; elapsedTime?: number };
 
 interface RequestMethodProps {
-    payload?: boolean;
-    color?: string;
+  payload?: boolean;
+  color?: string;
 }
 
 const RequestMethod: Record<string, RequestMethodProps> = {
-    "GET": {payload: false, color: "lime"},
-    "POST": {payload: true, color: "teal"},
-    "PUT": {payload: true, color: "indigo"},
-    "PATCH": {payload: true, color: "fuchsia"},
-    "DELETE": {payload: false, color: "pink"},
-}
+  GET: { payload: false, color: 'lime' },
+  POST: { payload: true, color: 'teal' },
+  PUT: { payload: true, color: 'indigo' },
+  PATCH: { payload: true, color: 'fuchsia' },
+  DELETE: { payload: false, color: 'pink' },
+};
 
 type RequestMethodName = keyof typeof RequestMethod;
 
 type RequestMethodSelectorType = React.FC<{
-    method: RequestMethodName,
-    onChange?: (method: RequestMethodName) => void;
+  method: RequestMethodName;
+  onChange?: (method: RequestMethodName) => void;
 }>;
 
-const RequestMethodSelector: RequestMethodSelectorType = ({method, onChange}) => {
-    const theme = useTheme();
-    const palette = labelColorsByName(RequestMethod[method].color || null, theme);
-    return (
-        <Dropdown>
-            <Chip
-                component={MenuButton}
-                variant="soft"
-                // color={RequestMethod[method].color || "neutral"}
-                endDecorator={<DropdownIcon/>}
-                sx={{
-                    mr: 1,
-                    borderRadius: "sm",
-                    fontWeight: 600,
-                    backgroundColor: palette[300],
-                    color: palette[800],
-                    "&:hover": {backgroundColor: palette[200]},
-                }}>
-                {method}
-            </Chip>
-            <Menu size="sm" sx={{zIndex: 9999}}>
-                {Object.keys(RequestMethod).filter((value) => value !== method).map((value) => (
-                    <MenuItem
-                        key={value}
-                        onClick={() => onChange?.(value)}
-                        sx={{color: labelColorsByName(RequestMethod[value].color || null, theme)[800]}}>
-                        {value}
-                    </MenuItem>
-                ))}
-            </Menu>
-        </Dropdown>
-    );
+const RequestMethodSelector: RequestMethodSelectorType = ({
+  method,
+  onChange,
+}) => {
+  const theme = useTheme();
+  const palette = labelColorsByName(RequestMethod[method].color || null, theme);
+  return (
+    <Dropdown>
+      <Chip
+        component={MenuButton}
+        variant="soft"
+        // color={RequestMethod[method].color || "neutral"}
+        endDecorator={<DropdownIcon />}
+        sx={{
+          mr: 1,
+          borderRadius: 'sm',
+          fontWeight: 600,
+          backgroundColor: palette[300],
+          color: palette[800],
+          '&:hover': { backgroundColor: palette[200] },
+        }}>
+        {method}
+      </Chip>
+      <Menu size="sm" sx={{ zIndex: 9999 }}>
+        {Object.keys(RequestMethod)
+          .filter((value) => value !== method)
+          .map((value) => (
+            <MenuItem
+              key={value}
+              onClick={() => onChange?.(value)}
+              sx={{
+                color: labelColorsByName(
+                  RequestMethod[value].color || null,
+                  theme
+                )[800],
+              }}>
+              {value}
+            </MenuItem>
+          ))}
+      </Menu>
+    </Dropdown>
+  );
 };
 
 const ApiPlayground: React.FC = () => {
-    const apiUrlInputRef = useRef<HTMLInputElement | null>(null);
-    const [requestResult, setRequestResult] = useState<RequestState>({status: "empty"});
-    const [requestMethod, setRequestMethod] = useState<RequestMethodName>("GET");
-    const [requestBody, setRequestBody] = useState("");
-    const [apiUrl, setApiUrl] = useState("");
-    const apiPrefix = envGlobals.API_ROOT;
-    const apiClient = useApiClient();
+  const apiUrlInputRef = useRef<HTMLInputElement | null>(null);
+  const [requestResult, setRequestResult] = useState<RequestState>({
+    status: 'empty',
+  });
+  const [requestMethod, setRequestMethod] = useState<RequestMethodName>('GET');
+  const [requestBody, setRequestBody] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
+  const apiPrefix = envGlobals.API_ROOT;
+  const apiClient = useApiClient();
 
-    const handleRequestMethodChange = (method: RequestMethodName) => {
-        setRequestResult({status: "empty"});
-        setRequestMethod(method);
-        setRequestBody("");
-        setApiUrl("");
+  const handleRequestMethodChange = (method: RequestMethodName) => {
+    setRequestResult({ status: 'empty' });
+    setRequestMethod(method);
+    setRequestBody('');
+    setApiUrl('');
 
+    apiUrlInputRef.current?.focus();
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setRequestResult({ status: 'loading' });
+
+    let requestConfig: AxiosRequestConfig = {
+      method: requestMethod,
+      url: apiUrl,
+    };
+
+    if (RequestMethod[requestMethod].payload) {
+      requestConfig = {
+        ...requestConfig,
+        data: requestBody,
+        headers: {
+          ...requestConfig.headers,
+          'Content-Type': 'application/json',
+        },
+      };
+    }
+
+    const start = performance.now();
+    apiClient
+      .request(requestConfig)
+      .then((response) =>
+        setRequestResult({
+          status: 'success',
+          response: response,
+          elapsedTime: Math.round(performance.now() - start),
+        })
+      )
+      .catch((reason) =>
+        setRequestResult({
+          status: 'failure',
+          response: reason,
+          elapsedTime: Math.round(performance.now() - start),
+        })
+      )
+      .finally(() => {
         apiUrlInputRef.current?.focus();
-    }
+      });
+  };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setRequestResult({status: "loading"});
-
-        let requestConfig: AxiosRequestConfig = {
-            method: requestMethod,
-            url: apiUrl,
-        }
-
-        if (RequestMethod[requestMethod].payload) {
-            requestConfig = {
-                ...requestConfig,
-                data: requestBody,
-                headers: {
-                    ...requestConfig.headers,
-                    "Content-Type": "application/json",
-                }
+  return (
+    <Box p={2}>
+      <form onSubmit={handleSubmit}>
+        <FormControl>
+          <Input
+            autoFocus
+            value={apiUrl}
+            name={`api-url-${_.lowerCase(requestMethod)}`}
+            slotProps={{ input: { ref: apiUrlInputRef } }}
+            disabled={requestResult.status === 'loading'}
+            onChange={(e) => setApiUrl(e.target.value.trim())}
+            startDecorator={
+              <>
+                <RequestMethodSelector
+                  method={requestMethod}
+                  onChange={handleRequestMethodChange}
+                />
+                {_.trimStart(apiPrefix, '/') + '/'}
+              </>
             }
-        }
-
-        const start = performance.now();
-        apiClient.request(requestConfig)
-            .then((response) =>
-                setRequestResult({
-                    status: "success",
-                    response: response,
-                    elapsedTime: Math.round(performance.now() - start)
-                }))
-            .catch((reason) =>
-                setRequestResult({
-                    status: "failure",
-                    response: reason,
-                    elapsedTime: Math.round(performance.now() - start)
-                }))
-            .finally(() => {
-                apiUrlInputRef.current?.focus();
-            });
-    }
-
-    return (
-        <Box p={2}>
-            <form onSubmit={handleSubmit}>
-                <FormControl>
-                    <Input
-                        autoFocus
-                        value={apiUrl}
-                        name={`api-url-${_.lowerCase(requestMethod)}`}
-                        slotProps={{input: {ref: apiUrlInputRef}}}
-                        disabled={requestResult.status === "loading"}
-                        onChange={(e) => setApiUrl(e.target.value.trim())}
-                        startDecorator={<>
-                            <RequestMethodSelector
-                                method={requestMethod}
-                                onChange={handleRequestMethodChange}/>
-                            {_.trimStart(apiPrefix, "/") + "/"}
-                        </>}
-                        endDecorator={
-                            <IconButton
-                                type="submit"
-                                disabled={apiUrl === ""}
-                                loading={requestResult.status === "loading"}
-                                variant="solid"
-                                color="primary">
-                                <RunIcon/>
-                            </IconButton>
-                        }
-                        sx={{
-                            "--Input-gap": 0,
-                            pl: 2
-                        }}/>
-                </FormControl>
-
-                {RequestMethod[requestMethod].payload &&
-                    <FormControl sx={{mt: 1}}>
-                        <FormLabel>Request (JSON):</FormLabel>
-                        <Textarea
-                            value={requestBody}
-                            onChange={(e) => setRequestBody(e.target.value)}
-                            minRows={3}
-                            maxRows={8}
-                            size="sm"
-                            sx={{
-                                fontFamily: "monospace"
-                            }}/>
-                    </FormControl>}
-            </form>
-
-            {(requestResult.status === "success" || requestResult.status === "failure") &&
-                <Box mt={2}>
-                    <Typography
-                        level="body-sm"
-                        fontWeight="bold"
-                        color={requestResult.status === "success" ? "success" : "danger"}
-                        startDecorator={requestResult.status === "success" ? <SuccessIcon/> : <WarningIcon/>}>
-                        {(requestResult.status === "success" ? "Success: " : "Error: ") + (requestResult.response.status || "unknown") +
-                            (requestResult.elapsedTime ? ` (${requestResult.elapsedTime} ms)` : "")}
-                    </Typography>
-
-                    <Typography level="body-sm" fontWeight="bold" ml={3} mt={1}>Response:</Typography>
-                    <Typography component="pre" level="body-sm" fontFamily="monospace" ml={3}>
-                        {requestResult.response.message && `Message: ${requestResult.response.message}`}
-                        {requestResult.response.data && JSON.stringify(requestResult.response.data, null, 2)}
-                    </Typography>
-                </Box>
+            endDecorator={
+              <IconButton
+                type="submit"
+                disabled={apiUrl === ''}
+                loading={requestResult.status === 'loading'}
+                variant="solid"
+                color="primary">
+                <RunIcon />
+              </IconButton>
             }
+            sx={{
+              '--Input-gap': 0,
+              pl: 2,
+            }}
+          />
+        </FormControl>
+
+        {RequestMethod[requestMethod].payload && (
+          <FormControl sx={{ mt: 1 }}>
+            <FormLabel>Request (JSON):</FormLabel>
+            <Textarea
+              value={requestBody}
+              onChange={(e) => setRequestBody(e.target.value)}
+              minRows={3}
+              maxRows={8}
+              size="sm"
+              sx={{
+                fontFamily: 'monospace',
+              }}
+            />
+          </FormControl>
+        )}
+      </form>
+
+      {(requestResult.status === 'success' ||
+        requestResult.status === 'failure') && (
+        <Box mt={2}>
+          <Typography
+            level="body-sm"
+            fontWeight="bold"
+            color={requestResult.status === 'success' ? 'success' : 'danger'}
+            startDecorator={
+              requestResult.status === 'success' ? (
+                <SuccessIcon />
+              ) : (
+                <WarningIcon />
+              )
+            }>
+            {(requestResult.status === 'success' ? 'Success: ' : 'Error: ') +
+              (requestResult.response.status || 'unknown') +
+              (requestResult.elapsedTime
+                ? ` (${requestResult.elapsedTime} ms)`
+                : '')}
+          </Typography>
+
+          <Typography level="body-sm" fontWeight="bold" ml={3} mt={1}>
+            Response:
+          </Typography>
+          <Typography
+            component="pre"
+            level="body-sm"
+            fontFamily="monospace"
+            ml={3}>
+            {requestResult.response.message &&
+              `Message: ${requestResult.response.message}`}
+            {requestResult.response.data &&
+              JSON.stringify(requestResult.response.data, null, 2)}
+          </Typography>
         </Box>
-    );
-}
+      )}
+    </Box>
+  );
+};
 
 export default ApiPlayground;

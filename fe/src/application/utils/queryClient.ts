@@ -1,10 +1,11 @@
-import {QueryClient} from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 
-const createQueryClient = () => new QueryClient({
+const createQueryClient = () =>
+  new QueryClient({
     defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: "always",
-        }
+      queries: {
+        refetchOnWindowFocus: 'always',
+      },
     },
 
     /* Setting up custom error handler, also needed for mutationCache:
@@ -14,6 +15,6 @@ const createQueryClient = () => new QueryClient({
         },
     }),
     */
-});
+  });
 
 export default createQueryClient;

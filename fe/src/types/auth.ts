@@ -1,18 +1,24 @@
-import {createContext} from "react";
-import {User, UserCredentials} from "../application/api/auth";
+import { createContext } from 'react';
+import { User, UserCredentials } from '../application/api/auth';
 
 interface IAuthState {
-    /** Indicates whether any authentication request is in progress */
-    isPending: boolean;
-    /** Function that performs login with passed credentials */
-    login(credentials: UserCredentials): void;
-    /** Function that performs logout */
-    logout(): void;
+  /** Indicates whether any authentication request is in progress */
+  isPending: boolean;
+  /** Function that performs login with passed credentials */
+  login(credentials: UserCredentials): void;
+  /** Function that performs logout */
+  logout(): void;
 }
 
-export type AuthState = IAuthState & (
-    | { isAuthenticated: true, user: User }
-    | { isAuthenticated: false, user: null });
+export type AuthState = IAuthState &
+  (
+    | { isAuthenticated: true; user: User }
+    | { isAuthenticated: false; user: null }
+  );
 
 export const AuthContext = createContext<AuthState | null>(null);
-export type {UserCredentials, User, LoginResponse} from "../application/api/auth";
+export type {
+  UserCredentials,
+  User,
+  LoginResponse,
+} from '../application/api/auth';

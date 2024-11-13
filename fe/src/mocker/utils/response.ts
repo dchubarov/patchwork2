@@ -1,4 +1,4 @@
-import {Response} from "miragejs";
+import { Response } from 'miragejs';
 
 export const BadRequestResponse = new Response(400);
 export const NotFoundResponse = new Response(404);

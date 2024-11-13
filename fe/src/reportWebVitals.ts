@@ -1,4 +1,4 @@
-import {Metric} from 'web-vitals';
+import { Metric } from 'web-vitals';
 
 const reportWebVitals = (onReport?: (metric: Metric) => void) => {
   if (onReport) {
