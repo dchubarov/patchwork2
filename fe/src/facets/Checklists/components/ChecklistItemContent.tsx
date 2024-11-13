@@ -330,7 +330,11 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
         }
         checked={item.id === targetItem?.id}
         onChange={() => setTargetItem(item)}
-        slotProps={{ icon: { sx: { color: colors.active } } }}
+        slotProps={{
+          icon: {
+            sx: (theme) => ({ color: theme.palette.text }),
+          },
+        }}
       />
     </ListItemContent>
   );
