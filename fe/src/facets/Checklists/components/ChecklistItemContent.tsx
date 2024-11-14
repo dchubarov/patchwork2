@@ -250,6 +250,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
         </Chip>
       )}
 
+      {/* TODO make item menu reusable */}
       <Dropdown>
         <MenuButton
           className="item-secondary-control"
