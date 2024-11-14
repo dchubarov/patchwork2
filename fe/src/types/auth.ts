@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { JwtPayload } from '@/utils/jwt';
 import { User, UserCredentials } from '../application/api/auth';
 
 interface IAuthState {
@@ -12,11 +13,12 @@ interface IAuthState {
 
 export type AuthState = IAuthState &
   (
-    | { isAuthenticated: true; user: User }
-    | { isAuthenticated: false; user: null }
+    | { isAuthenticated: true; user: User; sessionClaims: JwtPayload }
+    | { isAuthenticated: false; user: null; sessionClaims: null }
   );
 
 export const AuthContext = createContext<AuthState | null>(null);
+
 export type {
   UserCredentials,
   User,

@@ -10,7 +10,7 @@ import {
 } from '@/types/auth';
 import authApi from '../api/auth';
 import { useApiClient } from '@/hooks/env';
-import { decodeJwt } from '@/utils/jwt';
+import { decodeJwt, JwtPayload } from '@/utils/jwt';
 import { showNotification } from '@/utils/notification';
 import { logger } from '@/utils/logging';
 
@@ -21,22 +21,26 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const accessTokenRef = useRef<string | null>(null);
   const requestInterceptorRef = useRef<number | null>(null);
   const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(
-    0
-  ); // causes immediate refresh attempt
+    0 // causes immediate refresh attempt
+  );
 
   const handleSuccessfulLogin = (data: LoginResponse) => {
+    let jwt: JwtPayload | null = null;
     if (data.accessToken) {
       accessTokenRef.current = data.accessToken;
-      const jwt = decodeJwt(data.accessToken);
+      jwt = decodeJwt(data.accessToken);
       setTokenExpiresMillis(jwt.exp * 1000);
     }
 
+    // TODO error if no token, token expired, etc
+
     setContext((prev) => ({
       ...prev,
+      isPending: false,
+      isAuthenticated: true,
+      sessionClaims: jwt!!,
       user:
         prev.user && _.isEqual(prev.user, data.user) ? prev.user : data.user,
-      isAuthenticated: true,
-      isPending: false,
     }));
 
     if (requestInterceptorRef.current === null) {
@@ -61,9 +65,10 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     setTokenExpiresMillis(null);
     setContext((prev) => ({
       ...prev,
-      user: null,
-      isAuthenticated: false,
       isPending: false,
+      isAuthenticated: false,
+      sessionClaims: null,
+      user: null,
     }));
 
     if (requestInterceptorRef.current !== null) {
@@ -154,6 +159,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
       user: null,
       isPending: true, // because an attempt to refresh is always made on mount (see useEffect)
       isAuthenticated: false,
+      sessionClaims: null,
       login: (credentials: UserCredentials) => {
         doLogin(credentials);
       },
