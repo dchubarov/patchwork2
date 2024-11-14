@@ -50,8 +50,7 @@ interface ChecklistItemContentProps {
   showId?: boolean;
 }
 
-/*
-const DragHandle: React.FC = () => (
+/*const DragHandle: React.FC = () => (
   <DragIcon
     className="item-secondary-control"
     fontSize="xl"
@@ -61,8 +60,7 @@ const DragHandle: React.FC = () => (
       //transform: 'rotate(-90deg)',
     }}
   />
-);
-*/
+);*/
 
 const GroupProgress: React.FC<{
   isUpdating?: boolean;
@@ -202,9 +200,10 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
       updateItem({ ...item, colorLabel: label ?? null });
   };
 
-  const handleChangeParent = () => {
-    if (item.parent !== (targetItem?.id ?? null))
-      updateItem({ ...item, parent: targetItem?.id ?? null });
+  const handleChangeParent = (newParent?: string | null) => {
+    if (newParent === undefined) newParent = targetItem?.id ?? null;
+    if (item.id !== newParent && item.parent !== newParent)
+      updateItem({ ...item, parent: newParent });
   };
 
   const handleDeleteItem = (deleteItemId: string) => {
@@ -271,15 +270,21 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
         </MenuButton>
         <Menu size="sm">
           <MenuItem
-            disabled={
-              targetItem?.id === item.id || targetItem?.id === item.parent
-            }
-            onClick={handleChangeParent}>
-            <ListItemDecorator />
-            {targetItem?.id
-              ? `Make child of "${_.truncate(targetItem.note, { length: 20 })}" (#${targetItem.id})`
-              : 'Move to top level'}
+            disabled={item.parent == null}
+            onClick={() => handleChangeParent(null)}>
+            Move to top level
           </MenuItem>
+          {targetItem && targetItem.id !== item.id && (
+            <MenuItem
+              disabled={
+                item.id === targetItem.id ||
+                item.parent === targetItem.id ||
+                group?.targetWithin
+              }
+              onClick={() => handleChangeParent()}>
+              {`Make child of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
+            </MenuItem>
+          )}
           <ListDivider />
           <MenuItem color="danger" onClick={() => handleDeleteItem(item.id)}>
             <ListItemDecorator>
