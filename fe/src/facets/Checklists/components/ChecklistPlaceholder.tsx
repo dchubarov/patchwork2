@@ -1,11 +1,22 @@
 import React from 'react';
-import { ListItemContent, Radio } from '@mui/joy';
+import {
+  AspectRatio,
+  CircularProgress,
+  ListItemContent,
+  Radio,
+} from '@mui/joy';
 import { AddCircle as AddIcon } from '@mui/icons-material';
 import Editable from '@/components/Editable';
 import { useChecklist } from '../hooks';
 
 const ChecklistPlaceholder: React.FC = () => {
-  const { updateItem, targetItem, setTargetItem } = useChecklist();
+  const {
+    updateItem,
+    isUpdatingItem,
+    updatingItemId,
+    targetItem,
+    setTargetItem,
+  } = useChecklist();
   const handleValueEdited = (editedValue?: string) => {
     if (editedValue && editedValue.trim()) {
       updateItem({
@@ -23,7 +34,32 @@ const ChecklistPlaceholder: React.FC = () => {
 
   return (
     <ListItemContent sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-      <AddIcon sx={{ mx: '2px', color: 'var(--joy-palette-neutral-400)' }} />
+      <AspectRatio
+        ratio={1}
+        variant="soft"
+        sx={{
+          '--AspectRatio-radius': '50%',
+          width: '24px',
+        }}>
+        {isUpdatingItem && updatingItemId === '' ? (
+          <CircularProgress
+            variant="plain"
+            color="neutral"
+            thickness={3}
+            sx={{
+              '--CircularProgress-size': '18px',
+              padding: '3px',
+            }}
+          />
+        ) : (
+          <AddIcon
+            sx={{
+              color: 'var(--joy-palette-neutral-400)',
+            }}
+          />
+        )}
+      </AspectRatio>
+
       <Editable.Typography
         name="new-item-note"
         onEdited={handleValueEdited}

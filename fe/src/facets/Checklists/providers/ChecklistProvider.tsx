@@ -251,8 +251,8 @@ function checklistReducer(
     case ChecklistStateActionType.SET_UPDATING_ITEM:
       return {
         ...state,
-        isUpdatingItem: true,
-        updatingItemId: action.itemId ?? null,
+        isUpdatingItem: action.itemId != null,
+        updatingItemId: action.itemId,
       };
 
     case ChecklistStateActionType.SET_TARGET_ITEM:
