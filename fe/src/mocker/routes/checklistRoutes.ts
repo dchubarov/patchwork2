@@ -110,17 +110,25 @@ export default function checklistRoutes(server: AppServer) {
       const json = JSON.parse(request.requestBody).checklistItem;
       const checklistItem = ensureChecklistItem(schema, json?.id, checklistId);
 
-      if (
-        json.parent !== undefined &&
-        json.parent !== (checklistItem as any).parentId
-      ) {
-        checkPossibleParent(schema, checklistItem, json.parent);
-        (checklistItem as any).parentId = json.parent;
+      if (json.parent !== undefined || json.successor !== undefined) {
+        let updateSeq = false;
+        if (
+          json.parent !== undefined &&
+          json.parent !== (checklistItem as any).parentId
+        ) {
+          checkPossibleParent(schema, checklistItem, json.parent);
+          (checklistItem as any).parentId = json.parent;
+          updateSeq = true;
+        }
 
-        checklistItem.sequenceCode = calculateSequenceCode(
-          schema,
-          checklistItem
-        );
+        if (json.successor !== undefined) updateSeq = true;
+
+        if (updateSeq)
+          checklistItem.sequenceCode = calculateSequenceCode(
+            schema,
+            checklistItem,
+            json.successor
+          );
       }
 
       checklistItem.note = json.note ?? checklistItem.note;

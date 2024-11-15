@@ -12,6 +12,8 @@ const checklistItemSchema = z.object({
   colorLabel: z.nullable(z.string()).default(null),
   /** Parent item id */
   parent: z.nullable(z.string()).default(null),
+  /** Allows to specify successor ID when making update request. */
+  successor: z.optional(z.nullable(z.string())),
   /** Defines a relative position among other elements in group */
   sequenceCode: z.number(),
 });

@@ -207,6 +207,11 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
 
   const handleChangeSuccessor = () => {
     if (targetItem) {
+      updateItem({
+        ...item,
+        parent: targetItem.parent,
+        successor: targetItem.id,
+      });
     }
   };
 
@@ -286,7 +291,9 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
                 onClick={() => handleChangeParent()}>
                 {`Make child of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
               </MenuItem>
-              <MenuItem onClick={() => handleChangeSuccessor()}>
+              <MenuItem
+                disabled={targetItem.parent === item.id || group?.targetWithin}
+                onClick={() => handleChangeSuccessor()}>
                 {`Make predecessor of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
               </MenuItem>
             </>
