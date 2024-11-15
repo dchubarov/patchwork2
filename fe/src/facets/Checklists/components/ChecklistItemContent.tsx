@@ -161,6 +161,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
   showId,
 }) => {
   const {
+    data,
     updateItem,
     deleteItem,
     isUpdatingItem,
@@ -220,6 +221,9 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
   };
 
   const chipContent = `ID:${item.id} SQ:${item.sequenceCode}`;
+  const targetInfo = targetItem
+    ? `"${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`
+    : '';
 
   return (
     <ListItemContent
@@ -289,12 +293,12 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
               <MenuItem
                 disabled={item.parent === targetItem.id || group?.targetWithin}
                 onClick={() => handleChangeParent()}>
-                {`Make child of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
+                {`Make child of ${targetInfo}`}
               </MenuItem>
               <MenuItem
                 disabled={targetItem.parent === item.id || group?.targetWithin}
                 onClick={() => handleChangeSuccessor()}>
-                {`Make predecessor of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
+                {`Make ${data?.config?.reverseOrder ? 'successor' : 'predecessor'} of ${targetInfo}`}
               </MenuItem>
             </>
           )}

@@ -311,7 +311,12 @@ function rebuildGroups(
     });
 
     const group: ChecklistGroupState = {
-      items: items?.sort((a, b) => a.sequenceCode - b.sequenceCode) ?? [],
+      items:
+        items?.sort((a, b) =>
+          data?.config?.reverseOrder
+            ? b.sequenceCode - a.sequenceCode
+            : a.sequenceCode - b.sequenceCode
+        ) ?? [],
       expanded: state.groups.get(id)?.expanded ?? true,
       targetWithin,
       doableCount,

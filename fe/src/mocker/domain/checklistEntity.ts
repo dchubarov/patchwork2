@@ -11,15 +11,20 @@ import {
 export const CHECKLIST_ENTITY_KEY = 'checklist';
 export const CHECKLIST_ITEM_ENTITY_KEY = 'checklistItem';
 
-export interface ChecklistProgress {
+export interface ChecklistProgressDb {
   doableCount: number;
   doneCount: number;
+}
+
+interface ChecklistConfigDb {
+  reverseOrder?: boolean;
 }
 
 export type ChecklistDb = {
   items: HasMany<typeof CHECKLIST_ITEM_ENTITY_KEY>;
   title: string;
-  progress?: ChecklistProgress;
+  config?: ChecklistConfigDb;
+  progress?: ChecklistProgressDb;
 } & EntityCommonAttributes;
 
 export type ChecklistItemDb = {
@@ -75,7 +80,11 @@ const ChecklistEntity = {
   }),
 
   seeds: (server: AppServer) => {
-    server.create(CHECKLIST_ENTITY_KEY, { id: 'dime1', title: 'My checklist' });
+    server.create(CHECKLIST_ENTITY_KEY, {
+      id: 'dime1',
+      title: 'My checklist',
+      config: { reverseOrder: true },
+    });
     server.create(CHECKLIST_ITEM_ENTITY_KEY, {
       id: '1',
       checklistId: 'dime1',

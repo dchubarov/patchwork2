@@ -18,20 +18,29 @@ const checklistItemSchema = z.object({
   sequenceCode: z.number(),
 });
 
+/** Checklist configuration */
+const checklistConfigSchema = z.object({
+  /** Reverse order of sequence (last added items go first) */
+  reverseOrder: z.optional(z.boolean()),
+});
+
+/** Checklist overall progress */
+const checklistProgressSchema = z.object({
+  /** Total doable items (non-groups) */
+  doableCount: z.number().default(0),
+  /** Number of items done */
+  doneCount: z.number().default(0),
+});
+
 export const checklistSchema = z.object({
   /** Checklist id */
   id: z.nullable(z.string()).default(null),
   /** Checklist title */
   title: z.string(),
+  /** Checklist configuration */
+  config: z.optional(checklistConfigSchema),
   /** Checklist progress, contains done/doable count at fetch time */
-  progress: z.optional(
-    z.object({
-      /** Total doable items (non-groups) */
-      doableCount: z.number().default(0),
-      /** Number of items done */
-      doneCount: z.number().default(0),
-    })
-  ),
+  progress: z.optional(checklistProgressSchema),
   /** Checklist items */
   items: z.array(checklistItemSchema).default([]),
 });
@@ -44,6 +53,7 @@ export const checklistTemplateResponse: ChecklistResponseData = {
   checklist: {
     id: null,
     title: 'Untitled',
+    config: {},
     items: [],
   },
 };
