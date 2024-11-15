@@ -104,10 +104,15 @@ const ChecklistProvider: React.FC<
       });
     },
     onError: (error, data: ChecklistItemData) => {
-      showNotification(`Failed to update checklist item #${data.id}`, {
-        type: 'error',
-        subtitle: error.message,
-      });
+      showNotification(
+        data.id === ''
+          ? 'Failed to add checklist item'
+          : `Failed to update checklist item #${data.id}`,
+        {
+          type: 'error',
+          subtitle: error.message,
+        }
+      );
 
       // refresh item so re-render happens
       queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
