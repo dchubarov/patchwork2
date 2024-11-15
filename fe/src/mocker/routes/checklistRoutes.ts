@@ -10,7 +10,6 @@ import {
   BadRequestResponse,
   ForbiddenResponse,
   NotFoundResponse,
-  ServerErrorResponse,
 } from '../utils/response';
 
 export default function checklistRoutes(server: AppServer) {
@@ -110,25 +109,22 @@ export default function checklistRoutes(server: AppServer) {
       const json = JSON.parse(request.requestBody).checklistItem;
       const checklistItem = ensureChecklistItem(schema, json?.id, checklistId);
 
-      try {
-        if (json.parent !== undefined) {
-          (checklistItem as any).parentId = json.parent;
-        }
-
-        checklistItem.note = json.note ?? checklistItem.note;
-        checklistItem.done = json.done ?? checklistItem.done;
-        checklistItem.colorLabel =
-          json.colorLabel !== undefined
-            ? json.colorLabel
-            : checklistItem.colorLabel;
-        checklistItem.lastModifiedById = user.id;
-        checklistItem.lastModifiedAt = new Date();
-        checklistItem.save();
-
-        return checklistItem;
-      } catch (e) {
-        return ServerErrorResponse;
+      if (json.parent !== undefined) {
+        checkPossibleParent(schema, checklistItem, json.parent);
+        (checklistItem as any).parentId = json.parent;
       }
+
+      checklistItem.note = json.note ?? checklistItem.note;
+      checklistItem.done = json.done ?? checklistItem.done;
+      checklistItem.colorLabel =
+        json.colorLabel !== undefined
+          ? json.colorLabel
+          : checklistItem.colorLabel;
+      checklistItem.lastModifiedById = user.id;
+      checklistItem.lastModifiedAt = new Date();
+      checklistItem.save();
+
+      return checklistItem;
     })
   );
 
@@ -198,4 +194,29 @@ function recalculateChecklistProgress(
       if (item.done) checklist.progress!!.doneCount++;
     }
   });
+}
+
+function checkPossibleParent(
+  schema: AppSchema,
+  checklistItem: Instantiate<AppRegistry, typeof CHECKLIST_ITEM_ENTITY_KEY>,
+  newParentId: string | null
+) {
+  if (newParentId == null) return;
+  if (newParentId === checklistItem.id) throw BadRequestResponse;
+
+  let parent: Instantiate<
+    AppRegistry,
+    typeof CHECKLIST_ITEM_ENTITY_KEY
+  > | null = ensureChecklistItem(
+    schema,
+    newParentId,
+    checklistItem.checklistId
+  );
+
+  while (parent) {
+    if (parent.id === checklistItem.id) {
+      throw BadRequestResponse;
+    }
+    parent = parent.parent ?? null;
+  }
 }
