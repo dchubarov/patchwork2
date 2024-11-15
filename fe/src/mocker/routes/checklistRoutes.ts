@@ -10,6 +10,7 @@ import {
   BadRequestResponse,
   ForbiddenResponse,
   NotFoundResponse,
+  ServerErrorResponse,
 } from '../utils/response';
 
 export default function checklistRoutes(server: AppServer) {
@@ -92,7 +93,7 @@ export default function checklistRoutes(server: AppServer) {
         parentId: json.parent ?? null,
       });
 
-      item.attrs.sequenceCode = parseInt(item.id!!);
+      item.attrs.sequenceCode = calculateSequenceCode(schema, item);
       item.save();
 
       return item;
@@ -109,9 +110,17 @@ export default function checklistRoutes(server: AppServer) {
       const json = JSON.parse(request.requestBody).checklistItem;
       const checklistItem = ensureChecklistItem(schema, json?.id, checklistId);
 
-      if (json.parent !== undefined) {
+      if (
+        json.parent !== undefined &&
+        json.parent !== (checklistItem as any).parentId
+      ) {
         checkPossibleParent(schema, checklistItem, json.parent);
         (checklistItem as any).parentId = json.parent;
+
+        checklistItem.sequenceCode = calculateSequenceCode(
+          schema,
+          checklistItem
+        );
       }
 
       checklistItem.note = json.note ?? checklistItem.note;
@@ -219,4 +228,31 @@ function checkPossibleParent(
     }
     parent = parent.parent ?? null;
   }
+}
+
+function calculateSequenceCode(
+  schema: AppSchema,
+  checklistItem: Instantiate<AppRegistry, typeof CHECKLIST_ITEM_ENTITY_KEY>,
+  successorId: string | null = null
+) {
+  if (!checklistItem.id) throw ServerErrorResponse;
+  const baselineSeq = parseInt(checklistItem.id);
+
+  const itemsInGroup = schema
+    .where(CHECKLIST_ITEM_ENTITY_KEY, {
+      parentId: checklistItem.parent?.id ?? null,
+    } as any)
+    .filter((e) => e.id !== checklistItem.id)
+    .sort((a, b) => (a.sequenceCode ?? 0) - (b.sequenceCode ?? 0)).models;
+
+  if (itemsInGroup.length < 1) return baselineSeq;
+  if (successorId) {
+    const i = itemsInGroup.findIndex((e) => e.id === successorId);
+    if (i >= 0) {
+      const successorSeq = itemsInGroup[i].sequenceCode!!;
+      const predecessorSeq = i > 0 ? itemsInGroup[i - 1].sequenceCode!! : 0;
+      return (predecessorSeq + successorSeq) / 2;
+    }
+  }
+  return itemsInGroup[itemsInGroup.length - 1].sequenceCode!! + 1;
 }

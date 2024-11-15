@@ -156,7 +156,6 @@ const ItemToggle: React.FC<{
 };
 
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
-  level,
   item,
   group = null,
   showId,
@@ -206,11 +205,16 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
       updateItem({ ...item, parent: newParent });
   };
 
+  const handleChangeSuccessor = () => {
+    if (targetItem) {
+    }
+  };
+
   const handleDeleteItem = (deleteItemId: string) => {
     deleteItem(deleteItemId);
   };
 
-  const chipContent = `ID:${item.id} LV:${level} SQ:${item.sequenceCode}`;
+  const chipContent = `ID:${item.id} SQ:${item.sequenceCode}`;
 
   return (
     <ListItemContent
@@ -276,15 +280,16 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
             Move to top level
           </MenuItem>
           {targetItem && targetItem.id !== item.id && (
-            <MenuItem
-              disabled={
-                item.id === targetItem.id ||
-                item.parent === targetItem.id ||
-                group?.targetWithin
-              }
-              onClick={() => handleChangeParent()}>
-              {`Make child of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
-            </MenuItem>
+            <>
+              <MenuItem
+                disabled={item.parent === targetItem.id || group?.targetWithin}
+                onClick={() => handleChangeParent()}>
+                {`Make child of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
+              </MenuItem>
+              <MenuItem onClick={() => handleChangeSuccessor()}>
+                {`Make predecessor of "${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`}
+              </MenuItem>
+            </>
           )}
           <ListDivider />
           <MenuItem color="danger" onClick={() => handleDeleteItem(item.id)}>
@@ -304,8 +309,8 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
             <ListSubheader>Color Label</ListSubheader>
             <List orientation="horizontal" size="sm">
               <ColorLabel.MenuItems
-                showNoColor
                 onChange={handleColorLabelChange}
+                showNoColor
               />
             </List>
           </ListItem>
