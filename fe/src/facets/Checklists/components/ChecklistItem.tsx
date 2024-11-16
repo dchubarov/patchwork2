@@ -88,7 +88,7 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({
             nodeRef={nestedListRef}
             classNames={listItemClasses.nesting}
             in={group.expanded}
-            timeout={150}
+            timeout={80}
             unmountOnExit>
             <List ref={nestedListRef}>
               <ChecklistGroup

@@ -84,6 +84,10 @@ const ChecklistProvider: React.FC<
       });
     },
     onSuccess: (data) => {
+      dispatch({
+        type: ChecklistStateActionType.SET_UPDATING_ITEM,
+        itemId: data.checklistItem.id,
+      });
       queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
         if (!prev) return prev;
         let found = false;
@@ -127,12 +131,6 @@ const ChecklistProvider: React.FC<
         };
       });
     },
-    onSettled: () => {
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: null,
-      });
-    },
   });
 
   const { mutate: doDeleteItem } = useMutation({
@@ -161,12 +159,6 @@ const ChecklistProvider: React.FC<
       showNotification(`Failed to delete checklist item #${deleteItemId}`, {
         type: 'error',
         subtitle: error.message,
-      });
-    },
-    onSettled: () => {
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: null,
       });
     },
   });
@@ -232,6 +224,8 @@ function checklistReducer(
         ...state,
         data: action.data,
         isLoading: action.isLoading,
+        isUpdatingItem: false,
+        updatingItemId: null,
         ...rebuildGroups(action.data, state),
       };
 
@@ -287,13 +281,15 @@ function rebuildGroups(
 
   const visited = new Set<string | null>();
 
-  function dfs(id: string | null): ChecklistGroupState | undefined {
+  function dfs(id: string | null) {
     if (visited.has(id)) return;
     visited.add(id);
 
-    let doableCount = 0,
-      doneCount = 0,
-      targetWithin = id === state.targetItem?.id;
+    let expanded = state.groups.get(id)?.expanded ?? true,
+      forceExpandParent: boolean | undefined = undefined,
+      targetWithin = id === state.targetItem?.id,
+      doableCount = 0,
+      doneCount = 0;
 
     const items = roots.get(id);
     items?.forEach((item) => {
@@ -301,11 +297,19 @@ function rebuildGroups(
         const childGroup = dfs(item.id);
         if (childGroup) {
           if (childGroup.targetWithin) targetWithin = true;
-          doneCount += childGroup.doneCount;
+          if (childGroup.forceExpandParent) {
+            forceExpandParent = true;
+            expanded = true;
+          }
           doableCount += childGroup.doableCount;
+          doneCount += childGroup.doneCount;
         }
       } else {
         if (item.id === state.targetItem?.id) targetWithin = true;
+        if (item.id === state.updatingItemId) {
+          forceExpandParent = true;
+          expanded = true;
+        }
         if (item.done) doneCount++;
         doableCount++;
       }
@@ -321,7 +325,8 @@ function rebuildGroups(
             ? b.sequenceCode - a.sequenceCode
             : a.sequenceCode - b.sequenceCode
         ) ?? [],
-      expanded: state.groups.get(id)?.expanded ?? true,
+      expanded,
+      forceExpandParent,
       targetWithin,
       doableCount,
       doneCount,

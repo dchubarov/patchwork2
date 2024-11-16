@@ -6,6 +6,7 @@ export interface ChecklistGroupState {
   doableCount: number;
   doneCount: number;
   expanded: boolean;
+  forceExpandParent?: boolean;
   targetWithin: boolean;
 }
 
