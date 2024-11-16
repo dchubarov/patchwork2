@@ -1,5 +1,6 @@
 import { AxiosInstance } from 'axios';
 import {
+  allChecklistsResponseSchema,
   ChecklistItemData,
   ChecklistItemResponseData,
   checklistItemResponseSchema,
@@ -8,6 +9,13 @@ import {
   checklistTemplateResponse,
 } from '../types/schema';
 import { QueryFunctionContext } from '@tanstack/react-query';
+
+export const fetchAllChecklists =
+  (client: AxiosInstance) =>
+  async ({ signal }: QueryFunctionContext) =>
+    client
+      .get(`x/checklists/v2/checklist`, { signal })
+      .then((response) => allChecklistsResponseSchema.parse(response.data));
 
 export const fetchChecklist =
   (client: AxiosInstance, checklistId: string | number | null) =>

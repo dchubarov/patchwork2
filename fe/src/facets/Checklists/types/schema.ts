@@ -32,17 +32,24 @@ const checklistProgressSchema = z.object({
   doneCount: z.number().default(0),
 });
 
-export const checklistSchema = z.object({
+const checklistBaseSchema = z.object({
   /** Checklist id */
   id: z.nullable(z.string()).default(null),
   /** Checklist title */
   title: z.string(),
-  /** Checklist configuration */
-  config: z.optional(checklistConfigSchema),
   /** Checklist progress, contains done/doable count at fetch time */
   progress: z.optional(checklistProgressSchema),
+  /** Checklist configuration */
+  config: z.optional(checklistConfigSchema),
+});
+
+export const checklistSchema = checklistBaseSchema.extend({
   /** Checklist items */
   items: z.array(checklistItemSchema).default([]),
+});
+
+export const allChecklistsResponseSchema = z.object({
+  checklists: z.array(checklistBaseSchema).default([]),
 });
 
 export const checklistResponseSchema = z.object({
@@ -62,6 +69,7 @@ export const checklistItemResponseSchema = z.object({
   checklistItem: checklistItemSchema,
 });
 
+export type ChecklistBaseData = z.infer<typeof checklistBaseSchema>;
 export type ChecklistData = z.infer<typeof checklistSchema>;
 export type ChecklistItemData = z.infer<typeof checklistItemSchema>;
 export type ChecklistResponseData = z.infer<typeof checklistResponseSchema>;

@@ -106,6 +106,7 @@ const ChecklistProvider: React.FC<
           },
         };
       });
+      queryClient.invalidateQueries({ queryKey: ['checklists/all'] }).then();
     },
     onError: (error, data: ChecklistItemData) => {
       showNotification(
@@ -154,6 +155,7 @@ const ChecklistProvider: React.FC<
           },
         };
       });
+      queryClient.invalidateQueries({ queryKey: ['checklists/all'] }).then();
     },
     onError: (error, deleteItemId) => {
       showNotification(`Failed to delete checklist item #${deleteItemId}`, {
