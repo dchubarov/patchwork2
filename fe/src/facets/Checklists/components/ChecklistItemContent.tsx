@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AspectRatio,
   Box,
@@ -155,15 +155,124 @@ const ItemToggle: React.FC<{
   );
 };
 
+const ItemCommands: React.FC<{
+  item: ChecklistItemData;
+  group: ChecklistGroupState | null;
+}> = ({ item, group }) => {
+  const { updateItem, deleteItem, targetItem } = useChecklist();
+  const [open, setOpen] = useState(false);
+
+  const targetInfo = targetItem
+    ? `"${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`
+    : '';
+
+  const handleColorLabelChange = (label?: string) => {
+    if (item.colorLabel !== (label ?? null))
+      updateItem({ ...item, colorLabel: label ?? null });
+  };
+
+  const handleChangeParent = (newParent?: string | null) => {
+    if (newParent === undefined) newParent = targetItem?.id ?? null;
+    if (item.id !== newParent && item.parent !== newParent)
+      updateItem({ ...item, parent: newParent });
+  };
+
+  const handleChangeSuccessor = () => {
+    if (targetItem) {
+      updateItem({
+        ...item,
+        parent: targetItem.parent,
+        successor: targetItem.id,
+      });
+    }
+  };
+
+  const handleDeleteItem = (deleteItemId: string) => {
+    deleteItem(deleteItemId);
+  };
+
+  return (
+    <Dropdown open={open} onOpenChange={(_, isOpen) => setOpen(isOpen)}>
+      <MenuButton
+        className="item-secondary-control"
+        slots={{ root: IconButton }}
+        slotProps={{
+          root: {
+            size: 'sm',
+            sx: {
+              background: 'transparent',
+              color: 'var(--joy-palette-text-tertiary)',
+              '&:hover': {
+                background: 'transparent',
+              },
+            },
+          },
+        }}>
+        <MenuIcon />
+      </MenuButton>
+      <Menu size="sm">
+        {open && (
+          <>
+            <MenuItem
+              disabled={item.parent == null}
+              onClick={() => handleChangeParent(null)}>
+              Move to top level
+            </MenuItem>
+            {targetItem && targetItem.id !== item.id && (
+              <>
+                <MenuItem
+                  disabled={
+                    item.parent === targetItem.id || group?.targetWithin
+                  }
+                  onClick={() => handleChangeParent()}>
+                  {`Make child of ${targetInfo}`}
+                </MenuItem>
+                <MenuItem
+                  disabled={
+                    targetItem.parent === item.id || group?.targetWithin
+                  }
+                  onClick={() => handleChangeSuccessor()}>
+                  {`Make adjacent to ${targetInfo}`}
+                </MenuItem>
+              </>
+            )}
+            <ListDivider />
+            <MenuItem color="danger" onClick={() => handleDeleteItem(item.id)}>
+              <ListItemDecorator>
+                <DeleteIcon />
+              </ListItemDecorator>
+              Delete
+            </MenuItem>
+            <ListDivider />
+            <ListItem
+              nested
+              sx={{
+                marginX: '0.5rem',
+                '--ListItem-startActionWidth': 0,
+                '--ListItem-radius': 'var(--joy-radius-xs)',
+              }}>
+              <ListSubheader>Color Label</ListSubheader>
+              <List orientation="horizontal" size="sm">
+                <ColorLabel.MenuItems
+                  onChange={handleColorLabelChange}
+                  showNoColor
+                />
+              </List>
+            </ListItem>
+          </>
+        )}
+      </Menu>
+    </Dropdown>
+  );
+};
+
 const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
   item,
   group = null,
   showId,
 }) => {
   const {
-    data,
     updateItem,
-    deleteItem,
     isUpdatingItem,
     updatingItemId,
     targetItem,
@@ -195,35 +304,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
     else return false;
   };
 
-  const handleColorLabelChange = (label?: string) => {
-    if (item.colorLabel !== (label ?? null))
-      updateItem({ ...item, colorLabel: label ?? null });
-  };
-
-  const handleChangeParent = (newParent?: string | null) => {
-    if (newParent === undefined) newParent = targetItem?.id ?? null;
-    if (item.id !== newParent && item.parent !== newParent)
-      updateItem({ ...item, parent: newParent });
-  };
-
-  const handleChangeSuccessor = () => {
-    if (targetItem) {
-      updateItem({
-        ...item,
-        parent: targetItem.parent,
-        successor: targetItem.id,
-      });
-    }
-  };
-
-  const handleDeleteItem = (deleteItemId: string) => {
-    deleteItem(deleteItemId);
-  };
-
   const chipContent = `ID:${item.id} SQ:${item.sequenceCode}`;
-  const targetInfo = targetItem
-    ? `"${_.truncate(targetItem.note, { length: 20 })}" [#${targetItem.id}]`
-    : '';
 
   return (
     <ListItemContent
@@ -263,70 +344,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
         </Chip>
       )}
 
-      {/* TODO make item menu reusable */}
-      <Dropdown>
-        <MenuButton
-          className="item-secondary-control"
-          slots={{ root: IconButton }}
-          slotProps={{
-            root: {
-              size: 'sm',
-              sx: {
-                background: 'transparent',
-                color: 'var(--joy-palette-text-tertiary)',
-                '&:hover': {
-                  background: 'transparent',
-                },
-              },
-            },
-          }}>
-          <MenuIcon />
-        </MenuButton>
-        <Menu size="sm">
-          <MenuItem
-            disabled={item.parent == null}
-            onClick={() => handleChangeParent(null)}>
-            Move to top level
-          </MenuItem>
-          {targetItem && targetItem.id !== item.id && (
-            <>
-              <MenuItem
-                disabled={item.parent === targetItem.id || group?.targetWithin}
-                onClick={() => handleChangeParent()}>
-                {`Make child of ${targetInfo}`}
-              </MenuItem>
-              <MenuItem
-                disabled={targetItem.parent === item.id || group?.targetWithin}
-                onClick={() => handleChangeSuccessor()}>
-                {`Make ${data?.config?.reverseOrder ? 'successor' : 'predecessor'} of ${targetInfo}`}
-              </MenuItem>
-            </>
-          )}
-          <ListDivider />
-          <MenuItem color="danger" onClick={() => handleDeleteItem(item.id)}>
-            <ListItemDecorator>
-              <DeleteIcon />
-            </ListItemDecorator>
-            Delete
-          </MenuItem>
-          <ListDivider />
-          <ListItem
-            nested
-            sx={{
-              marginX: '0.5rem',
-              '--ListItem-startActionWidth': 0,
-              '--ListItem-radius': 'var(--joy-radius-xs)',
-            }}>
-            <ListSubheader>Color Label</ListSubheader>
-            <List orientation="horizontal" size="sm">
-              <ColorLabel.MenuItems
-                onChange={handleColorLabelChange}
-                showNoColor
-              />
-            </List>
-          </ListItem>
-        </Menu>
-      </Dropdown>
+      <ItemCommands item={item} group={group} />
 
       <Radio
         className={
