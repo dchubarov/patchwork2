@@ -228,13 +228,11 @@ function checklistReducer(
 ): ChecklistState {
   switch (action.type) {
     case ChecklistStateActionType.SET_DATA:
-      const groups = rebuildGroups(action.data, state);
       return {
         ...state,
         data: action.data,
         isLoading: action.isLoading,
-        targetItem: groups.get(null)?.targetWithin ? state.targetItem : null,
-        groups,
+        ...rebuildGroups(action.data, state),
       };
 
     case ChecklistStateActionType.SET_GROUP_EXPANDED:
@@ -258,11 +256,10 @@ function checklistReducer(
     case ChecklistStateActionType.SET_TARGET_ITEM:
       return {
         ...state,
-        groups: rebuildGroups(state.data, {
+        ...rebuildGroups(state.data, {
           ...state,
           targetItem: action.item,
         }),
-        targetItem: action.item,
       };
   }
 
@@ -272,9 +269,13 @@ function checklistReducer(
 function rebuildGroups(
   data: ChecklistData | null,
   state: ChecklistState
-): Map<string | null, ChecklistGroupState> {
+): {
+  groups: Map<string | null, ChecklistGroupState>;
+  targetItem: ChecklistItemData | null;
+} {
   const groups = new Map<string | null, ChecklistGroupState>();
-  if (!data) return groups;
+  let targetItem: ChecklistItemData | null = null;
+  if (!data) return { groups, targetItem };
 
   const roots = data.items.reduce((acc, item) => {
     const items = acc.get(item.parent);
@@ -308,6 +309,9 @@ function rebuildGroups(
         if (item.done) doneCount++;
         doableCount++;
       }
+      if (item.id === state.targetItem?.id) {
+        targetItem = item !== targetItem ? item : targetItem;
+      }
     });
 
     const group: ChecklistGroupState = {
@@ -328,5 +332,5 @@ function rebuildGroups(
   }
 
   dfs(null);
-  return groups;
+  return { groups, targetItem };
 }
