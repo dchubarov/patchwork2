@@ -12,9 +12,7 @@ import {
   Typography,
 } from '@mui/joy';
 import { Add as AddIcon, ArrowRight as ActiveIcon } from '@mui/icons-material';
-import { useQuery } from '@tanstack/react-query';
-import { useActiveView, useApiClient } from '@/hooks';
-import * as checklistApi from '../api';
+import { useActiveView } from '@/hooks';
 import PieProgress from '@/components/PieProgress';
 import { ChecklistBaseData } from '../types/schema';
 
@@ -102,15 +100,10 @@ const AllChecklistsItem: React.FC<{
   );
 };
 
-const AllChecklistsWidget: React.FC<{ activeChecklistId?: string | null }> = ({
-  activeChecklistId,
-}) => {
-  const apiClient = useApiClient();
-  const { data } = useQuery({
-    queryKey: ['checklists/all'],
-    queryFn: checklistApi.fetchAllChecklists(apiClient),
-  });
-
+const AllChecklistsWidget: React.FC<{
+  allChecklists: ChecklistBaseData[];
+  activeChecklistId?: string | null;
+}> = ({ allChecklists, activeChecklistId }) => {
   return (
     <List
       size="sm"
@@ -122,13 +115,13 @@ const AllChecklistsWidget: React.FC<{ activeChecklistId?: string | null }> = ({
       }}>
       <ListItem nested>
         <AllChecklistsGroup
-          count={data?.checklists.length}
+          count={allChecklists.length}
           caption="Personal checklists"
           addButton
         />
-        {data?.checklists.length && (
+        {allChecklists.length && (
           <List>
-            {data.checklists.map((item) => (
+            {allChecklists.map((item) => (
               <AllChecklistsItem
                 key={item.id}
                 item={item}
