@@ -52,6 +52,10 @@ export const allChecklistsResponseSchema = z.object({
   checklists: z.array(checklistBaseSchema).default([]),
 });
 
+export const checklistBaseResponseSchema = z.object({
+  checklist: checklistBaseSchema,
+});
+
 export const checklistResponseSchema = z.object({
   checklist: checklistSchema,
 });

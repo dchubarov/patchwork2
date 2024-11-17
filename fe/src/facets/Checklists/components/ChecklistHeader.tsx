@@ -5,13 +5,23 @@ import Editable from '@/components/Editable';
 import { useChecklist } from '../hooks';
 
 const ChecklistHeader: React.FC = () => {
-  const { data, groups, isLoading } = useChecklist();
+  const { data, groups, isLoading, updateChecklist } = useChecklist();
   const group = groups.get(null);
   const progress =
     !!group && group.doableCount > 0
       ? (group.doneCount / group.doableCount) * 100
       : 0;
   const counts = group ? `${group.doneCount} / ${group.doableCount}` : '';
+
+  const handleTitleEdited = (title?: string) => {
+    if (title && title !== data?.title) {
+      updateChecklist({
+        id: data?.id ?? null,
+        title: title ?? '',
+        items: [],
+      });
+    } else return false;
+  };
 
   return (
     <ListItemContent
@@ -40,10 +50,13 @@ const ChecklistHeader: React.FC = () => {
       </Tooltip>
 
       <Editable.Typography
+        noWrap
         level="h2"
         id="checklist-title"
         disabled={isLoading || !data}
         value={data?.title}
+        inputPlaceholder={data?.title}
+        onEdited={handleTitleEdited}
       />
     </ListItemContent>
   );

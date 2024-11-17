@@ -60,11 +60,7 @@ const AllChecklistsItem: React.FC<{
   let progress = 0,
     progressTooltip = '0 / 0';
 
-  if (
-    item.progress &&
-    item.progress.doableCount > 0 &&
-    item.progress.doneCount > 0
-  ) {
+  if (item.progress && item.progress.doableCount > 0) {
     progressTooltip = `${item.progress.doneCount} / ${item.progress.doableCount}`;
     progress = Math.trunc(
       (item.progress.doneCount / item.progress.doableCount) * 100
@@ -91,7 +87,7 @@ const AllChecklistsItem: React.FC<{
           </AspectRatio>
         </Tooltip>
       </ListItemDecorator>
-      <Typography level="body-sm" noWrap>
+      <Typography noWrap level="body-sm">
         <Link component={RouterLink} to={`${facet?.basePath}/${item.id}`}>
           {item.title}
         </Link>

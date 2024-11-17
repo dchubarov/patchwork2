@@ -11,22 +11,28 @@ import { useChecklist } from '../hooks';
 
 const ChecklistPlaceholder: React.FC = () => {
   const {
+    data,
+    updateChecklist,
     updateItem,
     isUpdatingItem,
     updatingItemId,
     targetItem,
     setTargetItem,
   } = useChecklist();
+
   const handleValueEdited = (editedValue?: string) => {
     if (editedValue && editedValue.trim()) {
-      updateItem({
+      const newItem = {
         id: '' /*new*/,
         note: editedValue.trim(),
         parent: targetItem?.id ?? null,
         done: false,
         colorLabel: null,
         sequenceCode: 0,
-      });
+      };
+      if (data && data?.id == null)
+        updateChecklist({ ...data, items: [newItem] });
+      else updateItem(newItem);
     }
     // always restore original (blank) value
     return false;

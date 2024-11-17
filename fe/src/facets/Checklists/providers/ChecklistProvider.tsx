@@ -11,14 +11,19 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { showNotification } from '@/utils/notification';
-import { useApiClient } from '@/hooks';
+import { useActiveView, useApiClient } from '@/hooks';
 import {
   ChecklistContext,
   ChecklistGroupState,
   ChecklistState,
 } from '../types/context';
-import { ChecklistData, ChecklistItemData } from '../types/schema';
+import {
+  ChecklistData,
+  ChecklistItemData,
+  ChecklistResponseData,
+} from '../types/schema';
 import * as checklistApi from '../api';
+import { useNavigate } from 'react-router-dom';
 
 enum ChecklistStateActionType {
   SET_DATA,
@@ -46,6 +51,7 @@ type ChecklistStateAction =
 
 export interface ChecklistProviderProps {
   checklistId?: string | number | null;
+  redirectBasePath?: string;
 }
 
 const ChecklistProvider: React.FC<
@@ -54,6 +60,8 @@ const ChecklistProvider: React.FC<
   const [state, dispatch] = useReducer(checklistReducer, initialState);
   const queryClient = useQueryClient();
   const apiClient = useApiClient();
+  const navigate = useNavigate();
+  const { facet } = useActiveView();
 
   const fetchOpts = queryOptions({
     queryKey: ['checklists/checklist', { checklistId }],
@@ -74,10 +82,40 @@ const ChecklistProvider: React.FC<
     });
   }, [isFetching, fetchResult, dispatch]);
 
+  const { mutate: doUpdateChecklist } = useMutation({
+    mutationKey: ['checklists/checklist/update', { checklistId }],
+    mutationFn: checklistApi.addOrUpdateChecklist(apiClient),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['checklists/all'] }).then();
+      if (state.data?.id === data.checklist.id) {
+        queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
+          if (!prev) return prev;
+          return {
+            checklist: {
+              ...prev.checklist,
+              ...data.checklist,
+            },
+          };
+        });
+      } else {
+        queryClient.setQueryData<ChecklistResponseData>(
+          ['checklists/checklist', { checklistId: data.checklist.id }],
+          () => ({
+            checklist: {
+              ...data.checklist,
+              items: [],
+            },
+          })
+        );
+        navigate(`${facet?.basePath}/${data.checklist.id}`);
+      }
+    },
+  });
+
   const { mutate: doUpdateItem } = useMutation({
     mutationKey: ['checklists/item/update', { checklistId }],
     mutationFn: checklistApi.addOrUpdateItem(apiClient, checklistId),
-    onMutate: (data) => {
+    onMutate: async (data) => {
       dispatch({
         type: ChecklistStateActionType.SET_UPDATING_ITEM,
         itemId: data.id,
@@ -131,6 +169,11 @@ const ChecklistProvider: React.FC<
           },
         };
       });
+
+      dispatch({
+        type: ChecklistStateActionType.SET_UPDATING_ITEM,
+        itemId: null,
+      });
     },
   });
 
@@ -162,6 +205,10 @@ const ChecklistProvider: React.FC<
         type: 'error',
         subtitle: error.message,
       });
+      dispatch({
+        type: ChecklistStateActionType.SET_UPDATING_ITEM,
+        itemId: null,
+      });
     },
   });
 
@@ -189,6 +236,10 @@ const ChecklistProvider: React.FC<
         dispatch({ type: ChecklistStateActionType.SET_TARGET_ITEM, item }),
       [dispatch]
     ),
+    updateChecklist: useCallback(
+      (data) => doUpdateChecklist(data),
+      [doUpdateChecklist]
+    ),
     updateItem: useCallback((updated) => doUpdateItem(updated), [doUpdateItem]),
     deleteItem: useCallback((itemId) => doDeleteItem(itemId), [doDeleteItem]),
   };
@@ -212,6 +263,7 @@ const initialState: ChecklistState = {
   groups: new Map(),
   setGroupExpanded: () => {},
   setTargetItem: () => {},
+  updateChecklist: () => {},
   updateItem: () => {},
   deleteItem: () => {},
 };

@@ -52,7 +52,65 @@ export default function checklistRoutes(server: AppServer) {
   );
 
   // Add a new checklist
-  server.post(`${checklistRouteBasename}/checklist`);
+  server.post(
+    `${checklistRouteBasename}/checklist`,
+    handleWithAuthorization((schema, request, user) => {
+      const json = JSON.parse(request.requestBody).checklist;
+      const timestamp = new Date();
+      const checklist = schema.create(CHECKLIST_ENTITY_KEY, {
+        title: json.title || 'Untitled',
+        config: {},
+        progress: {
+          doableCount: 0,
+          doneCount: 0,
+        },
+        lastModifiedById: user.id,
+        lastModifiedAt: timestamp,
+        createdById: user.id,
+        createdAt: timestamp,
+      });
+
+      if (Array.isArray(json.items)) {
+        json.items.forEach((item: any) => {
+          const dbItem = schema.create(CHECKLIST_ITEM_ENTITY_KEY, {
+            checklistId: checklist.id,
+            note: item.note,
+            colorLabel: item.colorLabel ?? null,
+            done: item.done ?? false,
+            parentId: null,
+            lastModifiedById: user.id,
+            lastModifiedAt: timestamp,
+            createdById: user.id,
+            createdAt: timestamp,
+          });
+          dbItem.attrs.sequenceCode = calculateSequenceCode(schema, dbItem);
+          dbItem.save();
+        });
+      }
+      checklist.reload();
+      if (checklist.title === 'Untitled')
+        checklist.title = `Untitled ${checklist.id}`;
+      recalculateChecklistProgress(checklist);
+      checklist.save();
+      return checklist;
+    })
+  );
+
+  // Update checklist title/options
+  server.put(
+    `${checklistRouteBasename}/checklist`,
+    handleWithAuthorization((schema, request, user) => {
+      const json = JSON.parse(request.requestBody).checklist;
+      const checklist = ensureChecklist(schema, json.id, user.id, 'write');
+      checklist.title = json.title ?? 'Untitled';
+      checklist.lastModifiedAt = new Date();
+      checklist.lastModifiedById = user.id;
+      if (json.config) {
+      }
+      checklist.save();
+      return checklist;
+    })
+  );
 
   // Get checklist contents
   server.get(
@@ -68,9 +126,6 @@ export default function checklistRoutes(server: AppServer) {
       return checklist;
     })
   );
-
-  // Update checklist title/options
-  server.put(`${checklistRouteBasename}/checklist/:checklistId`);
 
   // Delete a checklist identified by checklistId
   server.del(`${checklistRouteBasename}/checklist/:checklistId`);

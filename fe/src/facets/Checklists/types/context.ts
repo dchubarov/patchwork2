@@ -19,6 +19,7 @@ export interface ChecklistState {
   groups: Map<string | null, ChecklistGroupState>;
   setGroupExpanded: (itemId: string, expanded: boolean) => void;
   setTargetItem: (item: ChecklistItemData | null) => void;
+  updateChecklist: (data: ChecklistData) => void;
   updateItem: (item: ChecklistItemData) => void;
   deleteItem: (itemId: string) => void;
 }
