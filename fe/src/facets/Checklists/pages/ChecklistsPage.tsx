@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import Checklist from '../components/Checklist';
 import { useActiveView, useApiClient } from '@/hooks';
 import PageLayout from '@/components/PageLayout';
 import AllChecklistsWidget from '../components/AllChecklistsWidget';
 import * as checklistApi from '../api';
+import ChecklistProvider from '../providers/ChecklistProvider';
+import ChecklistContent from '../components/ChecklistContent';
 
 const ChecklistsPage: React.FC = () => {
   const { configureWidgets, facet } = useActiveView();
@@ -17,6 +18,13 @@ const ChecklistsPage: React.FC = () => {
     queryKey: ['checklists/all'],
     queryFn: checklistApi.fetchAllChecklists(apiClient),
   });
+
+  const navigateToChecklist = useCallback(
+    (toChecklistId: string | null) => {
+      navigate(`${facet?.basePath}/${toChecklistId ?? 'new'}`);
+    },
+    [facet, navigate]
+  );
 
   useEffect(() => {
     if (data) {
@@ -33,23 +41,24 @@ const ChecklistsPage: React.FC = () => {
 
       if (checklistId == null) {
         // TODO navigate to last used checklist
-        if (data.checklists.length < 1) navigate(`${facet?.basePath}/new`);
-        else navigate(`${facet?.basePath}/${data.checklists[0].id}`);
+        if (data.checklists.length < 1) navigateToChecklist(null);
+        else navigateToChecklist(data.checklists[0].id!!);
       }
 
       return () => configureWidgets({ slot: 1, component: null });
     }
-  }, [configureWidgets, checklistId, data, facet, navigate]);
+  }, [configureWidgets, navigateToChecklist, checklistId, data]);
 
   // TODO actual loading state
-  if (checklistId == null) return 'Loading...';
+  if (checklistId == null) return 'Thinking...';
 
   return (
     <PageLayout.Content noTitle>
-      <Checklist
-        checklistId={checklistId === 'new' ? null : checklistId}
-        showIds
-      />
+      <ChecklistProvider
+        checklistId={checklistId !== 'new' ? checklistId : null}
+        onMaterialize={navigateToChecklist}>
+        <ChecklistContent showIds />
+      </ChecklistProvider>
     </PageLayout.Content>
   );
 };

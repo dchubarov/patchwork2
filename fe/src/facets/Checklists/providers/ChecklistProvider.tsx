@@ -11,7 +11,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { showNotification } from '@/utils/notification';
-import { useActiveView, useApiClient } from '@/hooks';
+import { useApiClient } from '@/hooks';
 import {
   ChecklistContext,
   ChecklistGroupState,
@@ -23,7 +23,6 @@ import {
   ChecklistResponseData,
 } from '../types/schema';
 import * as checklistApi from '../api';
-import { useNavigate } from 'react-router-dom';
 
 enum ChecklistStateActionType {
   SET_DATA,
@@ -51,17 +50,15 @@ type ChecklistStateAction =
 
 export interface ChecklistProviderProps {
   checklistId?: string | number | null;
-  redirectBasePath?: string;
+  onMaterialize?: (checklistId: string) => void;
 }
 
 const ChecklistProvider: React.FC<
   PropsWithChildren<ChecklistProviderProps>
-> = ({ checklistId = null, children }) => {
+> = ({ checklistId = null, onMaterialize, children }) => {
   const [state, dispatch] = useReducer(checklistReducer, initialState);
   const queryClient = useQueryClient();
   const apiClient = useApiClient();
-  const navigate = useNavigate();
-  const { facet } = useActiveView();
 
   const fetchOpts = queryOptions({
     queryKey: ['checklists/checklist', { checklistId }],
@@ -74,6 +71,7 @@ const ChecklistProvider: React.FC<
     status: fetchStatus,
     data: fetchResult,
   } = useQuery(fetchOpts);
+
   useEffect(() => {
     dispatch({
       type: ChecklistStateActionType.SET_DATA,
@@ -97,7 +95,7 @@ const ChecklistProvider: React.FC<
             },
           };
         });
-      } else {
+      } else if (data.checklist.id != null) {
         queryClient.setQueryData<ChecklistResponseData>(
           ['checklists/checklist', { checklistId: data.checklist.id }],
           () => ({
@@ -107,7 +105,7 @@ const ChecklistProvider: React.FC<
             },
           })
         );
-        navigate(`${facet?.basePath}/${data.checklist.id}`);
+        onMaterialize?.(data.checklist.id);
       }
     },
   });
