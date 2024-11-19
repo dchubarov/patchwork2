@@ -68,6 +68,7 @@ const ChecklistPlaceholder: React.FC = () => {
       </AspectRatio>
 
       <Editable.Typography
+        autoTrim
         name="new-item-note"
         onEdited={handleValueEdited}
         placeholder="Click here to add a new item"

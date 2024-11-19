@@ -64,6 +64,7 @@ const ChecklistHeader: React.FC = () => {
         noWrap
         level="h2"
         id="checklist-title"
+        autoTrim
         disabled={isFetching || !data}
         value={data?.title}
         inputPlaceholder={data?.title}

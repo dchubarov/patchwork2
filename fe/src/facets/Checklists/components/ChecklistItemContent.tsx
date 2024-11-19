@@ -327,6 +327,7 @@ const ChecklistItemContent: React.FC<ChecklistItemContentProps> = ({
         inputPlaceholder={item.note}
         disabled={isUpdating}
         onEdited={handleNoteEdited}
+        autoTrim
         noWrap
         sx={{
           //color: colors.progress,

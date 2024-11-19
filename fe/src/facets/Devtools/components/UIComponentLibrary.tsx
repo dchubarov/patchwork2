@@ -18,6 +18,7 @@ const editableTypography: UIComponentCardProps<
 > = {
   title: 'Editable Typography',
   initialState: {
+    autoTrim: false,
     rejectChanges: false,
     disabled: false,
     multiline: false,
@@ -62,6 +63,15 @@ const editableTypography: UIComponentCardProps<
           name="editable-typography-multiline"
           onChange={(e) =>
             dispatch((prev) => ({ ...prev, multiline: e.target.checked }))
+          }
+        />
+        <Checkbox
+          size="sm"
+          label="Auto trim"
+          checked={state.autoTrim}
+          name="editable-typography-autoTrim"
+          onChange={(e) =>
+            dispatch((prev) => ({ ...prev, autoTrim: e.target.checked }))
           }
         />
         <Checkbox

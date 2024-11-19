@@ -9,6 +9,7 @@ export type EditableTypographyProps = {
   multiline?: boolean;
   placeholder?: string;
   inputPlaceholder?: string;
+  autoTrim?: boolean;
   onEdited?: (value?: string) => boolean | undefined | void;
 } & TypographyProps;
 
@@ -17,6 +18,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
   value,
   disabled,
   onEdited,
+  autoTrim,
   multiline,
   placeholder,
   inputPlaceholder,
@@ -34,8 +36,16 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
     }
   };
 
+  const handleValueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    let value = e.target.value;
+    if (autoTrim) value = value.trimStart();
+    setEditedValue(value);
+  };
+
   const endEditing = (cancelled?: boolean) => {
-    if (!cancelled) cancelled = onEdited?.(editedValue) === false;
+    let value = editedValue ?? '';
+    if (autoTrim) value = value?.trimEnd();
+    if (!cancelled) cancelled = onEdited?.(value) === false;
     if (cancelled) setEditedValue(originalValueRef.current);
     setEditMode(false);
   };
@@ -60,7 +70,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
       name={name}
       id={other.id}
       value={editedValue}
-      onChange={(e) => setEditedValue(e.target.value)}
+      onChange={handleValueChange}
       onBlur={() => endEditing()}
       onKeyDown={handleInputKeyDown}
       maxRows={multiline ? undefined : 1}
