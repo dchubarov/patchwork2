@@ -130,7 +130,7 @@ const AllChecklistsWidget: React.FC<{
             caption="Personal checklists"
             addButton
           />
-          {data.checklists.length && (
+          {data.checklists.length > 0 && (
             <List>
               {data.checklists.map((item) => (
                 <AllChecklistsItem

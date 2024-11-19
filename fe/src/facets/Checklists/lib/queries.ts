@@ -42,7 +42,6 @@ export const useChecklistQuery = (checklistId: string | number | null) => {
 };
 
 export const useUpdateChecklistMutation = (
-  dispatch: React.Dispatch<ChecklistStateAction>,
   onMaterialize?: (checklistId: string) => void
 ) => {
   const queryClient = useQueryClient();
@@ -51,22 +50,22 @@ export const useUpdateChecklistMutation = (
     mutationFn: Api.addOrUpdateChecklist(apiClient),
     onSuccess: ({ checklist: receivedData }, mutationData) => {
       if (!receivedData.id) throw new Error('Unexpected null id received');
-      if (mutationData.id == null) {
-        queryClient.setQueryData<ChecklistResponseData>(
-          checklistQueryKey(receivedData.id),
-          (prev) => {
-            if (prev)
-              throw new Error(
-                `Cached data is available for newly created checklist ${receivedData.id}`
-              );
-            return {
-              checklist: receivedData,
-            };
-          }
-        );
-        onMaterialize?.(receivedData.id);
-      }
-
+      queryClient.setQueryData<ChecklistResponseData>(
+        checklistQueryKey(receivedData.id),
+        (prev) => {
+          return prev
+            ? {
+                checklist: {
+                  ...prev.checklist,
+                  ...receivedData,
+                },
+              }
+            : {
+                checklist: receivedData,
+              };
+        }
+      );
+      if (mutationData.id == null) onMaterialize?.(receivedData.id);
       queryClient
         .invalidateQueries({ queryKey: allChecklistsQueryKey })
         .catch();

@@ -36,7 +36,7 @@ const ChecklistProvider: React.FC<
   } = useChecklistQuery(checklistId);
 
   const { mutate: doUpdateChecklist, isPending: isMutating } =
-    useUpdateChecklistMutation(dispatch, onMaterialize);
+    useUpdateChecklistMutation(onMaterialize);
 
   const { mutate: doUpdateItem } = useUpdateChecklistItemMutation(
     checklistId,
