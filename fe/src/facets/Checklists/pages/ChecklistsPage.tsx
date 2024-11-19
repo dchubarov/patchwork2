@@ -1,24 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { useActiveView, useApiClient } from '@/hooks';
+import { useActiveView } from '@/hooks';
 import PageLayout from '@/components/PageLayout';
+import { useAllChecklistsQuery } from '../lib/queries';
 import AllChecklistsWidget from '../components/AllChecklistsWidget';
-import * as checklistApi from '../lib/api';
 import ChecklistProvider from '../providers/ChecklistProvider';
 import ChecklistContent from '../components/ChecklistContent';
-import { allChecklistsQueryKey } from '../lib/queries';
+import ChecklistSkeleton from '../components/ChecklistSkeleton';
 
 const ChecklistsPage: React.FC = () => {
-  const { configureWidgets, facet } = useActiveView();
   const navigate = useNavigate();
-  const apiClient = useApiClient();
+  const { configureWidgets, facet } = useActiveView();
   const { checklistId } = useParams();
-
-  const { data } = useQuery({
-    queryKey: allChecklistsQueryKey,
-    queryFn: checklistApi.fetchAllChecklists(apiClient),
-  });
+  const { data } = useAllChecklistsQuery();
 
   const navigateToChecklist = useCallback(
     (toChecklistId: string | null) => {
@@ -28,38 +22,34 @@ const ChecklistsPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (data) {
-      configureWidgets({
-        slot: 1,
-        caption: 'All checklists',
-        component: (
-          <AllChecklistsWidget
-            allChecklists={data.checklists}
-            activeChecklistId={checklistId}
-          />
-        ),
-      });
+    configureWidgets({
+      slot: 1,
+      caption: 'All checklists',
+      component: <AllChecklistsWidget activeChecklistId={checklistId} />,
+    });
+    return () => configureWidgets({ slot: 1, component: null });
+  }, [checklistId, configureWidgets]);
 
-      if (checklistId == null) {
-        // TODO navigate to last used checklist
-        if (data.checklists.length < 1) navigateToChecklist(null);
-        else navigateToChecklist(data.checklists[0].id!!);
-      }
-
-      return () => configureWidgets({ slot: 1, component: null });
+  useEffect(() => {
+    if (data && checklistId == null) {
+      // TODO navigate to last used checklist
+      if (data.checklists.length < 1) navigateToChecklist(null);
+      else navigateToChecklist(data.checklists[0].id!!);
     }
-  }, [configureWidgets, navigateToChecklist, checklistId, data]);
-
-  // TODO actual loading state
-  if (checklistId == null) return 'Thinking...';
+  }, [checklistId, data, navigateToChecklist]);
 
   return (
     <PageLayout.Content noTitle>
-      <ChecklistProvider
-        checklistId={checklistId !== 'new' ? checklistId : null}
-        onMaterialize={navigateToChecklist}>
-        <ChecklistContent showIds />
-      </ChecklistProvider>
+      {checklistId == null ? (
+        <ChecklistSkeleton />
+      ) : (
+        <ChecklistProvider
+          checklistId={checklistId !== 'new' ? checklistId : null}
+          loadingElement={<ChecklistSkeleton />}
+          onMaterialize={navigateToChecklist}>
+          <ChecklistContent showIds />
+        </ChecklistProvider>
+      )}
     </PageLayout.Content>
   );
 };

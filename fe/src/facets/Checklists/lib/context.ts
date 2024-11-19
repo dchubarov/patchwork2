@@ -11,7 +11,8 @@ export interface ChecklistGroupState {
 }
 
 export interface ChecklistState {
-  isLoading?: boolean;
+  isFetching: boolean;
+  isMutating: boolean;
   isUpdatingItem?: boolean;
   updatingItemId?: string | null;
   targetItem: ChecklistItemData | null;
@@ -51,7 +52,8 @@ export type ChecklistStateAction =
     };
 
 const initialState: ChecklistState = {
-  isLoading: false,
+  isFetching: false,
+  isMutating: false,
   isUpdatingItem: false,
   targetItem: null,
   data: null,
@@ -83,7 +85,7 @@ function checklistReducer(
       return {
         ...state,
         data: action.data,
-        isLoading: action.isLoading,
+        isFetching: action.isLoading,
         isUpdatingItem: false,
         updatingItemId: null,
         ...rebuildGroups(action.data, state),

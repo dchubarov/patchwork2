@@ -10,6 +10,7 @@ import * as Api from './api';
 import { ChecklistStateAction, ChecklistStateActionType } from './context';
 import { showNotification } from '@/utils/notification';
 import { ChecklistResponseData, checklistTemplateResponse } from './schema';
+import * as checklistApi from './api';
 
 const baseChecklistsQueryKey: QueryKey = ['checklists'];
 
@@ -22,18 +23,26 @@ export const checklistQueryKey = (
   checklistId: string | number | null
 ): QueryKey => [...baseChecklistsQueryKey, 'checklist', { checklistId }];
 
+export const useAllChecklistsQuery = () => {
+  const apiClient = useApiClient();
+  return useQuery({
+    queryKey: allChecklistsQueryKey,
+    queryFn: checklistApi.fetchAllChecklists(apiClient),
+  });
+};
+
 export const useChecklistQuery = (checklistId: string | number | null) => {
   const apiClient = useApiClient();
   return useQuery({
     queryKey: checklistQueryKey(checklistId),
     queryFn: Api.fetchChecklist(apiClient, checklistId),
-    initialData: checklistTemplateResponse,
+    placeholderData: checklistTemplateResponse,
     enabled: !!checklistId,
-    staleTime: 0,
   });
 };
 
 export const useUpdateChecklistMutation = (
+  dispatch: React.Dispatch<ChecklistStateAction>,
   onMaterialize?: (checklistId: string) => void
 ) => {
   const queryClient = useQueryClient();
@@ -42,18 +51,25 @@ export const useUpdateChecklistMutation = (
     mutationFn: Api.addOrUpdateChecklist(apiClient),
     onSuccess: ({ checklist: receivedData }, mutationData) => {
       if (!receivedData.id) throw new Error('Unexpected null id received');
-
       if (mutationData.id == null) {
+        queryClient.setQueryData<ChecklistResponseData>(
+          checklistQueryKey(receivedData.id),
+          (prev) => {
+            if (prev)
+              throw new Error(
+                `Cached data is available for newly created checklist ${receivedData.id}`
+              );
+            return {
+              checklist: receivedData,
+            };
+          }
+        );
         onMaterialize?.(receivedData.id);
       }
 
       queryClient
         .invalidateQueries({ queryKey: allChecklistsQueryKey })
         .catch();
-
-      return queryClient.invalidateQueries({
-        queryKey: checklistQueryKey(receivedData.id),
-      });
     },
   });
 };

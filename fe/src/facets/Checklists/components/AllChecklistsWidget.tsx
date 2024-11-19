@@ -3,6 +3,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   AspectRatio,
   Chip,
+  CircularProgress,
   IconButton,
   Link,
   List,
@@ -15,6 +16,7 @@ import { Add as AddIcon, ArrowRight as ActiveIcon } from '@mui/icons-material';
 import { useActiveView } from '@/hooks';
 import PieProgress from '@/components/PieProgress';
 import { ChecklistBaseData } from '../lib/schema';
+import { useAllChecklistsQuery } from '../lib/queries';
 
 const AllChecklistsGroup: React.FC<{
   count?: number;
@@ -97,9 +99,10 @@ const AllChecklistsItem: React.FC<{
 };
 
 const AllChecklistsWidget: React.FC<{
-  allChecklists: ChecklistBaseData[];
   activeChecklistId?: string | null;
-}> = ({ allChecklists, activeChecklistId }) => {
+}> = ({ activeChecklistId }) => {
+  const { data, isLoading } = useAllChecklistsQuery();
+
   return (
     <List
       size="sm"
@@ -109,24 +112,37 @@ const AllChecklistsWidget: React.FC<{
         '--ListItem-startActionWidth': 0,
         '--ListItem-startActionTranslateX': '-50%',
       }}>
-      <ListItem nested>
-        <AllChecklistsGroup
-          count={allChecklists.length}
-          caption="Personal checklists"
-          addButton
-        />
-        {allChecklists.length && (
-          <List>
-            {allChecklists.map((item) => (
-              <AllChecklistsItem
-                key={item.id}
-                item={item}
-                active={item.id === activeChecklistId}
-              />
-            ))}
-          </List>
-        )}
-      </ListItem>
+      {isLoading && (
+        <ListItem>
+          <ListItemDecorator>
+            <CircularProgress
+              thickness={2}
+              sx={{ '--CircularProgress-size': '1.25em' }}
+            />
+          </ListItemDecorator>
+          Loading...
+        </ListItem>
+      )}
+      {data && (
+        <ListItem nested>
+          <AllChecklistsGroup
+            count={data?.checklists.length}
+            caption="Personal checklists"
+            addButton
+          />
+          {data.checklists.length && (
+            <List>
+              {data.checklists.map((item) => (
+                <AllChecklistsItem
+                  key={item.id}
+                  item={item}
+                  active={item.id === activeChecklistId}
+                />
+              ))}
+            </List>
+          )}
+        </ListItem>
+      )}
       {/*<ListItem nested>*/}
       {/*  <AllChecklistsGroup caption="Shared with me" count={0} />*/}
       {/*</ListItem>*/}

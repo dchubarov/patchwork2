@@ -1,12 +1,18 @@
 import React from 'react';
-import { AspectRatio, ListItemContent, Tooltip } from '@mui/joy';
+import {
+  AspectRatio,
+  CircularProgress,
+  ListItemContent,
+  Tooltip,
+} from '@mui/joy';
 import PieProgress from '@/components/PieProgress';
 import Editable from '@/components/Editable';
 
 import { useChecklist } from '../lib/context';
 
 const ChecklistHeader: React.FC = () => {
-  const { data, groups, isLoading, updateChecklist } = useChecklist();
+  const { data, groups, isFetching, isMutating, updateChecklist } =
+    useChecklist();
   const group = groups.get(null);
   const progress =
     !!group && group.doableCount > 0
@@ -41,12 +47,16 @@ const ChecklistHeader: React.FC = () => {
             width: theme.vars.fontSize.xl4,
             borderRadius: '50%',
           })}>
-          <PieProgress
-            value={progress}
-            margin={3}
-            thickness={6}
-            zeroIndicator
-          />
+          {isMutating ? (
+            <CircularProgress color="neutral" />
+          ) : (
+            <PieProgress
+              value={progress}
+              margin={3}
+              thickness={6}
+              zeroIndicator
+            />
+          )}
         </AspectRatio>
       </Tooltip>
 
@@ -54,7 +64,7 @@ const ChecklistHeader: React.FC = () => {
         noWrap
         level="h2"
         id="checklist-title"
-        disabled={isLoading || !data}
+        disabled={isFetching || !data}
         value={data?.title}
         inputPlaceholder={data?.title}
         onEdited={handleTitleEdited}
