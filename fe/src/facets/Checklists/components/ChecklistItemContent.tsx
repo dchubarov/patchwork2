@@ -29,9 +29,8 @@ import {
 } from '@mui/icons-material';
 import PieProgress from '@/components/PieProgress';
 import Editable from '@/components/Editable';
-import { ChecklistItemData } from '../types/schema';
-import { ChecklistGroupState } from '../types/context';
-import { useChecklist } from '../hooks';
+import { ChecklistItemData } from '../lib/schema';
+import { ChecklistGroupState, useChecklist } from '../lib/context';
 import ColorLabel from '@/components/ColorLabel';
 import { useLabelColors } from '@/hooks';
 

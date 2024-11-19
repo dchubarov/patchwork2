@@ -7,7 +7,8 @@ import {
 } from '@mui/joy';
 import { AddCircle as AddIcon } from '@mui/icons-material';
 import Editable from '@/components/Editable';
-import { useChecklist } from '../hooks';
+
+import { useChecklist } from '../lib/context';
 
 const ChecklistPlaceholder: React.FC = () => {
   const {

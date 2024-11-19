@@ -1,52 +1,16 @@
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useReducer,
-} from 'react';
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { showNotification } from '@/utils/notification';
-import { useApiClient } from '@/hooks';
+import React, { PropsWithChildren, useCallback, useEffect } from 'react';
 import {
   ChecklistContext,
-  ChecklistGroupState,
   ChecklistState,
-} from '../types/context';
+  ChecklistStateActionType,
+  useChecklistReducer,
+} from '../lib/context';
 import {
-  ChecklistData,
-  ChecklistItemData,
-  ChecklistResponseData,
-} from '../types/schema';
-import * as checklistApi from '../api';
-
-enum ChecklistStateActionType {
-  SET_DATA,
-  SET_GROUP_EXPANDED,
-  SET_UPDATING_ITEM,
-  SET_TARGET_ITEM,
-}
-
-type ChecklistStateAction =
-  | {
-      type: ChecklistStateActionType.SET_DATA;
-      data: ChecklistData | null;
-      isLoading: boolean;
-    }
-  | {
-      type: ChecklistStateActionType.SET_GROUP_EXPANDED;
-      itemId: string;
-      expanded: boolean;
-    }
-  | { type: ChecklistStateActionType.SET_UPDATING_ITEM; itemId: string | null }
-  | {
-      type: ChecklistStateActionType.SET_TARGET_ITEM;
-      item: ChecklistItemData | null;
-    };
+  useChecklistQuery,
+  useDeleteChecklistItemMutation,
+  useUpdateChecklistItemMutation,
+  useUpdateChecklistMutation,
+} from '../lib/queries';
 
 export interface ChecklistProviderProps {
   checklistId?: string | number | null;
@@ -56,21 +20,26 @@ export interface ChecklistProviderProps {
 const ChecklistProvider: React.FC<
   PropsWithChildren<ChecklistProviderProps>
 > = ({ checklistId = null, onMaterialize, children }) => {
-  const [state, dispatch] = useReducer(checklistReducer, initialState);
-  const queryClient = useQueryClient();
-  const apiClient = useApiClient();
-
-  const fetchOpts = queryOptions({
-    queryKey: ['checklists/checklist', { checklistId }],
-    queryFn: checklistApi.fetchChecklist(apiClient, checklistId),
-    staleTime: 0,
-  });
+  const [state, dispatch] = useChecklistReducer();
 
   const {
     isFetching,
     status: fetchStatus,
     data: fetchResult,
-  } = useQuery(fetchOpts);
+  } = useChecklistQuery(checklistId);
+
+  const { mutate: doUpdateChecklist } =
+    useUpdateChecklistMutation(onMaterialize);
+
+  const { mutate: doUpdateItem } = useUpdateChecklistItemMutation(
+    checklistId,
+    dispatch
+  );
+
+  const { mutate: doDeleteItem } = useDeleteChecklistItemMutation(
+    checklistId,
+    dispatch
+  );
 
   useEffect(() => {
     dispatch({
@@ -79,136 +48,6 @@ const ChecklistProvider: React.FC<
       isLoading: isFetching,
     });
   }, [isFetching, fetchResult, dispatch]);
-
-  const { mutate: doUpdateChecklist } = useMutation({
-    mutationKey: ['checklists/checklist/update', { checklistId }],
-    mutationFn: checklistApi.addOrUpdateChecklist(apiClient),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['checklists/all'] }).then();
-      if (state.data?.id === data.checklist.id) {
-        queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
-          if (!prev) return prev;
-          return {
-            checklist: {
-              ...prev.checklist,
-              ...data.checklist,
-            },
-          };
-        });
-      } else if (data.checklist.id != null) {
-        queryClient.setQueryData<ChecklistResponseData>(
-          ['checklists/checklist', { checklistId: data.checklist.id }],
-          () => ({
-            checklist: {
-              ...data.checklist,
-              items: [],
-            },
-          })
-        );
-        onMaterialize?.(data.checklist.id);
-      }
-    },
-  });
-
-  const { mutate: doUpdateItem } = useMutation({
-    mutationKey: ['checklists/item/update', { checklistId }],
-    mutationFn: checklistApi.addOrUpdateItem(apiClient, checklistId),
-    onMutate: async (data) => {
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: data.id,
-      });
-    },
-    onSuccess: (data) => {
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: data.checklistItem.id,
-      });
-      queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
-        if (!prev) return prev;
-        let found = false;
-        let items = prev.checklist.items.map((item) => {
-          if (item.id === data.checklistItem.id) {
-            found = true;
-            return data.checklistItem;
-          }
-          return item;
-        });
-        if (!found) items = [...items, data.checklistItem];
-        return {
-          checklist: {
-            ...prev.checklist,
-            items,
-          },
-        };
-      });
-      queryClient.invalidateQueries({ queryKey: ['checklists/all'] }).then();
-    },
-    onError: (error, data: ChecklistItemData) => {
-      showNotification(
-        data.id === ''
-          ? 'Failed to add checklist item'
-          : `Failed to update checklist item #${data.id}`,
-        {
-          type: 'error',
-          subtitle: error.message,
-        }
-      );
-
-      // refresh item so re-render happens
-      queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
-        if (!prev) return prev;
-        return {
-          checklist: {
-            ...prev.checklist,
-            items: prev.checklist.items.map((item) =>
-              item.id === data.id ? { ...item } : item
-            ),
-          },
-        };
-      });
-
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: null,
-      });
-    },
-  });
-
-  const { mutate: doDeleteItem } = useMutation({
-    mutationKey: ['checklists/item/delete', { checklistId }],
-    mutationFn: checklistApi.deleteItem(apiClient, checklistId),
-    onMutate: (deleteItemId) => {
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: deleteItemId,
-      });
-    },
-    onSuccess: (_, deletedItemId) => {
-      queryClient.setQueryData(fetchOpts.queryKey, (prev) => {
-        if (!prev) return prev;
-        return {
-          checklist: {
-            ...prev.checklist,
-            items: prev.checklist.items.filter(
-              (item) => item.id !== deletedItemId
-            ),
-          },
-        };
-      });
-      queryClient.invalidateQueries({ queryKey: ['checklists/all'] }).then();
-    },
-    onError: (error, deleteItemId) => {
-      showNotification(`Failed to delete checklist item #${deleteItemId}`, {
-        type: 'error',
-        subtitle: error.message,
-      });
-      dispatch({
-        type: ChecklistStateActionType.SET_UPDATING_ITEM,
-        itemId: null,
-      });
-    },
-  });
 
   if (fetchStatus === 'error') {
     // TODO need universal way to redirect to resource error page
@@ -250,144 +89,3 @@ const ChecklistProvider: React.FC<
 };
 
 export default ChecklistProvider;
-
-// Private
-
-const initialState: ChecklistState = {
-  isLoading: false,
-  isUpdatingItem: false,
-  targetItem: null,
-  data: null,
-  groups: new Map(),
-  setGroupExpanded: () => {},
-  setTargetItem: () => {},
-  updateChecklist: () => {},
-  updateItem: () => {},
-  deleteItem: () => {},
-};
-
-function checklistReducer(
-  state: ChecklistState,
-  action: ChecklistStateAction
-): ChecklistState {
-  switch (action.type) {
-    case ChecklistStateActionType.SET_DATA:
-      return {
-        ...state,
-        data: action.data,
-        isLoading: action.isLoading,
-        isUpdatingItem: false,
-        updatingItemId: null,
-        ...rebuildGroups(action.data, state),
-      };
-
-    case ChecklistStateActionType.SET_GROUP_EXPANDED:
-      const group = state.groups.get(action.itemId);
-      if (!group || group.expanded === action.expanded) break;
-      return {
-        ...state,
-        groups: new Map(state.groups).set(action.itemId, {
-          ...group,
-          expanded: action.expanded,
-        }),
-      };
-
-    case ChecklistStateActionType.SET_UPDATING_ITEM:
-      return {
-        ...state,
-        isUpdatingItem: action.itemId != null,
-        updatingItemId: action.itemId,
-      };
-
-    case ChecklistStateActionType.SET_TARGET_ITEM:
-      return {
-        ...state,
-        ...rebuildGroups(state.data, {
-          ...state,
-          targetItem: action.item,
-        }),
-      };
-  }
-
-  return state;
-}
-
-function rebuildGroups(
-  data: ChecklistData | null,
-  state: ChecklistState
-): {
-  groups: Map<string | null, ChecklistGroupState>;
-  targetItem: ChecklistItemData | null;
-} {
-  const groups = new Map<string | null, ChecklistGroupState>();
-  let targetItem: ChecklistItemData | null = null;
-  if (!data) return { groups, targetItem };
-
-  const roots = data.items.reduce((acc, item) => {
-    const items = acc.get(item.parent);
-    return acc.set(
-      item.parent,
-      Array.isArray(items) ? [...items, item] : [item]
-    );
-  }, new Map<string | null, ChecklistItemData[]>());
-
-  const visited = new Set<string | null>();
-
-  function dfs(id: string | null) {
-    if (visited.has(id)) return;
-    visited.add(id);
-
-    let expanded = state.groups.get(id)?.expanded ?? true,
-      forceExpandParent: boolean | undefined = undefined,
-      targetWithin = id === state.targetItem?.id,
-      doableCount = 0,
-      doneCount = 0;
-
-    const items = roots.get(id);
-    items?.forEach((item) => {
-      if (roots.has(item.id)) {
-        const childGroup = dfs(item.id);
-        if (childGroup) {
-          if (childGroup.targetWithin) targetWithin = true;
-          if (childGroup.forceExpandParent) {
-            forceExpandParent = true;
-            expanded = true;
-          }
-          doableCount += childGroup.doableCount;
-          doneCount += childGroup.doneCount;
-        }
-      } else {
-        if (item.id === state.targetItem?.id) targetWithin = true;
-        if (item.id === state.updatingItemId) {
-          forceExpandParent = true;
-          expanded = true;
-        }
-        if (item.done) doneCount++;
-        doableCount++;
-      }
-      if (item.id === state.targetItem?.id) {
-        targetItem = item !== targetItem ? item : targetItem;
-      }
-    });
-
-    const group: ChecklistGroupState = {
-      items:
-        items?.sort((a, b) =>
-          data?.config?.reverseOrder
-            ? b.sequenceCode - a.sequenceCode
-            : a.sequenceCode - b.sequenceCode
-        ) ?? [],
-      expanded,
-      forceExpandParent,
-      targetWithin,
-      doableCount,
-      doneCount,
-    };
-
-    groups.set(id, group);
-    return group;
-  }
-
-  dfs(null);
-  return { groups, targetItem };
-}

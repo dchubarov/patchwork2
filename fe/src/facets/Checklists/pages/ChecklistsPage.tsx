@@ -4,9 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useActiveView, useApiClient } from '@/hooks';
 import PageLayout from '@/components/PageLayout';
 import AllChecklistsWidget from '../components/AllChecklistsWidget';
-import * as checklistApi from '../api';
+import * as checklistApi from '../lib/api';
 import ChecklistProvider from '../providers/ChecklistProvider';
 import ChecklistContent from '../components/ChecklistContent';
+import { allChecklistsQueryKey } from '../lib/queries';
 
 const ChecklistsPage: React.FC = () => {
   const { configureWidgets, facet } = useActiveView();
@@ -15,7 +16,7 @@ const ChecklistsPage: React.FC = () => {
   const { checklistId } = useParams();
 
   const { data } = useQuery({
-    queryKey: ['checklists/all'],
+    queryKey: allChecklistsQueryKey,
     queryFn: checklistApi.fetchAllChecklists(apiClient),
   });
 

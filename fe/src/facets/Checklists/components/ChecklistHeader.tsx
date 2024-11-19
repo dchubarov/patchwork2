@@ -2,7 +2,8 @@ import React from 'react';
 import { AspectRatio, ListItemContent, Tooltip } from '@mui/joy';
 import PieProgress from '@/components/PieProgress';
 import Editable from '@/components/Editable';
-import { useChecklist } from '../hooks';
+
+import { useChecklist } from '../lib/context';
 
 const ChecklistHeader: React.FC = () => {
   const { data, groups, isLoading, updateChecklist } = useChecklist();

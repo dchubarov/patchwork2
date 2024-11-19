@@ -12,7 +12,8 @@ export function useEnvironment(): EnvironmentState {
   return context;
 }
 
-export function useApiClient(): AxiosInstance {
+export function useApiClient(client?: AxiosInstance): AxiosInstance {
   const { apiClient } = useEnvironment();
-  return apiClient;
+  if (client) return client;
+  else return apiClient;
 }

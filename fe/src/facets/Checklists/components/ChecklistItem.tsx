@@ -8,10 +8,11 @@ import {
   listItemClasses,
 } from '@mui/joy';
 import { KeyboardArrowDown as ExpandedIcon } from '@mui/icons-material';
-import { ChecklistItemData } from '../types/schema';
+import { ChecklistItemData } from '../lib/schema';
 import ChecklistGroup from './ChecklistGroup';
 import ChecklistItemContent from './ChecklistItemContent';
-import { useChecklist } from '../hooks';
+
+import { useChecklist } from '../lib/context';
 
 interface ChecklistItemProps {
   level: number;

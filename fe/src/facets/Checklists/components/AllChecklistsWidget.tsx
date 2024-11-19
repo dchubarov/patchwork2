@@ -14,7 +14,7 @@ import {
 import { Add as AddIcon, ArrowRight as ActiveIcon } from '@mui/icons-material';
 import { useActiveView } from '@/hooks';
 import PieProgress from '@/components/PieProgress';
-import { ChecklistBaseData } from '../types/schema';
+import { ChecklistBaseData } from '../lib/schema';
 
 const AllChecklistsGroup: React.FC<{
   count?: number;

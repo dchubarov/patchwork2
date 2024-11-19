@@ -1,6 +1,7 @@
 import React from 'react';
 import ChecklistItem from './ChecklistItem';
-import { useChecklist } from '../hooks';
+
+import { useChecklist } from '../lib/context';
 
 interface ChecklistGroupProps {
   level: number;
