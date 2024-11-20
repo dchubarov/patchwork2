@@ -13,6 +13,9 @@ export type EditableTypographyProps = {
   onEdited?: (value?: string) => boolean | undefined | void;
 } & TypographyProps;
 
+// TODO: use Input instead of Textarea unless multiline is true
+// TODO: leverage forwardRef/useImperativeHandle to expose edit() method
+
 const EditableTypography: React.FC<EditableTypographyProps> = ({
   name,
   value,
