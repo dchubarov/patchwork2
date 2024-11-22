@@ -64,7 +64,12 @@ const AppFacetsMenu: React.FC = () => {
                 badgeInset="20%"
                 badgeContent={<LockIcon sx={{ '--Icon-fontSize': '14px' }} />}
                 slotProps={{
-                  badge: { sx: { backgroundColor: 'transparent' } },
+                  badge: {
+                    sx: {
+                      backgroundColor: 'transparent',
+                      visibility: facet.authorization ? 'visible' : 'hidden',
+                    },
+                  },
                 }}
                 sx={{ '--Badge-ringSize': 0, backgroundColor: 'transparent' }}>
                 <Avatar sx={{ borderRadius: 'sm' }}>

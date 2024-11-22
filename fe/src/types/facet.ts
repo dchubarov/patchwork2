@@ -9,6 +9,8 @@ export interface ApplicationFacet {
   name: string;
   /** Router base path, if omitted, {@link name} will be used */
   basePath?: string;
+  /** Indicates whether authorization is required */
+  authorization?: boolean;
   /** Default display name, if omitted a localized name or {@link name} will be used */
   defaultDisplayName?: string;
   /** Category name */

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import AppFacets from 'src/facets';
 import { envGlobals } from '@/types/env';
+import AuthorizedRoute from '../components/AuthorizedRoute';
 
 export function buildRouter(
   rootElement: ReactNode,
@@ -20,6 +21,7 @@ export function buildRouter(
           },
 
           ...AppFacets.map((facet) => ({
+            Component: facet.authorization ? AuthorizedRoute : null,
             path: facet.basePath || facet.name,
             children: facet.routes(),
           })),

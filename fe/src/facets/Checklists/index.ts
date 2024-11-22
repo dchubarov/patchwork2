@@ -5,6 +5,7 @@ const LazyChecklistsPage = React.lazy(() => import('./pages/ChecklistsPage'));
 
 const ChecklistsFacet: ApplicationFacet = {
   name: 'checklists',
+  authorization: true,
   routes: () => [
     {
       index: true,

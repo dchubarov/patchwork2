@@ -95,6 +95,7 @@ function createFacetList(): EnvironmentApplicationFacet[] {
       ({
         name: value.name,
         basePath: normalizeBasePath(value.basePath || value.name),
+        authorization: value.authorization ?? false,
         category: value.category,
         icon: value.icon || undefined,
         defaultDisplayName: _.capitalize(
