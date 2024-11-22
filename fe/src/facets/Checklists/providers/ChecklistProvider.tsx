@@ -82,7 +82,6 @@ const ChecklistProvider: React.FC<
     deleteItem: useCallback((itemId) => doDeleteItem(itemId), [doDeleteItem]),
   };
 
-  // TODO refetch on user logout / user change
   if (fetchStatus === 'error') {
     // TODO need universal way to redirect to resource error page
     throw new Error('Error loading checklist');

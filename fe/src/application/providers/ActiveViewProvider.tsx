@@ -176,7 +176,7 @@ function mergeWidgetConfigurations(
           -1
       ),
       ...normalizedConfigs
-        .filter((config) => config.component !== undefined)
+        .filter((config) => !!config.component)
         .map(
           (config): SidebarWidget => ({
             key: config.key || `widget-${config.slot || 0}`,
