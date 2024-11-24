@@ -8,8 +8,8 @@ import {
   EnvironmentState,
   ServerInfoResponse,
 } from '@/types/env';
-import { createApiClient } from '../utils/apiClient';
-import monitoringApi from '../api/monitoring';
+import { createApiClient } from '../lib/apiClient';
+import monitoringApi from '../lib/monitoringApi';
 import AppFacets from 'src/facets';
 import { normalizeBasePath } from '@/utils/path';
 import version from '../../version.json';

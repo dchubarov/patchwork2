@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { JwtPayload } from '@/utils/jwt';
-import { User, UserCredentials } from '../application/api/auth';
+import { User, UserCredentials } from '../application/lib/authApi';
 
 interface IAuthState {
   /** Indicates whether any authentication request is in progress */
@@ -23,4 +23,4 @@ export type {
   UserCredentials,
   User,
   LoginResponse,
-} from '../application/api/auth';
+} from '../application/lib/authApi';

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import AppFacets from 'src/facets';
+import AppFacets from '../../facets';
 import { envGlobals } from '@/types/env';
 import AuthorizedRoute from '../components/AuthorizedRoute';
 

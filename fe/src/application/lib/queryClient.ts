@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 
-const createQueryClient = () =>
+export const createQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {
@@ -16,5 +16,3 @@ const createQueryClient = () =>
     }),
     */
   });
-
-export default createQueryClient;

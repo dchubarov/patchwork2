@@ -12,7 +12,7 @@ import { useApiClient } from '@/hooks/env';
 import { decodeJwt, JwtPayload } from '@/utils/jwt';
 import { showNotification } from '@/utils/notification';
 import { logger } from '@/utils/logging';
-import authApi from '../api/auth';
+import authApi from '../lib/authApi';
 
 const MAX_REFRESH_RETRY_COUNT = 3;
 const REFRESH_BEFORE_EXPIRATION_MILLIS = 3000;
@@ -22,7 +22,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const accessTokenRef = useRef<string | null>(null);
   const requestInterceptorRef = useRef<number | null>(null);
   const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(
-    0, // causes immediate refresh attempt
+    0 // causes immediate refresh attempt
   );
 
   const handleSuccessfulLogin = (data: LoginResponse) => {
@@ -52,7 +52,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         },
         (error) => {
           return Promise.reject(error);
-        },
+        }
       );
     }
   };
@@ -80,7 +80,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const shouldRetryRefreshAttempt = (
     failureCount: number,
-    error: Error,
+    error: Error
   ): boolean => {
     if (error instanceof AxiosError) {
       // Error 404 excluded for now since if mock backend isn't ready yet, it will return 404, so we need to retry.
@@ -139,7 +139,8 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     let timeoutId = null;
     if (tokenExpiresMillis !== null) {
-      const timeout = tokenExpiresMillis - REFRESH_BEFORE_EXPIRATION_MILLIS - _.now();
+      const timeout =
+        tokenExpiresMillis - REFRESH_BEFORE_EXPIRATION_MILLIS - _.now();
       if (timeout <= 0) {
         doRefresh();
       } else {

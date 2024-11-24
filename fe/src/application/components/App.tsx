@@ -4,7 +4,7 @@ import { CssBaseline, CssVarsProvider } from '@mui/joy';
 import Layout from './Layout';
 import Sidebar from './Sidebar';
 import ActiveViewProvider from '../providers/ActiveViewProvider';
-import { customizeTheme } from '../utils/customizeTheme';
+import { customizeTheme } from '../lib/customizeTheme';
 import ViewErrorBoundary from './ViewErrorBoundary';
 
 const App: React.FC = () => {
