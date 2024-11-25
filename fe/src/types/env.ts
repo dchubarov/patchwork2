@@ -17,6 +17,7 @@ const envGlobalsSchema = z.object({
   API_ROOT: z.string().transform(normalizeBasePath).default('/api'),
   UI_ROOT: z.optional(z.string().transform(normalizeBasePath)),
   PUBLIC_URL: z.optional(z.string()),
+  API_TIMEOUT: z.coerce.number().default(5000),
 });
 
 type EnvGlobals = z.infer<typeof envGlobalsSchema>;

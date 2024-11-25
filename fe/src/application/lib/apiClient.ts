@@ -5,10 +5,12 @@ import {
   ResourceAccessError,
   ResourceNotFoundError,
 } from '@/types/error';
+import { developmentLogger } from '@/utils/logging';
 
 export const createApiClient = () => {
   const client = axios.create({
     baseURL: envGlobals.API_ROOT,
+    timeout: envGlobals.API_TIMEOUT,
   });
 
   client.interceptors.response.use(null, function (error) {
@@ -37,5 +39,6 @@ export const createApiClient = () => {
     return Promise.reject(error);
   });
 
+  developmentLogger.log('Configured Axios API client:', client.defaults);
   return client;
 };
