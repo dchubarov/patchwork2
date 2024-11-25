@@ -1,11 +1,10 @@
-import React, { Suspense, useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useMemo } from 'react';
 import { CssBaseline, CssVarsProvider } from '@mui/joy';
 import Layout from './Layout';
 import Sidebar from './Sidebar';
 import ActiveViewProvider from '../providers/ActiveViewProvider';
 import { customizeTheme } from '../lib/customizeTheme';
-import ViewErrorBoundary from './ViewErrorBoundary';
+import ViewBoundary from './ViewBoundary';
 
 const App: React.FC = () => {
   const theme = useMemo(customizeTheme, []);
@@ -26,12 +25,7 @@ const App: React.FC = () => {
             </Layout.Sidebar>
 
             <Layout.View>
-              {/* TODO provide clear fallbacks */}
-              <ViewErrorBoundary>
-                <Suspense>
-                  <Outlet />
-                </Suspense>
-              </ViewErrorBoundary>
+              <ViewBoundary />
             </Layout.View>
 
             <Layout.Sidebar placement="right">
