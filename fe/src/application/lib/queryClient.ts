@@ -5,14 +5,14 @@ export const createQueryClient = () =>
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: 'always',
+        throwOnError: true,
+        retry: false,
       },
     },
 
     /* Setting up custom error handler, also needed for mutationCache:
     queryCache: new QueryCache({
-        onError(error, query) {
-            console.error(error);
-        },
-    }),
-    */
+      onError(error, query) {
+      },
+    }),*/
   });

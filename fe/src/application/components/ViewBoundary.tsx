@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { useAuth } from '@/hooks';
-import ViewPlaceholder from './ViewPlaceholder';
+import SuspenseFallback from '@/components/SuspenseFallback';
 import ViewError from './ViewError';
 
 const ViewBoundary: React.FC = () => {
@@ -21,7 +21,7 @@ const ViewBoundary: React.FC = () => {
       fallbackRender={({ error, resetErrorBoundary }) => (
         <ViewError reason={error} reset={resetErrorBoundary} />
       )}>
-      <Suspense fallback={<ViewPlaceholder />}>
+      <Suspense fallback={<SuspenseFallback />}>
         <Outlet />
       </Suspense>
     </ErrorBoundary>

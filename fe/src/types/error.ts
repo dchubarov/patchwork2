@@ -5,8 +5,8 @@
 export class ApplicationError extends Error {
   readonly recoverable?: boolean;
 
-  constructor(message: string, recoverable?: boolean) {
-    super(message);
+  constructor(message: string, cause?: any, recoverable?: boolean) {
+    super(message, { cause });
     this.recoverable = recoverable;
     Object.defineProperty(this, 'name', { value: new.target.name });
     Object.defineProperty(this, 'basename', { value: ApplicationError.name });
@@ -14,4 +14,6 @@ export class ApplicationError extends Error {
   }
 }
 
+export class ResourceNotFoundError extends ApplicationError {}
 export class ResourceAccessError extends ApplicationError {}
+export class ApiError extends ApplicationError {}
