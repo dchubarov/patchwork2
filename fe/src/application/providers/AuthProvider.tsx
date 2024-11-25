@@ -21,6 +21,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const apiClient = useApiClient();
   const accessTokenRef = useRef<string | null>(null);
   const requestInterceptorRef = useRef<number | null>(null);
+  const [isInitialRefresh, setInitialRefresh] = useState(true);
   const [tokenExpiresMillis, setTokenExpiresMillis] = useState<number | null>(
     0 // causes immediate refresh attempt
   );
@@ -34,7 +35,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
 
     // TODO error if no token, token expired, etc
-
+    setInitialRefresh(false);
     setContext((prev) => ({
       ...prev,
       isPending: false,
@@ -63,6 +64,8 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
 
     accessTokenRef.current = null;
+
+    setInitialRefresh(false);
     setTokenExpiresMillis(null);
     setContext((prev) => ({
       ...prev,
@@ -171,7 +174,10 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const [context, setContext] = useState(createInitialState);
   return (
-    <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={context}>
+      {/*TODO some kind of waiting message needed here if authentication takes long*/}
+      {!(isInitialRefresh && context.isPending) && children}
+    </AuthContext.Provider>
   );
 };
 
