@@ -1,9 +1,4 @@
-import React, {
-  PropsWithChildren,
-  ReactNode,
-  useCallback,
-  useEffect,
-} from 'react';
+import React, { PropsWithChildren, useCallback, useEffect } from 'react';
 import {
   ChecklistContext,
   ChecklistState,
@@ -20,17 +15,15 @@ import {
 export interface ChecklistProviderProps {
   checklistId?: string | number | null;
   onMaterialize?: (checklistId: string) => void;
-  loadingElement?: ReactNode;
 }
 
 const ChecklistProvider: React.FC<
   PropsWithChildren<ChecklistProviderProps>
-> = ({ checklistId = null, onMaterialize, loadingElement, children }) => {
+> = ({ checklistId = null, onMaterialize, children }) => {
   const [state, dispatch] = useChecklistReducer();
 
   const {
     isFetching,
-    isPlaceholderData,
     status: fetchStatus,
     data: fetchResult,
   } = useChecklistQuery(checklistId);
@@ -89,7 +82,7 @@ const ChecklistProvider: React.FC<
 
   return (
     <ChecklistContext.Provider value={context}>
-      {checklistId == null || !isPlaceholderData ? children : loadingElement}
+      {children}
     </ChecklistContext.Provider>
   );
 };

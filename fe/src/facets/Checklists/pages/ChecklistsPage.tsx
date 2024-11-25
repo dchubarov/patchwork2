@@ -3,10 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useActiveView } from '@/hooks';
 import PageLayout from '@/components/PageLayout';
 import { useAllChecklistsQuery } from '../lib/queries';
+import SuspenseFallback from '@/components/SuspenseFallback';
 import AllChecklistsWidget from '../components/AllChecklistsWidget';
 import ChecklistProvider from '../providers/ChecklistProvider';
 import ChecklistContent from '../components/ChecklistContent';
-import ChecklistSkeleton from '../components/ChecklistSkeleton';
 
 const ChecklistsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -38,18 +38,15 @@ const ChecklistsPage: React.FC = () => {
     }
   }, [checklistId, data, navigateToChecklist]);
 
-  return (
+  return checklistId == null ? (
+    <SuspenseFallback />
+  ) : (
     <PageLayout.Content noTitle>
-      {checklistId == null ? (
-        <ChecklistSkeleton />
-      ) : (
-        <ChecklistProvider
-          checklistId={checklistId !== 'new' ? checklistId : null}
-          loadingElement={<ChecklistSkeleton />}
-          onMaterialize={navigateToChecklist}>
-          <ChecklistContent showIds />
-        </ChecklistProvider>
-      )}
+      <ChecklistProvider
+        checklistId={checklistId !== 'new' ? checklistId : null}
+        onMaterialize={navigateToChecklist}>
+        <ChecklistContent showIds />
+      </ChecklistProvider>
     </PageLayout.Content>
   );
 };

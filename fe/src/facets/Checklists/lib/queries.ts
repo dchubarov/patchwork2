@@ -4,13 +4,14 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  useSuspenseQuery,
 } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks';
 import * as Api from './api';
+import * as checklistApi from './api';
 import { ChecklistStateAction, ChecklistStateActionType } from './context';
 import { showNotification } from '@/utils/notification';
-import { ChecklistResponseData, checklistTemplateResponse } from './schema';
-import * as checklistApi from './api';
+import { ChecklistResponseData } from './schema';
 
 const baseChecklistsQueryKey: QueryKey = ['checklists'];
 
@@ -33,11 +34,9 @@ export const useAllChecklistsQuery = () => {
 
 export const useChecklistQuery = (checklistId: string | number | null) => {
   const apiClient = useApiClient();
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: checklistQueryKey(checklistId),
     queryFn: Api.fetchChecklist(apiClient, checklistId),
-    placeholderData: checklistTemplateResponse,
-    enabled: !!checklistId,
   });
 };
 

@@ -7,6 +7,7 @@ import {
   checklistItemResponseSchema,
   ChecklistResponseData,
   checklistResponseSchema,
+  checklistTemplateResponse,
 } from './schema';
 import { QueryFunctionContext } from '@tanstack/react-query';
 
@@ -27,12 +28,18 @@ export const addOrUpdateChecklist =
       })
       .then((response) => checklistResponseSchema.parse(response.data));
 
-export const fetchChecklist =
-  (client: AxiosInstance, checklistId: string | number | null) =>
-  async ({ signal }: QueryFunctionContext): Promise<ChecklistResponseData> =>
-    client
-      .get(`x/checklists/v2/checklist/${checklistId}`, { signal })
-      .then((response) => checklistResponseSchema.parse(response.data));
+export const fetchChecklist = (
+  client: AxiosInstance,
+  checklistId: string | number | null
+) =>
+  checklistId == null
+    ? () => Promise.resolve(checklistTemplateResponse)
+    : async ({
+        signal,
+      }: QueryFunctionContext): Promise<ChecklistResponseData> =>
+        client
+          .get(`x/checklists/v2/checklist/${checklistId}`, { signal })
+          .then((response) => checklistResponseSchema.parse(response.data));
 
 export const addOrUpdateItem =
   (client: AxiosInstance, checklistId: string | number | null) =>
