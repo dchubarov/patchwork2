@@ -28,7 +28,7 @@ const ChecklistsPage: React.FC = () => {
       scope: `!${facet?.basePath}/*`,
       component: <AllChecklistsWidget activeChecklistId={checklistId} />,
     });
-  }, [checklistId, configureWidgets]);
+  }, [checklistId, configureWidgets, facet?.basePath]);
 
   useEffect(() => {
     if (data && checklistId == null) {
