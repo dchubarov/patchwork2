@@ -24,7 +24,6 @@ export interface SidebarWidget {
    *  - `/some/path` - matches exact location withing application.
    *  - `/some/path/*` - matches location and its sub-location.
    *  - `!/some/path` - matches authenticated user and exact location.
-   *  - `_/sub/path` - matches sub-path within current facet.
    *  - `!/*` - matches any location within application if there is an authenticated user.
    */
   scope?: string;
