@@ -140,7 +140,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   });
 
   useEffect(() => {
-    let timeoutId = null;
+    let timeoutId: any = null;
     if (tokenExpiresMillis !== null) {
       const timeout =
         tokenExpiresMillis - REFRESH_BEFORE_EXPIRATION_MILLIS - _.now();
