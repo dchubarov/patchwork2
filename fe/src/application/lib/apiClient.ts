@@ -39,6 +39,10 @@ export const createApiClient = () => {
     return Promise.reject(error);
   });
 
-  developmentLogger.log('Configured Axios API client:', client.defaults);
+  developmentLogger.log(
+    'Configured Axios API client with defaults:',
+    client.defaults
+  );
+
   return client;
 };

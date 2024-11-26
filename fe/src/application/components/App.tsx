@@ -4,7 +4,7 @@ import Layout from './Layout';
 import Sidebar from './Sidebar';
 import ActiveViewProvider from '../providers/ActiveViewProvider';
 import { customizeTheme } from '../lib/customizeTheme';
-import ViewBoundary from './ViewBoundary';
+import ActiveViewBoundary from './ActiveViewBoundary';
 
 const App: React.FC = () => {
   const theme = useMemo(customizeTheme, []);
@@ -25,7 +25,7 @@ const App: React.FC = () => {
             </Layout.Sidebar>
 
             <Layout.View>
-              <ViewBoundary />
+              <ActiveViewBoundary />
             </Layout.View>
 
             <Layout.Sidebar placement="right">

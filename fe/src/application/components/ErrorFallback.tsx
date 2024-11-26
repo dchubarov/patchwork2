@@ -1,6 +1,10 @@
 import _ from 'lodash';
 import React from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import {
+  isRouteErrorResponse,
+  Link as RouterLink,
+  useLocation,
+} from 'react-router-dom';
 import {
   Button,
   Card,
@@ -9,17 +13,28 @@ import {
   Divider,
   Link,
 } from '@mui/joy';
-import { ErrorOutline as WarningIcon } from '@mui/icons-material';
+import { BrokenImage as WarningIcon } from '@mui/icons-material';
 import Typography from '@mui/joy/Typography';
-import { useActiveView } from '@/hooks';
 import PageLayout from '@/components/PageLayout';
+import { useActiveViewSafe } from '@/hooks/view';
 
-const ViewError: React.FC<{
-  reason?: Error;
+const ErrorFallback: React.FC<{
+  reason?: unknown;
   reset?: () => void;
 }> = ({ reason, reset }) => {
   const location = useLocation();
-  const { facet } = useActiveView();
+  const view = useActiveViewSafe();
+
+  let errorMessage;
+  if (isRouteErrorResponse(reason)) {
+    errorMessage = reason.statusText;
+  } else if (reason instanceof Error) {
+    errorMessage = reason.message;
+  } else if (typeof reason === 'string') {
+    errorMessage = reason;
+  } else {
+    errorMessage = 'Unknown error';
+  }
 
   return (
     <PageLayout.Centered>
@@ -41,9 +56,7 @@ const ViewError: React.FC<{
         </CardContent>
         <Divider sx={{ mb: 1 }} />
         <CardContent sx={{ gap: 2 }}>
-          <Typography level="body-lg">
-            {reason?.message ?? 'Unknown error'}
-          </Typography>
+          <Typography level="body-lg">{errorMessage}</Typography>
 
           <Typography
             component="div"
@@ -51,13 +64,13 @@ const ViewError: React.FC<{
             sx={{ color: 'text.tertiary' }}>
             Instead of this page, you can try the following locations:
             <ul>
-              {facet && facet.basePath !== location.pathname && (
+              {view?.facet && view.facet.basePath !== location.pathname && (
                 <li>
                   <Link
                     component={RouterLink}
-                    to={facet.basePath}
+                    to={view.facet.basePath}
                     level="body-sm">
-                    {facet.localizedDisplayName}
+                    {view.facet.localizedDisplayName}
                   </Link>
                 </li>
               )}
@@ -71,11 +84,11 @@ const ViewError: React.FC<{
         </CardContent>
         <CardActions sx={{ justifyContent: 'flex-end', gap: 2 }}>
           <Typography>{' ' /* acts as spacer */}</Typography>
-          <Button onClick={() => reset?.()}>Try again</Button>
+          {reset && <Button onClick={() => reset()}>Try again</Button>}
         </CardActions>
       </Card>
     </PageLayout.Centered>
   );
 };
 
-export default ViewError;
+export default ErrorFallback;

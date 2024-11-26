@@ -4,9 +4,9 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { useAuth } from '@/hooks';
 import SuspenseFallback from '@/components/SuspenseFallback';
-import ViewError from './ViewError';
+import ErrorFallback from './ErrorFallback';
 
-const ViewBoundary: React.FC = () => {
+const ActiveViewBoundary: React.FC = () => {
   const { reset: resetQueryError } = useQueryErrorResetBoundary();
   const location = useLocation();
   const { user } = useAuth();
@@ -19,7 +19,7 @@ const ViewBoundary: React.FC = () => {
       key={errorBoundaryKey}
       onReset={resetQueryError}
       fallbackRender={({ error, resetErrorBoundary }) => (
-        <ViewError reason={error} reset={resetErrorBoundary} />
+        <ErrorFallback reason={error} reset={resetErrorBoundary} />
       )}>
       <Suspense fallback={<SuspenseFallback />}>
         <Outlet />
@@ -28,4 +28,4 @@ const ViewBoundary: React.FC = () => {
   );
 };
 
-export default ViewBoundary;
+export default ActiveViewBoundary;
