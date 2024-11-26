@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, {
   PropsWithChildren,
   ReactNode,
@@ -13,9 +14,10 @@ import {
   ViewConfiguration,
   ViewState,
 } from '@/types/view';
-import { useEnvironment } from '@/hooks/env';
+import { normalizeBasePath } from '@/utils/path';
 import { EnvironmentApplicationFacet } from '@/types/env';
-import _ from 'lodash';
+import { useEnvironment } from '@/hooks';
+import { useAuth } from '@/hooks';
 
 enum ViewStateActionType {
   CONFIGURE_VIEW,
@@ -59,12 +61,19 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(viewStateReducer, initialViewState);
   const { availableFacets } = useEnvironment();
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   const contextValue = {
     ...state,
-    facet: useMemo(() => {
-      return getActiveFacetFromPath(availableFacets, location.pathname);
-    }, [availableFacets, location.pathname]),
+    facet: useMemo(
+      () => getActiveFacetFromPath(availableFacets, location.pathname),
+      [availableFacets, location.pathname]
+    ),
+    widgets: filterScopedWidgets(
+      state.widgets,
+      isAuthenticated,
+      location.pathname
+    ),
     configureView: useCallback(
       (config: ViewConfiguration) => {
         dispatch({ type: ViewStateActionType.CONFIGURE_VIEW, config });
@@ -100,7 +109,7 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
 export default ActiveViewProvider;
 
-// private
+// Private
 
 function getActiveFacetFromPath(
   availableFacets: EnvironmentApplicationFacet[],
@@ -179,9 +188,9 @@ function mergeWidgetConfigurations(
         .filter((config) => !!config.component)
         .map(
           (config): SidebarWidget => ({
-            key: config.key || `widget-${config.slot || 0}`,
-            caption: config.caption || '',
             slot: config.slot || 0,
+            scope: config.scope,
+            caption: config.caption || '',
             component: config.component,
           })
         ),
@@ -191,4 +200,41 @@ function mergeWidgetConfigurations(
       (a: SidebarWidget, b: SidebarWidget) => a.slot - b.slot
     );
   }
+}
+
+function filterScopedWidgets(
+  widgets: SidebarWidget[],
+  isAuthenticated: boolean,
+  pathname: string
+) {
+  const filtered = widgets.filter((item) =>
+    scopeMatches(item.scope, isAuthenticated, pathname)
+  );
+  return filtered.length !== widgets.length ? filtered : widgets;
+}
+
+function scopeMatches(
+  scope: string | undefined,
+  isAuthenticated: boolean,
+  pathname: string
+): boolean {
+  if (typeof scope === 'undefined' || scope.length < 1) return true;
+
+  let exactMatch = true,
+    l = 0,
+    r = scope.length;
+
+  if (scope.startsWith('!')) {
+    if (!isAuthenticated) return false;
+    l++;
+  }
+  if (scope.endsWith('*')) {
+    exactMatch = false;
+    r--;
+  }
+
+  const normalizedPath = normalizeBasePath(scope.substring(l, r)) || '/';
+  return exactMatch
+    ? pathname === normalizedPath
+    : pathname.startsWith(normalizedPath);
 }

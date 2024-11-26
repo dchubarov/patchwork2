@@ -25,9 +25,9 @@ const ChecklistsPage: React.FC = () => {
     configureWidgets({
       slot: 1,
       caption: 'All checklists',
+      scope: `!${facet?.basePath}/*`,
       component: <AllChecklistsWidget activeChecklistId={checklistId} />,
     });
-    return () => configureWidgets({ slot: 1, component: null });
   }, [checklistId, configureWidgets]);
 
   useEffect(() => {

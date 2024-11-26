@@ -4,10 +4,30 @@ import { EnvironmentApplicationFacet } from '@/types/env';
 export type SidebarPlacement = 'left' | 'right';
 
 export interface SidebarWidget {
-  key: string;
-  caption: string;
+  /** Slot number, zero represents pinned widget */
   slot: number;
+  /** Widget caption, not used for pinned widget */
+  caption: string;
+  /**
+   * Widget UI component, passing `null` value to `configureWidget`
+   * causes removal of the widget
+   */
   component: ReactNode;
+  /**
+   * Represents a scope in which the widget does exist. Widget whose scope
+   * does not match current conditions are automatically ejected. Scope
+   * matching involves location and whether application has authenticated
+   * user. If scope is `undefined` widget is not ejected automatically and
+   * needs to be removed using `configureWidgets`.
+   *
+   * #### Examples:
+   *  - `/some/path` - matches exact location withing application.
+   *  - `/some/path/*` - matches location and its sub-location.
+   *  - `!/some/path` - matches authenticated user and exact location.
+   *  - `_/sub/path` - matches sub-path within current facet.
+   *  - `!/*` - matches any location within application if there is an authenticated user.
+   */
+  scope?: string;
 }
 
 export type SidebarWidgetsConfiguration =

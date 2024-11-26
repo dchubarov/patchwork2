@@ -19,11 +19,11 @@ const SidebarWidgetHost: React.FC<SidebarWidgetHostProps> = ({ widgets }) => {
       {widgets
         .filter((widget) => widget.slot !== 0)
         .map((widget) => (
-          <Accordion key={`widget-${widget.slot}`} defaultExpanded>
+          <Accordion key={widget.slot} defaultExpanded>
             <AccordionSummary>
               <ListItemContent>
                 <Typography level="title-sm">
-                  {widget.caption || widget.key}
+                  {widget.caption || `Widget ${widget.slot}`}
                 </Typography>
               </ListItemContent>
             </AccordionSummary>

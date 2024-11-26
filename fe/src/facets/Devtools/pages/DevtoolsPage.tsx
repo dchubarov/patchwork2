@@ -1,15 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PageLayout from '@/components/PageLayout';
 import ViewContextPlayground from '../components/ViewContextPlayground';
-import { useActiveView } from '@/hooks';
 import UIComponentPlayground from '../components/UIComponentPlayground';
 
 const DevtoolsPage: React.FC = () => {
-  const { ejectView } = useActiveView();
-
-  useEffect(() => {
+  /*useEffect(() => {
     return () => ejectView();
-  }, [ejectView]);
+  }, [ejectView]);*/
 
   return (
     <PageLayout.Indexed>
