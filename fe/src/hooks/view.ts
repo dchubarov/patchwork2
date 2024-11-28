@@ -4,6 +4,8 @@ import {
   FacetContext,
   DrawerState,
   DrawerContext,
+  SidebarWidgetsState,
+  SidebarWidgetsContext,
 } from '@/types/view';
 import { useContext } from 'react';
 import { EnvironmentApplicationFacet } from '@/types/env';
@@ -30,5 +32,14 @@ export function useDrawer(): DrawerState {
   const context = useContext(DrawerContext);
   if (!context)
     throw new Error('useDrawer() hook must be used withing DrawerProvider.');
+  return context;
+}
+
+export function useSidebarWidgets(): SidebarWidgetsState {
+  const context = useContext(SidebarWidgetsContext);
+  if (!context)
+    throw new Error(
+      'useSidebarWidgets() hook must be used withing SidebarWidgetsProvider.'
+    );
   return context;
 }

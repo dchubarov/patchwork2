@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { Sheet, Typography } from '@mui/joy';
 import InfoIcon from '@mui/icons-material/Info';
 import PageLayout from '@/components/PageLayout';
-import { useActiveView } from '@/hooks';
+import { useSidebarWidgets } from '@/hooks/view';
 
 const DefaultPage: React.FC = () => {
-  const { configureWidgets, ejectView } = useActiveView();
+  const { configureWidgets, removeAllWidgets } = useSidebarWidgets();
 
   useEffect(() => {
     configureWidgets([
@@ -26,10 +26,8 @@ const DefaultPage: React.FC = () => {
       },
     ]);
 
-    return () => {
-      ejectView();
-    };
-  }, [configureWidgets, ejectView]);
+    return () => removeAllWidgets();
+  }, [configureWidgets, removeAllWidgets]);
 
   return (
     <PageLayout.Centered>

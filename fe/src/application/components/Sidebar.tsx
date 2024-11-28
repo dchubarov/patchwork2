@@ -5,9 +5,11 @@ import SidebarDivider from './SidebarDivider';
 import SidebarUserPanel from './SidebarUserPanel';
 import SidebarHeader from './SidebarHeader';
 import SidebarWidgetHost from './SidebarWidgetHost';
+import { useSidebarWidgets } from '@/hooks/view';
 
 const Sidebar: React.FC = () => {
-  const { widgets, sidebarPlacement } = useActiveView();
+  const { sidebarPlacement } = useActiveView();
+  const { widgets } = useSidebarWidgets();
   const pinnedWidget =
     widgets.length > 0 && widgets[0].slot === 0 ? widgets[0] : null;
   const moreWidgets =

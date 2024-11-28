@@ -8,7 +8,7 @@ import {
 } from '@mui/joy';
 import { IndexedLayoutChildProps } from '@/types/layout';
 import { useActiveView } from '@/hooks';
-import { useDrawer } from '@/hooks/view';
+import { useDrawer, useSidebarWidgets } from '@/hooks/view';
 
 const DemoLoadingWidget: React.FC = () => (
   <Typography
@@ -19,13 +19,14 @@ const DemoLoadingWidget: React.FC = () => (
 );
 
 const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
-  const { configureView, configureWidgets, ejectView } = useActiveView();
+  const { configureView, ejectView } = useActiveView();
+  const { configureWidgets, removeAllWidgets } = useSidebarWidgets();
   const { openDrawer } = useDrawer();
   const [slot, setSlot] = useState(1);
 
   useEffect(() => {
     // Need to eject to remove test widgets
-    return () => ejectView();
+    return () => removeAllWidgets();
   }, [ejectView]);
 
   return (

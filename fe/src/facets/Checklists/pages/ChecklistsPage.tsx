@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useActiveView } from '@/hooks';
 import PageLayout from '@/components/PageLayout';
 import { useAllChecklistsQuery } from '../lib/queries';
 import SuspenseFallback from '@/components/SuspenseFallback';
 import AllChecklistsWidget from '../components/AllChecklistsWidget';
 import ChecklistProvider from '../providers/ChecklistProvider';
 import ChecklistContent from '../components/ChecklistContent';
-import { useFacet } from '@/hooks/view';
+import { useFacet, useSidebarWidgets } from '@/hooks/view';
 
 const ChecklistsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { configureWidgets } = useActiveView();
+  const { configureWidgets, removeWidgets } = useSidebarWidgets();
   const facet = useFacet();
   const { checklistId } = useParams();
   const { data } = useAllChecklistsQuery();
@@ -30,6 +29,7 @@ const ChecklistsPage: React.FC = () => {
       scope: `!${facet?.basePath}/*`,
       component: <AllChecklistsWidget activeChecklistId={checklistId} />,
     });
+    return () => removeWidgets(1);
   }, [checklistId, configureWidgets, facet?.basePath]);
 
   useEffect(() => {

@@ -40,9 +40,7 @@ export interface ViewState {
   key: string | null;
   title: string | null;
   sidebarPlacement: SidebarPlacement;
-  widgets: SidebarWidget[];
   configureView: (config: ViewConfiguration) => void;
-  configureWidgets: (config: SidebarWidgetsConfiguration) => void;
   ejectView: () => void;
 }
 
@@ -54,6 +52,13 @@ export interface DrawerState {
   closeDrawer: () => void;
 }
 
+export interface SidebarWidgetsState {
+  widgets: SidebarWidget[];
+  configureWidgets: (config: SidebarWidgetsConfiguration) => void;
+  removeWidgets: (...slots: number[]) => void;
+  removeAllWidgets: () => void;
+}
+
 export const ActiveViewContext = createContext<ViewState | null>(null);
 
 export const FacetContext = createContext<EnvironmentApplicationFacet | null>(
@@ -61,3 +66,7 @@ export const FacetContext = createContext<EnvironmentApplicationFacet | null>(
 );
 
 export const DrawerContext = createContext<DrawerState | null>(null);
+
+export const SidebarWidgetsContext = createContext<SidebarWidgetsState | null>(
+  null
+);
