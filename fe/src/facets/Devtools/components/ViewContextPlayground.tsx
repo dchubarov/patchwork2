@@ -8,6 +8,7 @@ import {
 } from '@mui/joy';
 import { IndexedLayoutChildProps } from '@/types/layout';
 import { useActiveView } from '@/hooks';
+import { useDrawer } from '@/hooks/view';
 
 const DemoLoadingWidget: React.FC = () => (
   <Typography
@@ -18,8 +19,8 @@ const DemoLoadingWidget: React.FC = () => (
 );
 
 const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
-  const { configureView, configureWidgets, ejectView, openDrawer } =
-    useActiveView();
+  const { configureView, configureWidgets, ejectView } = useActiveView();
+  const { openDrawer } = useDrawer();
   const [slot, setSlot] = useState(1);
 
   useEffect(() => {

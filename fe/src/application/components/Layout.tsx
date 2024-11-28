@@ -12,6 +12,7 @@ import { Toast, Toaster as HotToaster } from 'react-hot-toast';
 import { SidebarPlacement } from '@/types/view';
 import Notification from '@/components/Notification';
 import { useActiveView } from '@/hooks';
+import { useDrawer } from '@/hooks/view';
 
 const Root: React.FC<BoxProps> = ({ sx, ...other }) => (
   <Box
@@ -114,16 +115,11 @@ const View: React.FC<BoxProps> = ({ sx, ...other }) => (
 );
 
 const Drawer: React.FC = () => {
-  const {
-    drawerOpen,
-    drawerTitle,
-    drawerComponent,
-    closeDrawer,
-    sidebarPlacement,
-  } = useActiveView();
+  const { isOpen, title, element, closeDrawer } = useDrawer();
+  const { sidebarPlacement } = useActiveView();
   return (
     <JoyDrawer
-      open={drawerOpen}
+      open={isOpen}
       anchor={sidebarPlacement === 'left' ? 'right' : 'left'}
       onClose={closeDrawer}
       sx={{
@@ -131,9 +127,13 @@ const Drawer: React.FC = () => {
           'clamp(250px, 520px, calc(100vw - var(--Sidebar-width)))',
         zIndex: 1100,
       }}>
-      <ModalClose />
-      {drawerTitle && <DialogTitle>{drawerTitle}</DialogTitle>}
-      {drawerComponent && <DialogContent>{drawerComponent}</DialogContent>}
+      {isOpen && (
+        <>
+          <ModalClose />
+          {title && <DialogTitle>{title}</DialogTitle>}
+          <DialogContent>{element}</DialogContent>
+        </>
+      )}
     </JoyDrawer>
   );
 };

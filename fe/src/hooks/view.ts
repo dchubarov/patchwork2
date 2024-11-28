@@ -1,4 +1,10 @@
-import { ViewState, ActiveViewContext, FacetContext } from '@/types/view';
+import {
+  ViewState,
+  ActiveViewContext,
+  FacetContext,
+  DrawerState,
+  DrawerContext,
+} from '@/types/view';
 import { useContext } from 'react';
 import { EnvironmentApplicationFacet } from '@/types/env';
 
@@ -18,4 +24,11 @@ export function useActiveView(): ViewState {
 
 export function useFacet(): EnvironmentApplicationFacet | null {
   return useContext(FacetContext);
+}
+
+export function useDrawer(): DrawerState {
+  const context = useContext(DrawerContext);
+  if (!context)
+    throw new Error('useDrawer() hook must be used withing DrawerProvider.');
+  return context;
 }

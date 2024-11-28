@@ -1,9 +1,4 @@
-import React, {
-  PropsWithChildren,
-  ReactNode,
-  useCallback,
-  useReducer,
-} from 'react';
+import React, { PropsWithChildren, useCallback, useReducer } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   ActiveViewContext,
@@ -15,13 +10,12 @@ import {
 import { normalizeBasePath } from '@/utils/path';
 import { useAuth } from '@/hooks';
 import FacetProvider from './FacetProvider';
+import DrawerProvider from './DrawerProvider';
 
 enum ViewStateActionType {
   CONFIGURE_VIEW,
   CONFIGURE_WIDGETS,
   EJECT_VIEW,
-  OPEN_DRAWER,
-  CLOSE_DRAWER,
 }
 
 type ViewStateAction =
@@ -30,27 +24,16 @@ type ViewStateAction =
       type: ViewStateActionType.CONFIGURE_WIDGETS;
       config: SidebarWidgetsConfiguration;
     }
-  | { type: ViewStateActionType.EJECT_VIEW }
-  | {
-      type: ViewStateActionType.OPEN_DRAWER;
-      component: ReactNode;
-      title?: string;
-    }
-  | { type: ViewStateActionType.CLOSE_DRAWER };
+  | { type: ViewStateActionType.EJECT_VIEW };
 
 const initialViewState: ViewState = {
   key: null,
   title: null,
   sidebarPlacement: 'left',
   widgets: [],
-  drawerOpen: false,
-  drawerTitle: undefined,
-  drawerComponent: null,
   configureView: () => {},
   configureWidgets: () => {},
   ejectView: () => {},
-  openDrawer: () => {},
-  closeDrawer: () => {},
 };
 
 const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -80,21 +63,12 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
     ejectView: useCallback(() => {
       dispatch({ type: ViewStateActionType.EJECT_VIEW });
     }, [dispatch]),
-    openDrawer: useCallback(
-      (component: ReactNode, title?: string) => {
-        dispatch({ type: ViewStateActionType.OPEN_DRAWER, component, title });
-      },
-      [dispatch]
-    ),
-    closeDrawer: useCallback(() => {
-      dispatch({ type: ViewStateActionType.CLOSE_DRAWER });
-    }, [dispatch]),
   };
 
   return (
     <FacetProvider>
       <ActiveViewContext.Provider value={contextValue}>
-        {children}
+        <DrawerProvider>{children}</DrawerProvider>
       </ActiveViewContext.Provider>
     </FacetProvider>
   );
@@ -125,22 +99,6 @@ export function viewStateReducer(
       return {
         ...initialViewState,
         sidebarPlacement: state.sidebarPlacement,
-      };
-
-    case ViewStateActionType.OPEN_DRAWER:
-      return {
-        ...state,
-        drawerOpen: true,
-        drawerTitle: action.title,
-        drawerComponent: action.component,
-      };
-
-    case ViewStateActionType.CLOSE_DRAWER:
-      return {
-        ...state,
-        drawerOpen: false,
-        drawerTitle: undefined,
-        drawerComponent: null,
       };
   }
 }

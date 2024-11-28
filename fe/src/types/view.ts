@@ -41,13 +41,16 @@ export interface ViewState {
   title: string | null;
   sidebarPlacement: SidebarPlacement;
   widgets: SidebarWidget[];
-  drawerOpen: boolean;
-  drawerTitle?: string;
-  drawerComponent: ReactNode | null;
   configureView: (config: ViewConfiguration) => void;
   configureWidgets: (config: SidebarWidgetsConfiguration) => void;
   ejectView: () => void;
-  openDrawer: (component: ReactNode, title?: string) => void;
+}
+
+export interface DrawerState {
+  isOpen: boolean;
+  element: ReactNode;
+  title?: string;
+  openDrawer: (element: ReactNode, title?: string) => void;
   closeDrawer: () => void;
 }
 
@@ -56,3 +59,5 @@ export const ActiveViewContext = createContext<ViewState | null>(null);
 export const FacetContext = createContext<EnvironmentApplicationFacet | null>(
   null
 );
+
+export const DrawerContext = createContext<DrawerState | null>(null);

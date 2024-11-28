@@ -29,10 +29,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { SidebarPlacement } from '@/types/view';
 import { ApplicationEnvironment } from '@/types/env';
 import ApiPlayground from './ApiPlayground';
+import { useDrawer } from '@/hooks/view';
 
 const AppSettingsMenu: React.FC = () => {
   const { mode: colorScheme, setMode: setColorScheme } = useColorScheme();
-  const { sidebarPlacement, configureView, openDrawer } = useActiveView();
+  const { sidebarPlacement, configureView } = useActiveView();
+  const { openDrawer } = useDrawer();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const { environment, versionInfo, backendStatus, backendInfo } =
