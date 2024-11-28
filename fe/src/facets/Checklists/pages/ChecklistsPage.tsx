@@ -7,10 +7,12 @@ import SuspenseFallback from '@/components/SuspenseFallback';
 import AllChecklistsWidget from '../components/AllChecklistsWidget';
 import ChecklistProvider from '../providers/ChecklistProvider';
 import ChecklistContent from '../components/ChecklistContent';
+import { useFacet } from '@/hooks/view';
 
 const ChecklistsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { configureWidgets, facet } = useActiveView();
+  const { configureWidgets } = useActiveView();
+  const facet = useFacet();
   const { checklistId } = useParams();
   const { data } = useAllChecklistsQuery();
 

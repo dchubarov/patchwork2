@@ -44,7 +44,6 @@ export interface ViewState {
   drawerOpen: boolean;
   drawerTitle?: string;
   drawerComponent: ReactNode | null;
-  facet: EnvironmentApplicationFacet | null;
   configureView: (config: ViewConfiguration) => void;
   configureWidgets: (config: SidebarWidgetsConfiguration) => void;
   ejectView: () => void;
@@ -53,3 +52,7 @@ export interface ViewState {
 }
 
 export const ActiveViewContext = createContext<ViewState | null>(null);
+
+export const FacetContext = createContext<EnvironmentApplicationFacet | null>(
+  null
+);

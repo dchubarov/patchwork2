@@ -3,8 +3,8 @@ import { Box, Typography } from '@mui/joy';
 import AppSettingsMenu from './AppSettingsMenu';
 import SidebarDivider from './SidebarDivider';
 import { SidebarWidget } from '@/types/view';
-import { useActiveView } from '@/hooks';
 import AppFacetsMenu from './AppFacetsMenu';
+import { useFacet } from '@/hooks/view';
 
 interface SidebarHeaderProps {
   widget?: SidebarWidget | null;
@@ -12,7 +12,7 @@ interface SidebarHeaderProps {
 }
 
 const SidebarHeader: React.FC<SidebarHeaderProps> = ({ widget, divider }) => {
-  const { facet } = useActiveView();
+  const facet = useFacet();
 
   return (
     <Box

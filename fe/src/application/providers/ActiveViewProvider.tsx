@@ -1,9 +1,7 @@
-import _ from 'lodash';
 import React, {
   PropsWithChildren,
   ReactNode,
   useCallback,
-  useMemo,
   useReducer,
 } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -15,9 +13,8 @@ import {
   ViewState,
 } from '@/types/view';
 import { normalizeBasePath } from '@/utils/path';
-import { EnvironmentApplicationFacet } from '@/types/env';
-import { useEnvironment } from '@/hooks';
 import { useAuth } from '@/hooks';
+import FacetProvider from './FacetProvider';
 
 enum ViewStateActionType {
   CONFIGURE_VIEW,
@@ -49,7 +46,6 @@ const initialViewState: ViewState = {
   drawerOpen: false,
   drawerTitle: undefined,
   drawerComponent: null,
-  facet: null,
   configureView: () => {},
   configureWidgets: () => {},
   ejectView: () => {},
@@ -59,16 +55,11 @@ const initialViewState: ViewState = {
 
 const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(viewStateReducer, initialViewState);
-  const { availableFacets } = useEnvironment();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
 
   const contextValue = {
     ...state,
-    facet: useMemo(
-      () => getActiveFacetFromPath(availableFacets, location.pathname),
-      [availableFacets, location.pathname]
-    ),
     widgets: filterScopedWidgets(
       state.widgets,
       isAuthenticated,
@@ -101,25 +92,17 @@ const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   return (
-    <ActiveViewContext.Provider value={contextValue}>
-      {children}
-    </ActiveViewContext.Provider>
+    <FacetProvider>
+      <ActiveViewContext.Provider value={contextValue}>
+        {children}
+      </ActiveViewContext.Provider>
+    </FacetProvider>
   );
 };
 
 export default ActiveViewProvider;
 
 // Private
-
-function getActiveFacetFromPath(
-  availableFacets: EnvironmentApplicationFacet[],
-  pathname: string
-): EnvironmentApplicationFacet | null {
-  return (
-    availableFacets.find((value) => _.startsWith(pathname, value.basePath)) ||
-    null
-  );
-}
 
 export function viewStateReducer(
   state: ViewState,

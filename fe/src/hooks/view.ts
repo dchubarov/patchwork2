@@ -1,5 +1,6 @@
-import { ViewState, ActiveViewContext } from '@/types/view';
+import { ViewState, ActiveViewContext, FacetContext } from '@/types/view';
 import { useContext } from 'react';
+import { EnvironmentApplicationFacet } from '@/types/env';
 
 export function useActiveViewSafe(): ViewState | null {
   return useContext(ActiveViewContext);
@@ -13,4 +14,8 @@ export function useActiveView(): ViewState {
     );
   }
   return context;
+}
+
+export function useFacet(): EnvironmentApplicationFacet | null {
+  return useContext(FacetContext);
 }

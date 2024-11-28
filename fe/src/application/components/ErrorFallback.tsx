@@ -16,14 +16,14 @@ import {
 import { BrokenImage as WarningIcon } from '@mui/icons-material';
 import Typography from '@mui/joy/Typography';
 import PageLayout from '@/components/PageLayout';
-import { useActiveViewSafe } from '@/hooks/view';
+import { useFacet } from '@/hooks/view';
 
 const ErrorFallback: React.FC<{
   reason?: unknown;
   reset?: () => void;
 }> = ({ reason, reset }) => {
   const location = useLocation();
-  const view = useActiveViewSafe();
+  const facet = useFacet();
 
   let errorMessage;
   if (isRouteErrorResponse(reason)) {
@@ -64,13 +64,13 @@ const ErrorFallback: React.FC<{
             sx={{ color: 'text.tertiary' }}>
             Instead of this page, you can try the following locations:
             <ul>
-              {view?.facet && view.facet.basePath !== location.pathname && (
+              {facet && facet.basePath !== location.pathname && (
                 <li>
                   <Link
                     component={RouterLink}
-                    to={view.facet.basePath}
+                    to={facet.basePath}
                     level="body-sm">
-                    {view.facet.localizedDisplayName}
+                    {facet.localizedDisplayName}
                   </Link>
                 </li>
               )}
