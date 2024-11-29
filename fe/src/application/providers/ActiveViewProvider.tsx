@@ -1,11 +1,5 @@
 import React, { PropsWithChildren, useCallback, useReducer } from 'react';
-import {
-  ActiveViewContext,
-  SidebarWidget,
-  ViewConfiguration,
-  ViewState,
-} from '@/types/view';
-import { normalizeBasePath } from '@/utils/path';
+import { ActiveViewContext, ViewConfiguration, ViewState } from '@/types/view';
 import FacetProvider from './FacetProvider';
 import DrawerProvider from './DrawerProvider';
 import SidebarWidgetsProvider from './SidebarWidgetsProvider';
@@ -77,6 +71,7 @@ export function viewStateReducer(
   }
 }
 
+/*
 function filterScopedWidgets(
   widgets: SidebarWidget[],
   isAuthenticated: boolean,
@@ -113,3 +108,4 @@ function scopeMatches(
     ? pathname === normalizedPath
     : pathname.startsWith(normalizedPath);
 }
+*/

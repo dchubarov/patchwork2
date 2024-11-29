@@ -19,7 +19,7 @@ const DemoLoadingWidget: React.FC = () => (
 );
 
 const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
-  const { configureView, ejectView } = useActiveView();
+  const { configureView } = useActiveView();
   const { configureWidgets, removeAllWidgets } = useSidebarWidgets();
   const { openDrawer } = useDrawer();
   const [slot, setSlot] = useState(1);
@@ -27,7 +27,7 @@ const ViewContextPlayground: React.FC<IndexedLayoutChildProps> = () => {
   useEffect(() => {
     // Need to eject to remove test widgets
     return () => removeAllWidgets();
-  }, [ejectView]);
+  }, [removeAllWidgets]);
 
   return (
     <Stack gap={2} alignItems="flex-start">

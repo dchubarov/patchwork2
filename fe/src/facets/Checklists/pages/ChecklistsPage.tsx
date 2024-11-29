@@ -30,7 +30,7 @@ const ChecklistsPage: React.FC = () => {
       component: <AllChecklistsWidget activeChecklistId={checklistId} />,
     });
     return () => removeWidgets(1);
-  }, [checklistId, configureWidgets, facet?.basePath]);
+  }, [checklistId, configureWidgets, removeWidgets, facet?.basePath]);
 
   useEffect(() => {
     if (data && checklistId == null) {
