@@ -1,16 +1,11 @@
-import {EnvironmentState, EnvironmentContext} from "@/types/env";
-import {useContext} from "react";
-import {AxiosInstance} from "axios";
+import { EnvironmentContext } from '@/types/env';
+import { AxiosInstance } from 'axios';
+import { useSafeContext } from '@/utils/context';
 
-export function useEnvironment(): EnvironmentState {
-    const context = useContext(EnvironmentContext);
-    if (!context) {
-        throw new Error("useEnvironment() hook should be used within EnvironmentProvider.")
-    }
-    return context;
-}
+export const useEnvironment = () => useSafeContext(EnvironmentContext);
 
-export function useApiClient(): AxiosInstance {
-    const {apiClient} = useEnvironment();
-    return apiClient;
-}
+export const useApiClient = (client?: AxiosInstance): AxiosInstance => {
+  const { apiClient } = useEnvironment();
+  if (client) return client;
+  else return apiClient;
+};

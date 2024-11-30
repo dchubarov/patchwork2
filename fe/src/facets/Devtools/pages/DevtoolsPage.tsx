@@ -1,22 +1,30 @@
-import React, {useEffect} from "react";
-import PageLayout from "@/components/PageLayout";
-import ViewContextPlayground from "../components/ViewContextPlayground";
-import {useActiveView} from "@/hooks";
+import React from 'react';
+import PageLayout, { IndexedLayoutTab } from '@/components/PageLayout';
+import ViewContextPlayground from '../components/ViewContextPlayground';
+import UIComponentPlayground from '../components/UIComponentPlayground';
+import { useActiveView, useFacet } from '@/hooks';
 
 const DevtoolsPage: React.FC = () => {
-    const {ejectView} = useActiveView();
+  const { configureView } = useActiveView();
+  const facet = useFacet();
 
-    useEffect(() => {
-        return () => ejectView();
-    }, [ejectView]);
+  const handlePageChange = (tab: IndexedLayoutTab) => {
+    configureView({ title: tab.caption, scope: facet.basePath });
+  };
 
-    return (
-        <PageLayout.Indexed>
-            <ViewContextPlayground
-                tabKey="view-context-playground"
-                tabCaption="View context playground"/>
-        </PageLayout.Indexed>
-    );
-}
+  return (
+    <PageLayout.Indexed onTabChange={handlePageChange}>
+      <UIComponentPlayground
+        tabKey="ui-libarary"
+        tabCaption="Component Library"
+      />
+
+      <ViewContextPlayground
+        tabKey="view-context-playground"
+        tabCaption="View Context"
+      />
+    </PageLayout.Indexed>
+  );
+};
 
 export default DevtoolsPage;

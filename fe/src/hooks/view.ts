@@ -1,10 +1,15 @@
-import {ViewState, ActiveViewContext} from "@/types/view";
-import {useContext} from "react";
+import { useContext } from 'react';
+import { useSafeContext } from '@/utils/context';
+import {
+  ActiveViewContext,
+  DrawerContext,
+  FacetContext,
+  SidebarWidgetsContext,
+} from '@/types/view';
 
-export function useActiveView(): ViewState {
-    const context = useContext(ActiveViewContext);
-    if (!context) {
-        throw new Error("useActiveView hook must be used within ActiveViewProvider.");
-    }
-    return context;
-}
+export const useFacetOrNull = () => useContext(FacetContext);
+export const useFacet = () => useSafeContext(FacetContext);
+export const useActiveViewOrNull = () => useContext(ActiveViewContext);
+export const useActiveView = () => useSafeContext(ActiveViewContext);
+export const useSidebarWidgets = () => useSafeContext(SidebarWidgetsContext);
+export const useDrawer = () => useSafeContext(DrawerContext);

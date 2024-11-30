@@ -1,41 +1,50 @@
-import {Model} from "miragejs";
-import {AppServer} from "./index";
-import {SerializerInterface} from "miragejs/serializer";
+import { Model } from 'miragejs';
+import { AppRegistry, AppServer } from './index';
+import { SerializerInterface } from 'miragejs/serializer';
+import { Instantiate } from 'miragejs/-types';
 
-export type UserStatus = "active" | "suspended";
+export const USER_ENTITY_KEY = 'user';
+export type UserStatus = 'active' | 'suspended';
 
-export interface UserData {
-    username: string;
-    firstname?: string;
-    lastname?: string;
-    email: string;
-    status: UserStatus;
+interface UserDb {
+  id: string;
+  username: string;
+  firstname?: string;
+  lastname?: string;
+  email: string;
+  status: UserStatus;
 }
 
-export const USER_ENTITY_KEY = "user";
+export type UserDbModel = Instantiate<AppRegistry, typeof USER_ENTITY_KEY>;
 
 const UserEntity = {
-    models: {
-        [USER_ENTITY_KEY]: Model.extend<Partial<UserData>>({})
-    },
+  models: {
+    [USER_ENTITY_KEY]: Model.extend<Partial<UserDb>>({}),
+  },
 
-    factories: {},
+  factories: {},
 
-    seeds: (server: AppServer) => {
-        server.create(USER_ENTITY_KEY, {
-            id: "1000",
-            username: "dime",
-            firstname: "Dmitry",
-            email: "dime@twowls.org",
-            status: "active"
-        });
-    },
+  seeds: (server: AppServer) => {
+    server.create(USER_ENTITY_KEY, {
+      id: '1000',
+      username: 'dime',
+      firstname: 'Dmitry',
+      email: 'dime@twowls.org',
+      status: 'active',
+    });
+    server.create(USER_ENTITY_KEY, {
+      id: '1001',
+      username: 'monk',
+      email: 'dummy@twowls.org',
+      status: 'active',
+    });
+  },
 
-    serializers: (baseSerializer: SerializerInterface) => ({
-        [USER_ENTITY_KEY]: baseSerializer.extend?.({
-            attrs: ["id", "username", "firstname", "lastname", "email"]
-        })
+  serializers: (baseSerializer: SerializerInterface) => ({
+    [USER_ENTITY_KEY]: baseSerializer.extend?.({
+      attrs: ['id', 'username', 'firstname', 'lastname', 'email'],
     }),
-}
+  }),
+};
 
 export default UserEntity;
