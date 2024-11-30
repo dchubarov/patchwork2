@@ -26,7 +26,7 @@ const ChecklistsPage: React.FC = () => {
     configureWidgets({
       slot: 1,
       caption: 'All checklists',
-      scope: `!${facet?.basePath}/*`,
+      scope: `!${facet.basePath}/*`,
       component: <AllChecklistsWidget activeChecklistId={checklistId} />,
     });
   }, [checklistId, configureWidgets, facet.basePath]);

@@ -1,86 +1,48 @@
-import React, { PropsWithChildren, useCallback, useReducer } from 'react';
-import { ActiveViewContext, ViewConfiguration, ViewState } from '@/types/view';
-import FacetProvider from './FacetProvider';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
+import { ActiveViewContext, scopeMatches, ViewState } from '@/types/view';
 import DrawerProvider from './DrawerProvider';
 import SidebarWidgetsProvider from './SidebarWidgetsProvider';
-
-enum ViewStateActionType {
-  CONFIGURE_VIEW,
-  EJECT_VIEW,
-}
-
-type ViewStateAction =
-  | { type: ViewStateActionType.CONFIGURE_VIEW; config: ViewConfiguration }
-  | { type: ViewStateActionType.EJECT_VIEW };
-
-const initialViewState: ViewState = {
-  key: null,
-  title: null,
-  sidebarPlacement: 'left',
-  configureView: () => {},
-  ejectView: () => {},
-};
+import { useLocation } from 'react-router-dom';
+import { useAuth, useFacetOrNull } from '@/hooks';
 
 const ActiveViewProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [state, dispatch] = useReducer(viewStateReducer, initialViewState);
+  const facet = useFacetOrNull();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const [state, setState] = useState(
+    (): ViewState => ({
+      sidebarPlacement: 'left',
+      configureView: (config) =>
+        setState((prev) => ({
+          ...prev,
+          ...config,
+        })),
+      ejectView: () =>
+        setState((prev) => ({ ...prev, title: undefined, scope: undefined })),
+    })
+  );
 
-  const contextValue = {
-    ...state,
-    configureView: useCallback(
-      (config: ViewConfiguration) => {
-        dispatch({ type: ViewStateActionType.CONFIGURE_VIEW, config });
-      },
-      [dispatch]
-    ),
-    ejectView: useCallback(() => {
-      dispatch({ type: ViewStateActionType.EJECT_VIEW });
-    }, [dispatch]),
-  };
+  if (!scopeMatches(state.scope, location.pathname, isAuthenticated)) {
+    state.ejectView();
+  }
+
+  useEffect(() => {
+    let documentTitle = '';
+    if (state.title) documentTitle += state.title + ' :: ';
+    if (facet) documentTitle += facet.localizedDisplayName + ' :: ';
+    documentTitle += 'Patchwork2';
+    document.title = documentTitle;
+  }, [state.title, facet]);
 
   return (
-    <FacetProvider>
-      <ActiveViewContext.Provider value={contextValue}>
-        <SidebarWidgetsProvider>
-          <DrawerProvider>{children}</DrawerProvider>
-        </SidebarWidgetsProvider>
-      </ActiveViewContext.Provider>
-    </FacetProvider>
+    <SidebarWidgetsProvider>
+      <DrawerProvider>
+        <ActiveViewContext.Provider value={state}>
+          {children}
+        </ActiveViewContext.Provider>
+      </DrawerProvider>
+    </SidebarWidgetsProvider>
   );
 };
 
 export default ActiveViewProvider;
-
-// Private
-
-export function viewStateReducer(
-  state: ViewState,
-  action: ViewStateAction
-): ViewState {
-  switch (action.type) {
-    case ViewStateActionType.CONFIGURE_VIEW:
-      return {
-        ...state,
-        ...action.config,
-      };
-
-    case ViewStateActionType.EJECT_VIEW:
-      return {
-        ...initialViewState,
-        sidebarPlacement: state.sidebarPlacement,
-      };
-  }
-}
-
-/*
-function filterScopedWidgets(
-  widgets: SidebarWidget[],
-  isAuthenticated: boolean,
-  pathname: string
-) {
-  const filtered = widgets.filter((item) =>
-    scopeMatches(item.scope, isAuthenticated, pathname)
-  );
-  return filtered.length !== widgets.length ? filtered : widgets;
-}
-
-*/

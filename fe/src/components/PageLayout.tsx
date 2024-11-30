@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, {
   Children,
   cloneElement,
@@ -30,13 +31,13 @@ const paddingSxProps = (sidebarPlacement: SidebarPlacement) => ({
 });
 
 const PageTitle: React.FC<BoxProps> = ({ sx, ...other }) => {
-  const { title, key } = useActiveView();
+  const { title } = useActiveView();
 
   return (
     <Box {...other} sx={[{ mb: 2 }, ...(Array.isArray(sx) ? sx : [sx])]}>
       {/* TODO show breadcrumbs if available*/}
       <Typography component="h1" level="h2">
-        {title || key || '!NoViewTitle!'}
+        {title || '!NoViewTitle!'}
       </Typography>
     </Box>
   );
@@ -83,9 +84,18 @@ interface TabState {
   element: ReactElement;
 }
 
+export type IndexedLayoutTab = Omit<TabState, 'element'>;
+
+interface IndexedLayoutProps {
+  onTabChange?: (tab: IndexedLayoutTab) => void;
+}
+
 // TODO EXPERIMENTAL: displays children in tabs, router navigation is missing
-const Indexed: React.FC<PropsWithChildren> = ({ children }) => {
-  const { sidebarPlacement, configureView } = useActiveView();
+const Indexed: React.FC<PropsWithChildren<IndexedLayoutProps>> = ({
+  onTabChange,
+  children,
+}) => {
+  const { sidebarPlacement } = useActiveView();
   const tabs = useMemo(() => {
     const childrenArray = Children.toArray(children);
     const result = Children.map(childrenArray, (child) => {
@@ -111,14 +121,15 @@ const Indexed: React.FC<PropsWithChildren> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<TabState | null>(
     tabs?.[0] || null
   );
-  useEffect(() => {
-    configureView({ title: activeTab?.caption });
-  }, [activeTab, configureView]);
 
   const handleTabChange = (tabKey?: string | number | null) => {
     const tab = tabs?.find((value) => value.key === tabKey);
     setActiveTab(tab || null);
   };
+
+  useEffect(() => {
+    onTabChange?.(_.omit(activeTab, 'element'));
+  }, [onTabChange, activeTab]);
 
   return (
     <Tabs

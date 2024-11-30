@@ -33,17 +33,23 @@ export interface SidebarWidget {
 export type SidebarWidgetsConfiguration =
   | Partial<SidebarWidget>
   | Partial<SidebarWidget>[];
-export type ViewConfiguration = Partial<
-  Pick<ViewState, 'key' | 'title' | 'sidebarPlacement'>
->;
 
 export interface ViewState {
-  key: string | null;
-  title: string | null;
+  /** Sidebar screen position */
   sidebarPlacement: SidebarPlacement;
+  /** View title */
+  title?: string;
+  /** See {@link SidebarWidget.scope} */
+  scope?: string;
+  /** Configures view parameters */
   configureView: (config: ViewConfiguration) => void;
+  /** Resets view parameters */
   ejectView: () => void;
 }
+
+export type ViewConfiguration = Partial<
+  Omit<ViewState, 'configureView' | 'ejectView'>
+>;
 
 export interface DrawerState {
   isOpen: boolean;
