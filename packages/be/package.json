@@ -9,12 +9,17 @@
     "start-dev": "ts-node $npm_package_main"
   },
   "dependencies": {
-    "express": "^4.21.1"
+    "@libsql/client": "^0.14.0",
+    "@prisma/adapter-libsql": "^6.0.0",
+    "@prisma/client": "6.0.0",
+    "express": "^4.21.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "prettier": "^3.4.1",
+    "prisma": "^6.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }
