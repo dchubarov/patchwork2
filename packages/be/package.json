@@ -1,0 +1,21 @@
+{
+  "name": "patchwork2-server",
+  "version": "1.0.0",
+  "main": "src/app.ts",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start-dev": "ts-node $npm_package_main"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
+    "prettier": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
