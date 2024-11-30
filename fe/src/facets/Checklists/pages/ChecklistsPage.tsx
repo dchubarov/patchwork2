@@ -10,14 +10,14 @@ import { useFacet, useSidebarWidgets } from '@/hooks/view';
 
 const ChecklistsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { configureWidgets, removeWidgets } = useSidebarWidgets();
+  const { configureWidgets } = useSidebarWidgets();
   const facet = useFacet();
   const { checklistId } = useParams();
   const { data } = useAllChecklistsQuery();
 
   const navigateToChecklist = useCallback(
     (toChecklistId: string | null) => {
-      navigate(`${facet?.basePath}/${toChecklistId ?? 'new'}`);
+      navigate(`${facet.basePath}/${toChecklistId ?? 'new'}`);
     },
     [facet, navigate]
   );
@@ -29,8 +29,7 @@ const ChecklistsPage: React.FC = () => {
       scope: `!${facet?.basePath}/*`,
       component: <AllChecklistsWidget activeChecklistId={checklistId} />,
     });
-    return () => removeWidgets(1);
-  }, [checklistId, configureWidgets, removeWidgets, facet?.basePath]);
+  }, [checklistId, configureWidgets, facet.basePath]);
 
   useEffect(() => {
     if (data && checklistId == null) {

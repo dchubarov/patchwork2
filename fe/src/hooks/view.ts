@@ -1,45 +1,15 @@
+import { useContext } from 'react';
+import { useSafeContext } from '@/utils/context';
 import {
-  ViewState,
   ActiveViewContext,
-  FacetContext,
-  DrawerState,
   DrawerContext,
-  SidebarWidgetsState,
+  FacetContext,
   SidebarWidgetsContext,
 } from '@/types/view';
-import { useContext } from 'react';
-import { EnvironmentApplicationFacet } from '@/types/env';
 
-export function useActiveViewSafe(): ViewState | null {
-  return useContext(ActiveViewContext);
-}
-
-export function useActiveView(): ViewState {
-  const context = useContext(ActiveViewContext);
-  if (!context) {
-    throw new Error(
-      'useActiveView hook must be used within ActiveViewProvider.'
-    );
-  }
-  return context;
-}
-
-export function useFacet(): EnvironmentApplicationFacet | null {
-  return useContext(FacetContext);
-}
-
-export function useDrawer(): DrawerState {
-  const context = useContext(DrawerContext);
-  if (!context)
-    throw new Error('useDrawer() hook must be used withing DrawerProvider.');
-  return context;
-}
-
-export function useSidebarWidgets(): SidebarWidgetsState {
-  const context = useContext(SidebarWidgetsContext);
-  if (!context)
-    throw new Error(
-      'useSidebarWidgets() hook must be used withing SidebarWidgetsProvider.'
-    );
-  return context;
-}
+export const useFacetOrNull = () => useContext(FacetContext);
+export const useFacet = () => useSafeContext(FacetContext);
+export const useActiveViewOrNull = () => useContext(ActiveViewContext);
+export const useActiveView = () => useSafeContext(ActiveViewContext);
+export const useSidebarWidgets = () => useSafeContext(SidebarWidgetsContext);
+export const useDrawer = () => useSafeContext(DrawerContext);

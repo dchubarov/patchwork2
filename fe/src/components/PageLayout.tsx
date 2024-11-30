@@ -21,7 +21,7 @@ import { SidebarPlacement } from '@/types/view';
 import { IndexedLayoutChildProps } from '@/types/layout';
 import { developmentLogger } from '@/utils/logging';
 import { useActiveView } from '@/hooks';
-import { useActiveViewSafe } from '@/hooks/view';
+import { useActiveViewOrNull } from '@/hooks/view';
 
 const paddingSxProps = (sidebarPlacement: SidebarPlacement) => ({
   pl: sidebarPlacement === 'left' ? 4 : 2,
@@ -61,7 +61,7 @@ const Content: React.FC<PropsWithChildren<ContentLayoutProps>> = ({
 };
 
 const Centered: React.FC<PropsWithChildren> = ({ children }) => {
-  const view = useActiveViewSafe();
+  const view = useActiveViewOrNull();
 
   return (
     <Box

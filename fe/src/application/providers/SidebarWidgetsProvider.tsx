@@ -1,13 +1,18 @@
 import _ from 'lodash';
 import React, { PropsWithChildren, useState } from 'react';
 import {
+  scopeMatches,
   SidebarWidget,
   SidebarWidgetsConfiguration,
   SidebarWidgetsContext,
   SidebarWidgetsState,
 } from '@/types/view';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks';
 
 const SidebarWidgetsProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [state, setState] = useState(
     (): SidebarWidgetsState => ({
       widgets: [],
@@ -33,6 +38,14 @@ const SidebarWidgetsProvider: React.FC<PropsWithChildren> = ({ children }) => {
         }),
     })
   );
+
+  // remove widgets whose scope does not match current context
+  const filteredWidgets = state.widgets.filter((e) =>
+    scopeMatches(e.scope, location.pathname, isAuthenticated)
+  );
+  if (state.widgets.length !== filteredWidgets.length) {
+    setState((prev) => ({ ...prev, widgets: filteredWidgets }));
+  }
 
   return (
     <SidebarWidgetsContext.Provider value={state}>

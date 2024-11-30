@@ -16,7 +16,7 @@ import { Add as AddIcon, ArrowRight as ActiveIcon } from '@mui/icons-material';
 import PieProgress from '@/components/PieProgress';
 import { ChecklistBaseData } from '../lib/schema';
 import { useAllChecklistsQuery } from '../lib/queries';
-import { useFacet } from '@/hooks/view';
+import { useFacetOrNull } from '@/hooks/view';
 
 const AllChecklistsGroup: React.FC<{
   count?: number;
@@ -24,7 +24,7 @@ const AllChecklistsGroup: React.FC<{
   addButton?: boolean;
 }> = ({ count, caption, addButton }) => {
   const navigate = useNavigate();
-  const facet = useFacet();
+  const facet = useFacetOrNull();
   return (
     <ListItem
       component="div"
@@ -56,7 +56,7 @@ const AllChecklistsItem: React.FC<{
   item: ChecklistBaseData;
   active?: boolean;
 }> = ({ item, active }) => {
-  const facet = useFacet();
+  const facet = useFacetOrNull();
   if (!item.id) return null;
 
   let progress = 0,

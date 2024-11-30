@@ -1,5 +1,6 @@
 import { createContext, ReactNode } from 'react';
 import { EnvironmentApplicationFacet } from '@/types/env';
+import { normalizeBasePath } from '@/utils/path';
 
 export type SidebarPlacement = 'left' | 'right';
 
@@ -70,3 +71,29 @@ export const DrawerContext = createContext<DrawerState | null>(null);
 export const SidebarWidgetsContext = createContext<SidebarWidgetsState | null>(
   null
 );
+
+export function scopeMatches(
+  scope: string | undefined,
+  pathname: string,
+  isAuthenticated: boolean
+): boolean {
+  if (typeof scope === 'undefined' || scope.length < 1) return true;
+
+  let exactMatch = true,
+    l = 0,
+    r = scope.length;
+
+  if (scope.startsWith('!')) {
+    if (!isAuthenticated) return false;
+    l++;
+  }
+  if (scope.endsWith('*')) {
+    exactMatch = false;
+    r--;
+  }
+
+  const normalizedPath = normalizeBasePath(scope.substring(l, r)) || '/';
+  return exactMatch
+    ? pathname === normalizedPath
+    : pathname.startsWith(normalizedPath);
+}

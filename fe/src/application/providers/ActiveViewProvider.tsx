@@ -83,29 +83,4 @@ function filterScopedWidgets(
   return filtered.length !== widgets.length ? filtered : widgets;
 }
 
-function scopeMatches(
-  scope: string | undefined,
-  isAuthenticated: boolean,
-  pathname: string
-): boolean {
-  if (typeof scope === 'undefined' || scope.length < 1) return true;
-
-  let exactMatch = true,
-    l = 0,
-    r = scope.length;
-
-  if (scope.startsWith('!')) {
-    if (!isAuthenticated) return false;
-    l++;
-  }
-  if (scope.endsWith('*')) {
-    exactMatch = false;
-    r--;
-  }
-
-  const normalizedPath = normalizeBasePath(scope.substring(l, r)) || '/';
-  return exactMatch
-    ? pathname === normalizedPath
-    : pathname.startsWith(normalizedPath);
-}
 */

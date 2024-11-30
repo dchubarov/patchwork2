@@ -1,10 +1,4 @@
-import { useContext } from 'react';
 import { AuthContext } from '@/types/auth';
+import { useSafeContext } from '@/utils/context';
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === null) {
-    throw new Error('useAuth() hook must be used within AuthProvider.');
-  }
-  return context;
-};
+export const useAuth = () => useSafeContext(AuthContext);

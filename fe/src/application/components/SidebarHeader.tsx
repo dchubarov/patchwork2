@@ -4,7 +4,7 @@ import AppSettingsMenu from './AppSettingsMenu';
 import SidebarDivider from './SidebarDivider';
 import { SidebarWidget } from '@/types/view';
 import AppFacetsMenu from './AppFacetsMenu';
-import { useFacet } from '@/hooks/view';
+import { useFacetOrNull } from '@/hooks/view';
 
 interface SidebarHeaderProps {
   widget?: SidebarWidget | null;
@@ -12,7 +12,7 @@ interface SidebarHeaderProps {
 }
 
 const SidebarHeader: React.FC<SidebarHeaderProps> = ({ widget, divider }) => {
-  const facet = useFacet();
+  const facet = useFacetOrNull();
 
   return (
     <Box

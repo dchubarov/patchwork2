@@ -16,14 +16,14 @@ import {
 import { BrokenImage as WarningIcon } from '@mui/icons-material';
 import Typography from '@mui/joy/Typography';
 import PageLayout from '@/components/PageLayout';
-import { useFacet } from '@/hooks/view';
+import { useFacetOrNull } from '@/hooks/view';
 
 const ErrorFallback: React.FC<{
   reason?: unknown;
   reset?: () => void;
 }> = ({ reason, reset }) => {
   const location = useLocation();
-  const facet = useFacet();
+  const facet = useFacetOrNull();
 
   let errorMessage;
   if (isRouteErrorResponse(reason)) {

@@ -1,4 +1,11 @@
 export { useAuth } from './auth';
-export { useEnvironment, useApiClient } from './env';
-export { useActiveView } from './view';
 export { useLabelColors } from './theme';
+export { useEnvironment, useApiClient } from './env';
+export {
+  useActiveView,
+  useActiveViewOrNull,
+  useFacet,
+  useFacetOrNull,
+  useDrawer,
+  useSidebarWidgets,
+} from './view';
