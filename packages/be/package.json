@@ -6,6 +6,8 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "prisma-generate-client": "prisma generate",
+    "prisma-migrate": "prisma migrate dev",
     "start-dev": "ts-node $npm_package_main | npx pino-pretty"
   },
   "dependencies": {
