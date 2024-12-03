@@ -4,10 +4,15 @@
   "main": "src/app.ts",
   "license": "MIT",
   "private": true,
+  "prisma": {
+    "seed": "ts-node prisma/seed"
+  },
   "scripts": {
     "build": "tsc",
     "prisma-generate-client": "prisma generate",
-    "prisma-migrate": "prisma migrate dev",
+    "prisma-migrate-dev": "prisma migrate dev",
+    "prisma-migrate-baseline": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema --script > prisma/migrations/0_initial/migration.sql",
+    "prisma-migrate-reset": "prisma migrate reset",
     "start-dev": "ts-node $npm_package_main | npx pino-pretty"
   },
   "dependencies": {
