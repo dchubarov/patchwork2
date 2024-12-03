@@ -1,10 +1,14 @@
+import dotenv from 'dotenv';
 import { z } from 'zod';
-import 'dotenv/config';
+
+dotenv.config({
+  path: ['.env.local', '.env'],
+});
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
   LISTEN_ADDRESS: z.string().default('127.0.0.1'),
-  LISTEN_PORT: z.coerce.number().default(5555),
+  LISTEN_PORT: z.coerce.number().default(3000),
 });
 
 function parseProcessEnvironment() {
