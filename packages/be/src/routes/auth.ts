@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { prisma } from '../prisma';
+import prisma from '../prisma';
+import bcrypt from 'bcrypt';
 
 const router = Router();
 
@@ -26,8 +27,24 @@ router.get('/login', async (req, res) => {
     },
   });
 
-  if (user) res.send(`OK:${user?.id}`);
-  else res.send('XX');
+  if (!user) {
+    res.send('XX');
+    return;
+  }
+
+  if (user.authType !== 'internal') {
+  }
+
+  if (user.status !== 'active') {
+  }
+
+  if (user.password) {
+    const passwordMatches = await bcrypt.compare('***', user.password);
+    if (!passwordMatches) {
+    }
+  }
+
+  res.send(`OK:${user?.id}`);
 });
 
 /**
