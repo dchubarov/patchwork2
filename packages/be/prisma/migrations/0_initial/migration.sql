@@ -3,8 +3,12 @@ CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "authType" TEXT NOT NULL DEFAULT 'internal',
+    "password" TEXT,
     "firstname" TEXT,
-    "lastname" TEXT
+    "lastname" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateIndex

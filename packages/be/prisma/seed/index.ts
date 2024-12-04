@@ -1,14 +1,23 @@
 import { PrismaClient } from '@prisma/client';
+import readlineSync from 'readline-sync';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
+const BCRYPT_SALT_ROUNDS = 10;
 
 async function main() {
+  const pwd = readlineSync.question('Initial user password: ', {
+    hideEchoBack: true,
+  });
+
+  let hashedPassword = await bcrypt.hash(pwd, BCRYPT_SALT_ROUNDS);
   await prisma.user.upsert({
     where: { email: 'dime@twowls.org' },
     update: {},
     create: {
-      email: 'dime@twowls.org',
       username: 'dime',
+      email: 'dime@twowls.org',
+      password: hashedPassword,
       firstname: 'Dmitry',
     },
   });

@@ -1,7 +1,11 @@
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  username  String  @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  status    String   @default("active")
+  authType  String   @default("internal")
+  password  String?
   firstname String?
   lastname  String?
+  createdAt DateTime @default(now())
 }
