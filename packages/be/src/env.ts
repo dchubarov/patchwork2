@@ -10,6 +10,7 @@ const envSchema = z
     DATABASE_URL: z.string(),
     LISTEN_ADDRESS: z.string().default('127.0.0.1'),
     LISTEN_PORT: z.coerce.number().default(3000),
+    LISTEN_PORT_HTTPS: z.coerce.number().optional(),
     LOG_LEVEL: z.string().default('info'),
   })
   .readonly();

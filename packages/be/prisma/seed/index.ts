@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import readlineSync from 'readline-sync';
-import bcrypt from 'bcrypt';
+import * as readlineSync from 'readline-sync';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 const BCRYPT_SALT_ROUNDS = 10;

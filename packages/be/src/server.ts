@@ -1,18 +1,34 @@
 import express from 'express';
 import pino from 'pino-http';
 import { rootLogger } from './logging';
+import { errorHandler } from './error';
 import { env } from './env';
 import routes from './routes';
+import https from 'https';
+import http from 'http';
+import { tlsCredentials } from './encrypt';
 
 const app = express();
 
 /* More options: https://www.npmjs.com/package/pino-http */
 app.use(pino({ logger: rootLogger, useLevel: 'trace' }));
+//app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(routes);
+app.use(errorHandler);
 
-app.listen(env.LISTEN_PORT, env.LISTEN_ADDRESS, () => {
+if (env.LISTEN_PORT_HTTPS) {
+  https
+    .createServer({ ...tlsCredentials() }, app)
+    .listen(env.LISTEN_PORT_HTTPS, env.LISTEN_ADDRESS, () => {
+      rootLogger.info(
+        `Server is listening at ${env.LISTEN_ADDRESS}:${env?.LISTEN_PORT_HTTPS}/HTTPS`
+      );
+    });
+}
+
+http.createServer(app).listen(env.LISTEN_PORT, env.LISTEN_ADDRESS, () => {
   rootLogger.info(
-    `Server is running at ${env.LISTEN_ADDRESS}:${env.LISTEN_PORT}`
+    `Server is listening at ${env.LISTEN_ADDRESS}:${env?.LISTEN_PORT}/HTTP`
   );
 });
