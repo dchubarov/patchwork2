@@ -1,5 +1,6 @@
 import pino from 'pino';
+import { env } from './env';
 
 export const rootLogger = pino({
-  level: 'debug',
+  level: env.LOG_LEVEL,
 });

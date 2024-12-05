@@ -5,11 +5,14 @@ dotenv.config({
   path: ['.env.local', '.env'],
 });
 
-const envSchema = z.object({
-  DATABASE_URL: z.string(),
-  LISTEN_ADDRESS: z.string().default('127.0.0.1'),
-  LISTEN_PORT: z.coerce.number().default(3000),
-});
+const envSchema = z
+  .object({
+    DATABASE_URL: z.string(),
+    LISTEN_ADDRESS: z.string().default('127.0.0.1'),
+    LISTEN_PORT: z.coerce.number().default(3000),
+    LOG_LEVEL: z.string().default('info'),
+  })
+  .readonly();
 
 function parseProcessEnvironment() {
   const vars = Object.entries(process.env).reduce<
