@@ -9,16 +9,4 @@ model User {
   lastname  String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Session   Session[]
-}
-
-model Session {
-  id        Int      @id @default(autoincrement())
-  serial    String   @default(cuid()) @unique
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  expiresAt DateTime @default(now())
-
-  @@index([expiresAt])
 }
