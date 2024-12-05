@@ -9,7 +9,7 @@ import { developmentLogger } from '@/utils/logging';
 
 export const createApiClient = () => {
   const client = axios.create({
-    baseURL: envGlobals.API_ROOT,
+    baseURL: envGlobals.API_HOST + envGlobals.API_ROOT,
     timeout: envGlobals.API_TIMEOUT,
   });
 

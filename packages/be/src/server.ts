@@ -7,11 +7,13 @@ import routes from './routes';
 import https from 'https';
 import http from 'http';
 import { tlsCredentials } from './encrypt';
+import cors from 'cors';
 
 const app = express();
 
 /* More options: https://www.npmjs.com/package/pino-http */
 app.use(pino({ logger: rootLogger, useLevel: 'trace' }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 //app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(routes);

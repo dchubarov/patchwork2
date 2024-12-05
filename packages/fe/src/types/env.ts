@@ -13,7 +13,11 @@ const envGlobalsSchema = z.object({
   ENV: z
     .nativeEnum(ApplicationEnvironment)
     .default(ApplicationEnvironment.Production),
-  ENABLE_MOCKER: z.coerce.boolean().default(false),
+  ENABLE_MOCKER: z.preprocess(
+    (val) => String(val).localeCompare('true') === 0,
+    z.boolean()
+  ),
+  API_HOST: z.string().default(''),
   API_ROOT: z.string().transform(normalizeBasePath).default('/api'),
   UI_ROOT: z.optional(z.string().transform(normalizeBasePath)),
   PUBLIC_URL: z.optional(z.string()),

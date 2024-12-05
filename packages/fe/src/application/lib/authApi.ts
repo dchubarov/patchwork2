@@ -12,8 +12,8 @@ export interface UserCredentials {
 const userSchema = z.object({
   username: z.string().trim().min(1),
   email: z.string().email(),
-  firstname: z.optional(z.string()),
-  lastname: z.optional(z.string()),
+  firstname: z.string().nullish(),
+  lastname: z.string().nullish(),
   id: z.coerce.number().min(1),
 });
 
