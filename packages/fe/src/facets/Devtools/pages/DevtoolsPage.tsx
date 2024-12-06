@@ -12,7 +12,7 @@ const DevtoolsPage: React.FC = () => {
     (tab: IndexedLayoutTab) => {
       configureView({ title: tab.caption, scope: facet.basePath });
     },
-    [configureView]
+    [configureView, facet.basePath]
   );
 
   return (
