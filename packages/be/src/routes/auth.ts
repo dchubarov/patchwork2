@@ -10,12 +10,12 @@ const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
 const REFRESH_TOKEN_BACKDATE_SECONDS = 30;
 const REFRESH_TOKEN_COOKIE_NAME = '__Secure-RefreshToken';
 
-const router = Router();
+const controller = Router();
 
 /**
  * Refresh access token based on refresh token (secure cookie).
  */
-router.get(
+controller.get(
   '/refresh',
   handleCatching(async (req, res) => {
     if (!req.cookies[REFRESH_TOKEN_COOKIE_NAME])
@@ -47,7 +47,7 @@ router.get(
 /**
  * Login with JSON credentials.
  */
-router.post(
+controller.post(
   '/login',
   handleCatching(async (req, res) => {
     const { success, data: credentials } = loginRequestSchema.safeParse(
@@ -137,7 +137,7 @@ router.post(
 /**
  * Logout current user.
  */
-router.get('/logout', (req, res) => {
+controller.get('/logout', (req, res) => {
   if (req.cookies[REFRESH_TOKEN_COOKIE_NAME]) {
     res.cookie(REFRESH_TOKEN_COOKIE_NAME, '', {
       path: req.baseUrl,
@@ -150,4 +150,4 @@ router.get('/logout', (req, res) => {
   res.status(204).end();
 });
 
-export default Router().use('/auth', router);
+export default Router().use('/auth', controller);

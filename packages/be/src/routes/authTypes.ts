@@ -4,8 +4,14 @@ export const userSchema = z.object({
   id: z.coerce.string(),
   email: z.string(),
   username: z.string(),
-  firstname: z.string().nullish(),
-  lastname: z.string().nullish(),
+  firstname: z
+    .string()
+    .nullish()
+    .transform((x) => x ?? undefined),
+  lastname: z
+    .string()
+    .nullish()
+    .transform((x) => x ?? undefined),
 });
 
 export const loginRequestSchema = z.object({
@@ -18,4 +24,4 @@ export const loginResponseSchema = z.object({
   accessToken: z.string(),
 });
 
-export type LoginResponse = z.infer<typeof loginResponseSchema>;
+// export type LoginResponse = z.infer<typeof loginResponseSchema>;

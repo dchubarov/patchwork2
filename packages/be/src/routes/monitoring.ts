@@ -1,11 +1,11 @@
 import { Router } from 'express';
 
-const router = Router();
+const controller = Router();
 
 /**
  * Get server info.
  */
-router.get('/server-info', (_, res) => {
+controller.get('/server-info', (_, res) => {
   res.send({
     server: 'Butterfly NodeJS/Express',
     status: 'operational',
@@ -13,4 +13,4 @@ router.get('/server-info', (_, res) => {
   });
 });
 
-export default router;
+export default controller;
