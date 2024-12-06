@@ -39,6 +39,16 @@ export const createApiClient = () => {
     return Promise.reject(error);
   });
 
+  if (!envGlobals.ENABLE_MOCKER) {
+    client.interceptors.request.use((request) => {
+      developmentLogger.log(
+        `[API Client] ${request.method?.toUpperCase()} ${request.baseURL}/${request.url}`,
+        { request }
+      );
+      return request;
+    });
+  }
+
   developmentLogger.log(
     'Configured Axios API client with defaults:',
     client.defaults

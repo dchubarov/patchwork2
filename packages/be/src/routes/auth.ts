@@ -3,27 +3,49 @@ import bcrypt from 'bcrypt';
 import prisma from '../prisma';
 import { loginRequestSchema, loginResponseSchema } from './authTypes';
 import { handleCatching, RequestProcessingError } from '../error';
-import { generateToken } from '../encrypt';
-
-const router = Router();
+import { generateToken, verifyToken } from '../encrypt';
 
 const ACCESS_TOKEN_TTL_SECONDS = 60 * 60;
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
 const REFRESH_TOKEN_BACKDATE_SECONDS = 30;
-const REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
+const REFRESH_TOKEN_COOKIE_NAME = '__Secure-RefreshToken';
+
+const router = Router();
 
 /**
  * Refresh access token based on refresh token (secure cookie).
  */
 router.get(
   '/refresh',
-  handleCatching(async (_, res) => {
-    res.send('OK');
+  handleCatching(async (req, res) => {
+    if (!req.cookies[REFRESH_TOKEN_COOKIE_NAME])
+      throw new RequestProcessingError('No refresh token received', 401);
+
+    let userId;
+    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+    const payload = verifyToken(refreshToken);
+    if (payload.sub && payload.sub.startsWith('user:')) {
+      userId = parseInt(payload.sub.substring(5));
+    }
+    if (!userId) throw new RequestProcessingError('Invalid token', 401);
+
+    const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (!dbUser || dbUser.status !== 'active') {
+      throw new RequestProcessingError('User not found', 401);
+    }
+
+    const accessToken = generateToken(dbUser.id, ACCESS_TOKEN_TTL_SECONDS);
+    const result = loginResponseSchema.parse({
+      accessToken,
+      user: dbUser,
+    });
+
+    res.status(200).json(result);
   })
 );
 
 /**
- * Login with credentials.
+ * Login with JSON credentials.
  */
 router.post(
   '/login',
@@ -70,6 +92,7 @@ router.post(
     const accessToken = generateToken(
       dbUser.id,
       ACCESS_TOKEN_TTL_SECONDS,
+      0,
       epochSeconds
     );
 
@@ -96,6 +119,9 @@ router.post(
         maxAge:
           (REFRESH_TOKEN_TTL_SECONDS - REFRESH_TOKEN_BACKDATE_SECONDS) * 1000,
         path: req.baseUrl,
+        httpOnly: req.secure,
+        secure: req.secure,
+        sameSite: 'none',
       });
     }
 
@@ -111,8 +137,17 @@ router.post(
 /**
  * Logout current user.
  */
-router.get('/logout', (_, res) => {
-  res.send('OK');
+router.get('/logout', (req, res) => {
+  if (req.cookies[REFRESH_TOKEN_COOKIE_NAME]) {
+    res.cookie(REFRESH_TOKEN_COOKIE_NAME, '', {
+      path: req.baseUrl,
+      maxAge: 0,
+      secure: req.secure,
+      httpOnly: req.secure,
+      sameSite: 'none',
+    });
+  }
+  res.status(204).end();
 });
 
 export default Router().use('/auth', router);

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 let serverKey = fs.readFileSync('./build/keys/key.pem');
 let serverCertificate = fs.readFileSync('./build/keys/cert.pem');
@@ -25,10 +25,13 @@ export function generateToken(
   );
 }
 
-export function verifyToken(token: string) {
-  return jwt.verify(token, serverCertificate, {
+export function verifyToken(token: string): JwtPayload {
+  const payload = jwt.verify(token, serverCertificate, {
     algorithms: ['RS256', 'RS384', 'RS512'],
   });
+  if (typeof payload === 'string')
+    throw new Error(`Invalid token payload: ${payload}`);
+  return payload;
 }
 
 export const tlsCredentials = () => ({

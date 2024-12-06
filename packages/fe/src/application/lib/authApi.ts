@@ -40,11 +40,11 @@ const loginRequest =
   (client: AxiosInstance) =>
   async (credentials: UserCredentials): Promise<LoginResponse> =>
     client
-      .post('auth/login', credentials)
+      .post('auth/login', credentials, { withCredentials: true })
       .then((response) => loginResponseSchema.parse(response.data));
 
 const logoutRequest = (client: AxiosInstance) => async () =>
-  client.get('auth/logout');
+  client.get('auth/logout', { withCredentials: true });
 
 const authApi = {
   refreshRequest,

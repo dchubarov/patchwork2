@@ -8,6 +8,8 @@ dotenv.config({
 const envSchema = z
   .object({
     DATABASE_URL: z.string(),
+    DOMAIN: z.string().default('localhost'),
+    CORS_ALLOWED_ORIGINS: z.string().default('*'),
     LISTEN_ADDRESS: z.string().default('127.0.0.1'),
     LISTEN_PORT: z.coerce.number().default(3000),
     LISTEN_PORT_HTTPS: z.coerce.number().optional(),
