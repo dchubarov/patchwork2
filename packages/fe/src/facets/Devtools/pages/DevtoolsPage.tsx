@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PageLayout, { IndexedLayoutTab } from '@/components/PageLayout';
 import ViewContextPlayground from '../components/ViewContextPlayground';
 import UIComponentPlayground from '../components/UIComponentPlayground';
@@ -8,9 +8,12 @@ const DevtoolsPage: React.FC = () => {
   const { configureView } = useActiveView();
   const facet = useFacet();
 
-  const handlePageChange = (tab: IndexedLayoutTab) => {
-    configureView({ title: tab.caption, scope: facet.basePath });
-  };
+  const handlePageChange = useCallback(
+    (tab: IndexedLayoutTab) => {
+      configureView({ title: tab.caption, scope: facet.basePath });
+    },
+    [configureView]
+  );
 
   return (
     <PageLayout.Indexed onTabChange={handlePageChange}>
