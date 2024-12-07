@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt';
 import { loginRequestSchema, loginResponseSchema } from '@patchwork2/shared';
 import { handleCatching, RequestProcessingError } from '../error';
 import { generateToken, verifyToken } from '../encrypt';
-import { User } from '@prisma/client';
 import prisma from '../prisma';
+import { transformUser } from './authMiddleware';
 
 const ACCESS_TOKEN_TTL_SECONDS = 60 * 60;
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
@@ -12,16 +12,6 @@ const REFRESH_TOKEN_BACKDATE_SECONDS = 30;
 const REFRESH_TOKEN_COOKIE_NAME = '__Secure-RefreshToken';
 
 const controller = Router();
-
-export const transformUser = (dbUser: User) => ({
-  ...dbUser,
-  roles: dbUser.roles
-    ? dbUser.roles
-        .split(',')
-        .map((value) => value.trim())
-        .filter((value) => value !== '')
-    : [],
-});
 
 /**
  * Refresh access token based on refresh token (secure cookie).

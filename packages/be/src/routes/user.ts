@@ -2,20 +2,28 @@ import { Router } from 'express';
 import { userSchema } from '@patchwork2/shared';
 import { handleCatching, RequestProcessingError } from '../error';
 import prisma from '../prisma';
-import { transformUser } from './auth';
+import { transformUser } from './authMiddleware';
+import auth from './authMiddleware';
 
 const controller = Router();
 
 controller.get(
   '/:userId',
+  auth.required(),
   handleCatching(async (req, res) => {
-    const userId = parseInt(req.params.userId);
+    const userId = req.params.userId;
     if (!userId) throw new RequestProcessingError('Invalid user id', 400);
 
-    const dbUser = await prisma.user.findUnique({ where: { id: userId } });
-    if (!dbUser) throw new RequestProcessingError('User not found', 404);
-
-    res.status(200).send({ user: userSchema.parse(transformUser(dbUser)) });
+    let user;
+    if (userId === req.user?.id) user = req.user;
+    else {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+      });
+      if (!dbUser) throw new RequestProcessingError('User not found', 404);
+      user = userSchema.parse(transformUser(dbUser));
+    }
+    res.status(200).send({ user });
   })
 );
 

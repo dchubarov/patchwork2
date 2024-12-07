@@ -3,7 +3,7 @@ import { NextFunction, Request, RequestHandler, Response } from 'express';
 export class RequestProcessingError extends Error {
   readonly httpStatus?: number;
 
-  constructor(message?: string, httpCode?: number, cause?: Error) {
+  constructor(message?: string, httpCode?: number, cause?: unknown) {
     super(message, { cause });
     this.httpStatus = httpCode;
     Object.defineProperty(this, 'name', { value: new.target.name });
