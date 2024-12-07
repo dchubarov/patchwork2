@@ -1,12 +1,12 @@
 import { createContext } from 'react';
 import { JwtPayload } from '@/utils/jwt';
-import { User, UserCredentials } from '../application/lib/authApi';
+import { User, LoginRequest } from '@patchwork2/shared';
 
 interface IAuthState {
   /** Indicates whether any authentication request is in progress */
   isPending: boolean;
   /** Function that performs login with passed credentials */
-  login(credentials: UserCredentials): void;
+  login(credentials: LoginRequest): void;
   /** Function that performs logout */
   logout(): void;
 }
@@ -19,8 +19,4 @@ export type AuthState = IAuthState &
 
 export const AuthContext = createContext<AuthState | null>(null);
 
-export type {
-  UserCredentials,
-  User,
-  LoginResponse,
-} from '../application/lib/authApi';
+export type { LoginRequest, User, LoginResponse } from '@patchwork2/shared';

@@ -1,13 +1,8 @@
-import z from 'zod';
 import { AxiosInstance } from 'axios';
-
-const serverInfoResponseSchema = z.object({
-  server: z.string(),
-  status: z.string(),
-  timestamp: z.number(),
-});
-
-export type ServerInfoResponse = z.infer<typeof serverInfoResponseSchema>;
+import {
+  ServerInfoResponse,
+  serverInfoResponseSchema,
+} from '@patchwork2/shared';
 
 const serverInfoRequest =
   (client: AxiosInstance) => async (): Promise<ServerInfoResponse> =>

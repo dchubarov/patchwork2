@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks';
-import { UserCredentials } from '@/types/auth';
+import { LoginRequest } from '@/types/auth';
 import {
   Avatar,
   Box,
@@ -36,7 +36,7 @@ const SidebarUserPanel: React.FC = () => {
     }
   }
 
-  const handleSubmitCredentials = (credentials?: UserCredentials) => {
+  const handleSubmitCredentials = (credentials?: LoginRequest) => {
     if (credentials?.login && credentials?.password) {
       login(credentials);
     }

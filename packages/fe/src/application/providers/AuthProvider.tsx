@@ -6,7 +6,7 @@ import {
   AuthContext,
   AuthState,
   LoginResponse,
-  UserCredentials,
+  LoginRequest,
 } from '@/types/auth';
 import { useApiClient } from '@/hooks/env';
 import { decodeJwt, JwtPayload } from '@/utils/jwt';
@@ -164,7 +164,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
       isPending: true, // because an attempt to refresh is always made on mount (see useEffect)
       isAuthenticated: false,
       sessionClaims: null,
-      login: (credentials: UserCredentials) => {
+      login: (credentials: LoginRequest) => {
         doLogin(credentials);
       },
       logout: () => {

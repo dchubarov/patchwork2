@@ -1,4 +1,4 @@
-import { UserCredentials } from '@/types/auth';
+import { LoginRequest } from '@/types/auth';
 import React, { FormEvent, KeyboardEvent, useState } from 'react';
 import { Box, Button, FormControl, Input } from '@mui/joy';
 import {
@@ -8,7 +8,7 @@ import {
 
 interface LoginFormProps {
   disabled?: boolean;
-  onSubmitCredentials?: (credentials?: UserCredentials) => void;
+  onSubmitCredentials?: (credentials?: LoginRequest) => void;
 }
 
 const SidebarLoginForm: React.FC<LoginFormProps> = ({
