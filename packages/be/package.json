@@ -1,7 +1,7 @@
 {
   "name": "patchwork2-server",
   "version": "1.0.0",
-  "main": "src/app.ts",
+  "main": "src/main.ts",
   "license": "MIT",
   "private": true,
   "prisma": {

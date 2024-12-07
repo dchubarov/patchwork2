@@ -1,8 +1,8 @@
 import fs from 'fs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-let serverKey = fs.readFileSync('./build/keys/key.pem');
-let serverCertificate = fs.readFileSync('./build/keys/cert.pem');
+let serverKey = fs.readFileSync('./dev.key.pem');
+let serverCertificate = fs.readFileSync('./dev.cert.pem');
 
 export function generateToken(
   userId: string | number,

@@ -1,12 +1,12 @@
 import express from 'express';
 import pino from 'pino-http';
-import { rootLogger } from './logging';
-import { errorHandler } from './error';
-import { env } from './env';
+import { rootLogger } from '../lib/logging';
+import { errorHandler } from '../lib/error';
+import { env } from '../lib/env';
 import routes from './routes';
 import https from 'https';
 import http from 'http';
-import { tlsCredentials } from './encrypt';
+import { tlsCredentials } from '../lib/encrypt';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -31,13 +31,13 @@ if (env.LISTEN_PORT_HTTPS) {
     .createServer({ ...tlsCredentials() }, app)
     .listen(env.LISTEN_PORT_HTTPS, env.LISTEN_ADDRESS, () => {
       rootLogger.info(
-        `Server is listening at ${env.LISTEN_ADDRESS}:${env?.LISTEN_PORT_HTTPS}/HTTPS`
+        `Server is listening at ${env.LISTEN_ADDRESS}:${env?.LISTEN_PORT_HTTPS}/https`
       );
     });
 }
 
 http.createServer(app).listen(env.LISTEN_PORT, env.LISTEN_ADDRESS, () => {
   rootLogger.info(
-    `Server is listening at ${env.LISTEN_ADDRESS}:${env?.LISTEN_PORT}/HTTP`
+    `Server is listening at ${env.LISTEN_ADDRESS}:${env?.LISTEN_PORT}/http`
   );
 });

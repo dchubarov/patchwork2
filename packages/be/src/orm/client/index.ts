@@ -1,8 +1,8 @@
 import { createClient } from '@libsql/client';
 import { PrismaLibSQL } from '@prisma/adapter-libsql';
 import { PrismaClient } from '@prisma/client';
-import { rootLogger } from './logging';
-import { env } from './env';
+import { rootLogger } from '../../lib/logging';
+import { env } from '../../lib/env';
 
 const logger = rootLogger.child({ name: 'Prisma' });
 

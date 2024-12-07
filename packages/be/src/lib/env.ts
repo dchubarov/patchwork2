@@ -5,7 +5,7 @@ dotenv.config({
   path: ['.env.local', '.env'],
 });
 
-const envSchema = z
+const envConfigSchema = z
   .object({
     DATABASE_URL: z.string(),
     DOMAIN: z.string().default('localhost'),
@@ -17,7 +17,9 @@ const envSchema = z
   })
   .readonly();
 
-function parseProcessEnvironment() {
+type EnvConfig = z.infer<typeof envConfigSchema>;
+
+function parseProcessEnvironment(): EnvConfig {
   const vars = Object.entries(process.env).reduce<
     Record<string, string | undefined>
   >((acc, [key, value]) => {
@@ -25,7 +27,7 @@ function parseProcessEnvironment() {
     return acc;
   }, {});
 
-  const result = envSchema.safeParse(vars);
+  const result = envConfigSchema.safeParse(vars);
   if (result.error) {
     throw new Error('Failed to create application environment', {
       cause: result.error,
@@ -35,4 +37,4 @@ function parseProcessEnvironment() {
   return result.data;
 }
 
-export const env = parseProcessEnvironment();
+export const env: EnvConfig = parseProcessEnvironment();

@@ -1,4 +1,4 @@
-import { rootLogger } from './logging';
+import { rootLogger } from './lib/logging';
 
 process.on('uncaughtException', (error, origin) => {
   rootLogger.error(

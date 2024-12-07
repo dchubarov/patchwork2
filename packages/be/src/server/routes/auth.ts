@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import { loginRequestSchema, loginResponseSchema } from '@patchwork2/shared';
-import { handleCatching, RequestProcessingError } from '../error';
-import { generateToken, verifyToken } from '../encrypt';
-import prisma from '../prisma';
-import { transformUser } from './authMiddleware';
+import { handleCatching, RequestProcessingError } from '../../lib/error';
+import { generateToken, verifyToken } from '../../lib/encrypt';
+import { transformUser } from '../../lib/transform';
+import { userRepository } from '../../orm';
 
 const ACCESS_TOKEN_TTL_SECONDS = 60 * 60;
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
@@ -30,7 +30,7 @@ controller.get(
     }
     if (!userId) throw new RequestProcessingError('Invalid token', 401);
 
-    const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+    const dbUser = await userRepository.findById(userId);
     if (!dbUser || dbUser.status !== 'active') {
       throw new RequestProcessingError('User not found', 401);
     }
@@ -59,11 +59,7 @@ controller.post(
       throw new RequestProcessingError('Invalid credentials', 400);
     }
 
-    const dbUser = await prisma.user.findFirst({
-      where: {
-        OR: [{ username: credentials.login }, { email: credentials.login }],
-      },
-    });
+    const dbUser = await userRepository.findByLogin(credentials.login);
 
     if (!dbUser) {
       throw new RequestProcessingError('User not found', 401);

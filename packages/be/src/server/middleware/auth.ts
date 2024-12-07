@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import { verifyToken } from '../encrypt';
-import { RequestProcessingError } from '../error';
 import { JwtPayload } from 'jsonwebtoken';
-import { User } from '@prisma/client';
-import prisma from '../prisma';
 import { userSchema } from '@patchwork2/shared';
+import { RequestProcessingError } from '../../lib/error';
+import { verifyToken } from '../../lib/encrypt';
+import { userRepository } from '../../orm';
+import { transformUser } from '../../lib/transform';
 
 const required =
   () => async (req: Request, _: Response, next: NextFunction) => {
     const header = req.header('authorization');
-    if (!header || !header.startsWith('Bearer:')) {
+    if (!header || !header.startsWith('Bearer')) {
       next(new RequestProcessingError('No access token supplied', 401));
       return;
     }
@@ -17,7 +17,7 @@ const required =
     let jwt: JwtPayload | undefined;
     let caught;
     try {
-      jwt = verifyToken(header.substring(7).trimStart());
+      jwt = verifyToken(header.substring(6).trimStart());
     } catch (err) {
       caught = err;
     }
@@ -27,8 +27,8 @@ const required =
       return;
     }
 
-    const userId = parseInt(jwt.sub.substring(5));
-    const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+    const userId = jwt.sub.substring(5);
+    const dbUser = await userRepository.findById(userId);
     if (!dbUser || dbUser.status !== 'active') {
       next(new RequestProcessingError('Invalid user', 401));
       return;
@@ -37,16 +37,6 @@ const required =
     req.user = userSchema.parse(transformUser(dbUser));
     next();
   };
-
-export const transformUser = (dbUser: User) => ({
-  ...dbUser,
-  roles: dbUser.roles
-    ? dbUser.roles
-        .split(',')
-        .map((value) => value.trim())
-        .filter((value) => value !== '')
-    : [],
-});
 
 const auth = {
   required,
