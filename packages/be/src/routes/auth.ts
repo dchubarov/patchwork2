@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
-import prisma from '../prisma';
-import { loginRequestSchema, loginResponseSchema } from './authTypes';
+import { loginRequestSchema, loginResponseSchema } from '@patchwork2/shared';
 import { handleCatching, RequestProcessingError } from '../error';
 import { generateToken, verifyToken } from '../encrypt';
+import prisma from '../prisma';
 
 const ACCESS_TOKEN_TTL_SECONDS = 60 * 60;
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;

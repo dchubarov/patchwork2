@@ -1,7 +1,7 @@
 import { Router } from 'express';
+import { userSchema } from '@patchwork2/shared';
 import { handleCatching, RequestProcessingError } from '../error';
 import prisma from '../prisma';
-import { userSchema } from './authTypes';
 
 const controller = Router();
 

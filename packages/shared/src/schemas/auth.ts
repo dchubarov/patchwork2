@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { nullishToUndefined } from '../utils/transform';
 
-export const userRole = z.enum(['admin']);
+export const userRoleSchema = z.enum(['admin']);
 
 export const userSchema = z.object({
   id: z.coerce.string(),
@@ -10,15 +11,9 @@ export const userSchema = z.object({
     .string()
     .nullish()
     .transform((value) => (value ? value.split(',') : []))
-    .pipe(userRole.array()),
-  firstname: z
-    .string()
-    .nullish()
-    .transform((x) => x ?? undefined),
-  lastname: z
-    .string()
-    .nullish()
-    .transform((x) => x ?? undefined),
+    .pipe(userRoleSchema.array()),
+  firstname: z.string().nullish().transform(nullishToUndefined),
+  lastname: z.string().nullish().transform(nullishToUndefined),
 });
 
 export const loginRequestSchema = z.object({
@@ -31,4 +26,4 @@ export const loginResponseSchema = z.object({
   accessToken: z.string(),
 });
 
-// export type LoginResponse = z.infer<typeof loginResponseSchema>;
+export type LoginResponse = z.infer<typeof loginResponseSchema>;
