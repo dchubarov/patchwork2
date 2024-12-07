@@ -5,6 +5,7 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'active',
     "authType" TEXT NOT NULL DEFAULT 'internal',
+    "roles" TEXT,
     "password" TEXT,
     "firstname" TEXT,
     "lastname" TEXT,

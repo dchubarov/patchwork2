@@ -11,14 +11,12 @@ async function main() {
   });
 
   let hashedPassword = await bcrypt.hash(pwd, BCRYPT_SALT_ROUNDS);
-  await prisma.user.upsert({
-    where: { email: 'dime@twowls.org' },
-    update: {},
-    create: {
-      username: 'dime',
-      email: 'dime@twowls.org',
+  await prisma.user.create({
+    data: {
+      username: 'rabbit',
+      email: `admin@`,
       password: hashedPassword,
-      firstname: 'Dmitry',
+      roles: 'admin',
     },
   });
 }

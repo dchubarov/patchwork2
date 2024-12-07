@@ -4,6 +4,7 @@ model User {
   username  String    @unique
   status    String    @default("active")
   authType  String    @default("internal")
+  roles     String?
   password  String?
   firstname String?
   lastname  String?

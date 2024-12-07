@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
+export const userRole = z.enum(['admin']);
+
 export const userSchema = z.object({
   id: z.coerce.string(),
   email: z.string(),
   username: z.string(),
+  roles: z
+    .string()
+    .nullish()
+    .transform((value) => (value ? value.split(',') : []))
+    .pipe(userRole.array()),
   firstname: z
     .string()
     .nullish()
