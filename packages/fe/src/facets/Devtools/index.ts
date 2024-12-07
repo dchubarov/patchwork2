@@ -7,6 +7,7 @@ const DevtoolsFacet: ApplicationFacet = {
   basePath: 'dev-tools',
   defaultDisplayName: 'Developer',
   icon: 'DEV',
+  authorization: (user) => user.roles.includes('developer'),
   routes: (): RouteObject[] => [
     {
       index: true,

@@ -24,7 +24,7 @@ import {
   ViewSidebarOutlined as SidebarIcon,
   Webhook as ReactQueryDevtoolsIcon,
 } from '@mui/icons-material';
-import { useActiveView, useEnvironment } from '@/hooks';
+import { useActiveView, useAuth, useEnvironment } from '@/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { SidebarPlacement } from '@/types/view';
 import { ApplicationEnvironment } from '@/types/env';
@@ -40,6 +40,7 @@ const AppSettingsMenu: React.FC = () => {
   const { environment, versionInfo, backendStatus, backendInfo } =
     useEnvironment();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   useEffect(() => {
     setMounted(true);
@@ -141,25 +142,26 @@ const AppSettingsMenu: React.FC = () => {
           </ButtonGroup>
         </ListItem>
 
-        {environment === ApplicationEnvironment.Development && (
-          <>
-            <ListSubheader>Developer</ListSubheader>
-            <MenuItem onClick={handleOpenApiPlaygroundItemClick}>
-              <ListItemDecorator>
-                <ApiIcon />
-              </ListItemDecorator>
-              Open API playground
-            </MenuItem>
-            <MenuItem onClick={handleOpenReactQueryDevtoolsItemClick}>
-              <ListItemDecorator>
-                <ReactQueryDevtoolsIcon />
-              </ListItemDecorator>
-              Open React Query Devtools
-            </MenuItem>
-          </>
-        )}
+        {environment === ApplicationEnvironment.Development &&
+          user?.roles.includes('developer') && (
+            <>
+              <ListSubheader>Developer</ListSubheader>
+              <MenuItem onClick={handleOpenApiPlaygroundItemClick}>
+                <ListItemDecorator>
+                  <ApiIcon />
+                </ListItemDecorator>
+                Open API playground
+              </MenuItem>
+              <MenuItem onClick={handleOpenReactQueryDevtoolsItemClick}>
+                <ListItemDecorator>
+                  <ReactQueryDevtoolsIcon />
+                </ListItemDecorator>
+                Open React Query Devtools
+              </MenuItem>
+            </>
+          )}
 
-        <ListSubheader>Backend</ListSubheader>
+        <ListSubheader>Server</ListSubheader>
         <MenuItem color={backendStatus !== 'online' ? 'danger' : 'neutral'}>
           <ListItemDecorator>
             {backendStatus === 'online' ? <OnlineIcon /> : <OfflineIcon />}

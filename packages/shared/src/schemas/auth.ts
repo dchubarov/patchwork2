@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { nullishToUndefined } from '../utils/transform';
 
-export const userRoleSchema = z.enum(['admin']);
+export const userRoleSchema = z.enum(['admin', 'developer']);
 
 export const userSchema = z.object({
   id: z.coerce.string(),

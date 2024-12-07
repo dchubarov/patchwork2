@@ -1,7 +1,10 @@
 import { RouteObject } from 'react-router-dom';
 import { ComponentType } from 'react';
+import { User } from '@patchwork2/shared';
 
 export type RouteProvider = () => RouteObject[];
+
+export type AuthorizationFn = (user: User) => boolean;
 
 /** Represents an application facet */
 export interface ApplicationFacet {
@@ -10,7 +13,7 @@ export interface ApplicationFacet {
   /** Router base path, if omitted, {@link name} will be used */
   basePath?: string;
   /** Indicates whether authorization is required */
-  authorization?: boolean;
+  authorization?: boolean | AuthorizationFn;
   /** Default display name, if omitted a localized name or {@link name} will be used */
   defaultDisplayName?: string;
   /** Category name */
