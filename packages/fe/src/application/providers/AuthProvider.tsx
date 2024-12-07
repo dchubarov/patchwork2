@@ -48,7 +48,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     if (requestInterceptorRef.current === null) {
       requestInterceptorRef.current = apiClient.interceptors.request.use(
         (config) => {
-          config.headers.Authorization = `Bearer: ${accessTokenRef.current}`;
+          config.headers.Authorization = `Bearer ${accessTokenRef.current}`;
           return config;
         },
         (error) => {

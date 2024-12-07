@@ -18,7 +18,6 @@ export function handleWithAuthorization<R extends AnyResponse = AnyResponse>(
   return async (schema: AppSchema, request: Request) => {
     const user = getAuthenticatedUser(schema, request);
     if (user === null) return UnauthorizedResponse;
-
     try {
       return await authorizedHandler(schema, request, user);
     } catch (err) {
@@ -36,8 +35,8 @@ function getAuthenticatedUser(
 ): UserDbModel | null {
   let authenticatedUser: UserDbModel | null = null;
   const authorization = request.requestHeaders.Authorization;
-  if (authorization && authorization.startsWith('Bearer:')) {
-    const rawAccessToken = authorization.substring(7).trim();
+  if (authorization && authorization.startsWith('Bearer')) {
+    const rawAccessToken = authorization.substring(6).trim();
     const accessToken = decodeJwt(rawAccessToken);
     if (accessToken.exp > Math.trunc(_.now() / 1000)) {
       if (accessToken.sub && accessToken.sub.startsWith('user:')) {
