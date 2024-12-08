@@ -119,6 +119,8 @@ controller.post(
         httpOnly: req.secure,
         secure: req.secure,
         sameSite: 'none',
+        // TODO read more: https://developers.google.com/privacy-sandbox/cookies/chips
+        partitioned: true,
       });
     }
 
@@ -142,6 +144,7 @@ controller.get('/logout', (req, res) => {
       secure: req.secure,
       httpOnly: req.secure,
       sameSite: 'none',
+      partitioned: true,
     });
   }
   res.status(204).end();
