@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { JwtPayload } from '@/utils/jwt';
-import { User, LoginRequest } from '@patchwork2/shared';
+import { User, LoginRequest } from '@patchwork2/schema';
 
 interface IAuthState {
   /** Indicates whether any authentication request is in progress */
@@ -18,5 +18,3 @@ export type AuthState = IAuthState &
   );
 
 export const AuthContext = createContext<AuthState | null>(null);
-
-export type { LoginRequest, User, LoginResponse } from '@patchwork2/shared';

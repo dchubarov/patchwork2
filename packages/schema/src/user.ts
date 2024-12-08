@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { nullishToUndefined } from '../utils/transform';
+import { nullishToUndefined } from './utils';
 
 export const userRoleSchema = z.enum(['admin', 'developer']);
 
@@ -12,17 +12,5 @@ export const userSchema = z.object({
   lastname: z.string().nullish().transform(nullishToUndefined),
 });
 
-export const loginRequestSchema = z.object({
-  login: z.string().trim().min(1),
-  password: z.string(),
-});
-
-export const loginResponseSchema = z.object({
-  user: userSchema,
-  accessToken: z.string(),
-});
-
 export type UserRole = z.infer<typeof userRoleSchema>;
 export type User = z.infer<typeof userSchema>;
-export type LoginRequest = z.infer<typeof loginRequestSchema>;
-export type LoginResponse = z.infer<typeof loginResponseSchema>;

@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import React, { PropsWithChildren, useEffect, useReducer } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { ServerInfoResponse } from '@patchwork2/schema';
 import {
   envGlobals,
   EnvironmentContext,
   EnvironmentApplicationFacet,
   EnvironmentState,
-  ServerInfoResponse,
 } from '@/types/env';
 import { createApiClient } from '../lib/apiClient';
 import monitoringApi from '../lib/monitoringApi';

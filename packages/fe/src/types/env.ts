@@ -52,7 +52,6 @@ export interface EnvironmentState {
 }
 
 export const EnvironmentContext = createContext<EnvironmentState | null>(null);
-export type { ServerInfoResponse } from '@patchwork2/shared';
 
 // Private
 

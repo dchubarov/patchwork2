@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
-import { loginRequestSchema, loginResponseSchema } from '@patchwork2/shared';
+import { loginRequestSchema, loginResponseSchema } from '@patchwork2/schema';
 import { handleCatching, RequestProcessingError } from '../../lib/error';
 import { generateToken, verifyToken } from '../../lib/encrypt';
 import { transformUser } from '../../lib/transform';

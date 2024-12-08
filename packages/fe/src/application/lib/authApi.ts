@@ -3,7 +3,7 @@ import {
   LoginRequest,
   LoginResponse,
   loginResponseSchema,
-} from '@patchwork2/shared';
+} from '@patchwork2/schema';
 
 const refreshRequest =
   (client: AxiosInstance) => async (): Promise<LoginResponse> =>

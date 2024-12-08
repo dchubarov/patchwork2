@@ -1,4 +1,4 @@
-import { LoginRequest } from '@/types/auth';
+import { LoginRequest } from '@patchwork2/schema';
 import React, { FormEvent, KeyboardEvent, useState } from 'react';
 import { Box, Button, FormControl, Input } from '@mui/joy';
 import {

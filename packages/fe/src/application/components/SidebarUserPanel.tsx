@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks';
-import { LoginRequest } from '@/types/auth';
+import { LoginRequest } from '@patchwork2/schema';
 import {
   Avatar,
   Box,

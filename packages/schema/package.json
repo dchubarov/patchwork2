@@ -1,5 +1,5 @@
 {
-  "name": "@patchwork2/shared",
+  "name": "@patchwork2/schema",
   "version": "1.0.0",
   "license": "MIT",
   "private": true,

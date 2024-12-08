@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import { userSchema } from '@patchwork2/shared';
+import { userSchema } from '@patchwork2/schema';
 import { RequestProcessingError } from '../../lib/error';
 import { verifyToken } from '../../lib/encrypt';
 import { userRepository } from '../../orm';

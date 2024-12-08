@@ -1,15 +1,13 @@
 export {
   serverInfoResponseSchema,
   type ServerInfoResponse,
-} from './schemas/monitoring';
+} from './monitoring';
+
+export { userRoleSchema, type UserRole, userSchema, type User } from './user';
 
 export {
-  userRoleSchema,
-  type UserRole,
-  userSchema,
-  type User,
   loginRequestSchema,
   type LoginRequest,
   loginResponseSchema,
   type LoginResponse,
-} from './schemas/auth';
+} from './auth';

@@ -2,7 +2,7 @@ import { AxiosInstance } from 'axios';
 import {
   ServerInfoResponse,
   serverInfoResponseSchema,
-} from '@patchwork2/shared';
+} from '@patchwork2/schema';
 
 const serverInfoRequest =
   (client: AxiosInstance) => async (): Promise<ServerInfoResponse> =>

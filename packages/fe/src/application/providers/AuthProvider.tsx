@@ -2,12 +2,8 @@ import _ from 'lodash';
 import React, { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
-import {
-  AuthContext,
-  AuthState,
-  LoginResponse,
-  LoginRequest,
-} from '@/types/auth';
+import { AuthContext, AuthState } from '@/types/auth';
+import { LoginResponse, LoginRequest } from '@patchwork2/schema';
 import { useApiClient } from '@/hooks/env';
 import { decodeJwt, JwtPayload } from '@/utils/jwt';
 import { showNotification } from '@/utils/notification';

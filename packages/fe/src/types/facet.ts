@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom';
 import { ComponentType } from 'react';
-import { User } from '@patchwork2/shared';
+import { User } from '@patchwork2/schema';
 
 export type RouteProvider = () => RouteObject[];
 

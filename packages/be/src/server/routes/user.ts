@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { userSchema } from '@patchwork2/shared';
+import { userSchema } from '@patchwork2/schema';
 import { handleCatching, RequestProcessingError } from '../../lib/error';
 import { userRepository } from '../../orm';
 import auth from '../middleware/auth';
