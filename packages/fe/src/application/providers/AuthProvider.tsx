@@ -8,7 +8,7 @@ import { useApiClient } from '@/hooks/env';
 import { decodeJwt, JwtPayload } from '@/utils/jwt';
 import { showNotification } from '@/utils/notification';
 import { logger } from '@/utils/logging';
-import authApi from '../lib/authApi';
+import * as authApi from '../lib/authApi';
 
 const MAX_REFRESH_RETRY_COUNT = 3;
 const REFRESH_BEFORE_EXPIRATION_MILLIS = 3000;

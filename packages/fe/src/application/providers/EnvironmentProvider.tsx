@@ -9,7 +9,7 @@ import {
   EnvironmentState,
 } from '@/types/env';
 import { createApiClient } from '../lib/apiClient';
-import monitoringApi from '../lib/monitoringApi';
+import * as monitoringApi from '../lib/monitoringApi';
 import AppFacets from 'src/facets';
 import { normalizeBasePath } from '@/utils/path';
 import version from '../../version.json';

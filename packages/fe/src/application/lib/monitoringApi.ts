@@ -4,14 +4,8 @@ import {
   serverInfoResponseSchema,
 } from '@patchwork2/schema';
 
-const serverInfoRequest =
+export const serverInfoRequest =
   (client: AxiosInstance) => async (): Promise<ServerInfoResponse> =>
     client
       .get('server-info')
       .then((response) => serverInfoResponseSchema.parse(response.data));
-
-const monitoringApi = {
-  serverInfoRequest,
-};
-
-export default monitoringApi;
