@@ -6,7 +6,9 @@ export const findById = async (
 ): Promise<User | null> => {
   if (!userId) return null;
   else if (typeof userId === 'string') userId = parseInt(userId);
-  return await prisma.user.findUnique({ where: { id: userId } });
+  return await prisma.user.findUnique({
+    where: { id: userId },
+  });
 };
 
 export const findByLogin = async (login: string): Promise<User | null> => {

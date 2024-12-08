@@ -11,13 +11,22 @@ async function main() {
   });
 
   let hashedPassword = await bcrypt.hash(pwd, BCRYPT_SALT_ROUNDS);
-  await prisma.user.create({
-    data: {
-      username: 'rabbit',
-      email: `admin@`,
-      password: hashedPassword,
-      roles: 'admin',
-    },
+  await prisma.user.createMany({
+    data: [
+      {
+        username: 'rabbit',
+        email: `admin@`,
+        password: hashedPassword,
+        roles: 'admin',
+      },
+      {
+        // TODO remove this user when sso signup is available
+        username: 'dime',
+        email: 'dime@twowls.org',
+        password: hashedPassword,
+        roles: 'admin,developer',
+      },
+    ],
   });
 }
 
