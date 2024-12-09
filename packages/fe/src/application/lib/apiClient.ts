@@ -83,7 +83,7 @@ function logAxiosResponse(
 
   const styledMsg = [
     'API',
-    'font-weight:bold;background-color:skyblue;padding:2px;border:1px solid deepskyblue;border-radius:4px',
+    'font-weight:bold;background-color:skyblue;color:black;padding:2px;border:1px solid deepskyblue;border-radius:4px',
   ];
 
   styledMsg.push(
@@ -105,7 +105,7 @@ function logAxiosResponse(
   let msg = '';
   const params: string[] = [];
   styledMsg.forEach((value, index) => {
-    if (index % 2 == 0) msg += `%c${index > 0 ? ' ' : ''}${value}`;
+    if (index % 2 === 0) msg += `%c${index > 0 ? ' ' : ''}${value}`;
     else params.push(value);
   });
 
